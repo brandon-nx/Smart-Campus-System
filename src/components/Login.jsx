@@ -1,25 +1,40 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
+import "../styles/Login.css";
+import logo from "../assets/Logo.png"; 
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    console.log("Logging in:", email, password);
-    navigate("/"); // Redirect to home after login
-  };
-
   return (
     <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">Login</button>
+      <div className="top-bar">
+        <button className="back-btn">←</button>
+        <span className="top-bar-text">Member of UOSM</span>
+      </div>
+
+      <img src={logo} alt="URoute Logo" className="logo" />
+
+      <div className="login-title">
+        <div className="welcome">Welcome to</div>
+        <div className="app-name">URoute</div>
+      </div>
+
+      <form className="login-form">
+        <input type="email" placeholder="Email" required />
+        <input type="password" placeholder="Enter Password" required />
+
+        <label className="remember-me">
+          <input type="checkbox" />
+          Remember Me
+        </label>
+
+        <button type="submit" className="login-btn">Login</button>
+
+        <a href="#" className="forgot-password">Forgot Password?</a>
       </form>
+
+      <div className="signup-link">
+        Don't have an account? <Link to="/signup">Sign Up</Link>
+      </div>
     </div>
   );
 }
