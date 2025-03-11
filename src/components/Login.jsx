@@ -1,13 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
-import logo from "../assets/Logo.png"; 
+import logo from "../assets/logo.png"; 
 
 function Login() {
+  const navigate = useNavigate();
+
   return (
     <div className="login-container">
       <div className="top-bar">
-        <button className="back-btn">←</button>
+        <button className="back-btn" onClick={() => navigate("/")}>←</button>
         <span className="top-bar-text">Member of UOSM</span>
       </div>
 

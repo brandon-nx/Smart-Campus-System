@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Signup.css";
-import profilepic from "../assets/profilepic.png";
+import profilepic from "../assets/profilePic.png";
 
 function Signup() {
   const [name, setName] = useState("");
