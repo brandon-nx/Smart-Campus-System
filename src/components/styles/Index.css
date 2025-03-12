@@ -93,48 +93,6 @@
     border-radius: 8px;
   }
   
-  /* Bottom section: Menu Bar */
-  .index-bottom {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 0;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-  }
-  
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-  }
-  
-  .nav-icon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 4px;
-  }
-  
-  .sos-btn {
-    border: none;
-    padding: 0;
-    border-radius: 50%;
-    width: 50px;     /* Adjust as needed */
-    height: 50px;    /* Adjust as needed */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .sos-btn img.sos-icon {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
   /* Responsive adjustments */
   @media (max-width: 428px) {
     .search-box {

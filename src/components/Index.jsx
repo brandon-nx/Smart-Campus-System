@@ -1,13 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../styles/Index.css";
-import blueDot from "../assets/blueDot.png";
-import redPin from "../assets/redPin.png";
-import switchLocation from "../assets/switchLocation.png";
-import mapIcon from "../assets/mapIcon.png";
-import eventIcon from "../assets/eventIcon.png";
-import signInIcon from "../assets/signInIcon.png";
-import sosIcon from "../assets/sosIcon.png";
+import blueDot from "../assets/icons/blueDot.png";
+import redPin from "../assets/icons/redPin.png";
+import switchLocation from "../assets/icons/switchLocation.png";
 
 function Index() {
     const [showLocationDropdown, setShowLocationDropdown] = useState(false);
@@ -26,9 +20,6 @@ function Index() {
       "Location 9",
       "Location 10",
     ];
-
-    const navigate = useNavigate();
-
 
     return (
         <div className="index-container">
@@ -93,25 +84,6 @@ function Index() {
                 <div className="map-placeholder">
                 <p>Map goes here</p>
                 </div>
-            </div>
-        
-            {/* Bottom Section: Menu Bar */}
-            <div className="index-bottom">
-                <div className="nav-item">
-                    <img src={mapIcon} alt="Map Icon" className="nav-icon" />
-                    <span>Map</span>
-                </div>
-                <div className="nav-item">
-                    <img src={eventIcon} alt="Event Icon" className="nav-icon" />
-                    <span>Event</span>
-                </div>
-                <div className="nav-item" onClick={() => navigate("/login")}>
-                    <img src={signInIcon} alt="Sign In Icon" className="nav-icon" />
-                    <span>Sign In</span>
-                </div>
-                <button className="sos-btn">
-                    <img src={sosIcon} alt="SOS" className="sos-icon" />
-                </button>
             </div>
         </div>
     );

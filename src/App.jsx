@@ -1,18 +1,23 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Index from "./components/Index";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
+import { createBrowserRouter } from "react-router-dom";
+import Login from "./components/routes/Login";
+import Signup from "./components/routes/Signup";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    // errorElement: <ErrorPage />,
+    id: 'root',
+    children: [
+      { index: true, element: <NavigationPage /> },
+      {path: "login", element: <Login />},
+      {path: "signup", element: <Signup />}
+    ],
+  },
+]);
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-      </Routes>
-    </Router>
-  );
+  return (<RouterProvider router={router} />);
 }
 
 export default App;
