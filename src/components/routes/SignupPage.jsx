@@ -1,0 +1,80 @@
+import React from "react";
+import classes from "./styles/Signup.module.css";
+import profilepic from "../../assets/images/profilePic.png";
+import { Link, redirect } from "react-router-dom";
+import SignupForm from "../SignupForm";
+
+export default function SignupPage() {
+  return (
+    <div className={classes["signup-container"]}>
+      <div className={classes["top-bar"]}>
+        <Link to={"/login"} className={classes["back-btn"]}>
+          ←
+        </Link>
+        <span className={classes["top-bar-text"]}>Sign Up</span>
+      </div>
+
+      <div className={classes["profile-section"]}>
+        <img
+          src={profilepic}
+          alt="Profile"
+          className={classes["profile-pic"]}
+        />
+      </div>
+      <SignupForm />
+    </div>
+  );
+}
+
+export async function action({ request }) {
+  console.log(request);
+
+  const data = await request.formData();
+
+  const password = data.get("password");
+  const confirmPassword = data.get("confirm-password");
+
+  if (password.trim() !== confirmPassword.trim()) {
+    return {
+      message: "User signup failed due to validation errors.",
+      errors: {
+        password: "Password does not match",
+        confirmPassword: "Password does not match",
+      },
+    };
+  }
+
+  console.log(data);
+
+  const authData = {
+    name: data.get("name"),
+    email: data.get("email"),
+    gender: data.get("gender"),
+    dateOfBirth: data.get("date-of-birth"),
+    password: data.get("password"),
+    image: "some_url",
+  };
+
+  console.log(authData);
+
+  const response = await fetch(`http://localhost:8080/signup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(authData),
+  });
+
+  if (response.status === 422 || response.status === 401) {
+    return response;
+  }
+
+  if (!response.ok) {
+    throw new Response(
+      { message: "Something is wrong, signing up failed." },
+      { status: 500 }
+    );
+  }
+
+  return redirect("/");
+}

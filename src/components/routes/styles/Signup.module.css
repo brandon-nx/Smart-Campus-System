@@ -1,16 +1,16 @@
 /* Container setup */
 .signup-container {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    position: relative;
-    padding-top: 60px; 
-    box-sizing: border-box;
-    background-color: #fff;
-  }
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  padding-top: 60px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
 
 /* Top horizontal bar */
 .top-bar {
@@ -34,7 +34,7 @@
   cursor: pointer;
   border: none;
   background: none;
-  color: #AD000B;
+  color: #ad000b;
 }
 
 .top-bar-text {
@@ -67,7 +67,7 @@
   font-size: 0.9rem;
   border: none;
   border-radius: 6px;
-  background-color: #AD000B;
+  background-color: #ad000b;
   color: #fff;
   cursor: pointer;
   transition: opacity 0.3s;
@@ -75,37 +75,6 @@
 
 .update-profile-btn:hover {
   opacity: 0.9;
-}
-
-/* Form styling */
-.signup-form {
-  width: 100%;
-  max-width: 320px;
-  display: flex;
-  flex-direction: column;
-}
-
-.signup-form input,
-.signup-form select {
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-/* Signup button styling */
-.signup-btn {
-  padding: 14px;
-  background-color: #AD000B;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  margin-top: 15px;
-  cursor: pointer;
-  transition: opacity 0.3s;
 }
 
 .signup-btn:hover {
@@ -117,14 +86,5 @@
   .profile-pic {
     width: 80px;
     height: 80px;
-  }
-  .signup-form input,
-  .signup-form select {
-    padding: 10px;
-    font-size: 0.9rem;
-  }
-  .signup-btn {
-    padding: 12px;
-    font-size: 0.9rem;
   }
 }

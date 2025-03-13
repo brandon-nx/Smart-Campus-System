@@ -10,16 +10,16 @@ function sosHandler() {}
 export default function RootNavigation() {
   return (
     <div className={classes["nav-container"]}>
-      <NavLink to={"/navmap"} className={classes["nav-item"]}>
-        <img src={mapIcon} alt="Map Icon" className="nav-icon" />
+      <NavLink to={"/map"} className={classes["nav-item"]} end>
+        <img src={mapIcon} alt="Map Icon" className={classes["nav-icon"]} />
         <span>Map</span>
       </NavLink>
-      <NavLink to={"/navmap"} className={classes["nav-item"]}>
-        <img src={eventIcon} alt="Event Icon" className="nav-icon" />
+      <NavLink to={"/events"} className={classes["nav-item"]}>
+        <img src={eventIcon} alt="Event Icon" className={classes["nav-icon"]} />
         <span>Event</span>
       </NavLink>
-      <NavLink to={"/navmap"} className={classes["nav-item"]}>
-        <img src={signInIcon} alt="Sign In Icon" className="nav-icon" />
+      <NavLink to={"/login"} className={classes["nav-item"]}>
+        <img src={signInIcon} alt="Sign In Icon" className={classes["nav-icon"]} />
         <span>Sign In</span>
       </NavLink>
       <button onClick={sosHandler} className={classes["sos-btn"]}>
