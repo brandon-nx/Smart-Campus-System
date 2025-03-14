@@ -18,13 +18,12 @@ async function add(data) {
   //ISSUE HERE--->
   const existingUser = await db.query("SELECT * FROM users WHERE email = ? OR username = ?", [email, name]);
 
-  if (existingUser.length > 0) {
+  if (existingUser.length > 2) {
+    console.log("flag2", print = existingUser.length);
     return 1;
   }
   // register to database then return user and email
-  try{
-    db.query(
-    'INSERT INTO users (email, username, password, type, gender, dateOfBirth, profilepicture) VALUES (?, ?, ?, "user", ?, STR_TO_DATE(?, "%Y-%m-%d"), ?)',
+  db.query('INSERT INTO users (email, username, password, type, gender, dateOfBirth, profilepicture) VALUES (?, ?, ?, "user", ?, STR_TO_DATE(?, "%Y-%m-%d"), ?)',
     [email, name, hashedPw, gender, dateOfBirth, profilePicture],
     (err, results) => {
         if (err) {
@@ -36,10 +35,6 @@ async function add(data) {
       }
     );
   }
-    catch(err){
-      console.log("error here: "+err);
-    }
-}
 
 //
 async function get(data) {
