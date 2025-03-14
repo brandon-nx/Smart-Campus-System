@@ -5,6 +5,8 @@ import Button from "./UI/Button";
 export default function LoginForm() {
   const navigation = useNavigation();
   const data = useActionData();
+
+  console.log(data);
   const isSubmitting = navigation.state === "submitting";
   return (
     <Form method="post" className="form">
@@ -13,14 +15,18 @@ export default function LoginForm() {
         type="email"
         name="email"
         placeholder="Email"
-        error={data && data.message}
+        error={
+          data?.errors?.find((err) => err.field === "email")?.message || null
+        }
       />
       <Input
         id="password"
         type="password"
         name="password"
         placeholder="Enter Password"
-        error={data && data.message}
+        error={
+          data?.errors?.find((err) => err.field === "password")?.message || null
+        }
       />
 
       <Input

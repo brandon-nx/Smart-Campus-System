@@ -1,8 +1,9 @@
 // user adding and retrieving functions
 
-const { hash } = require('bcryptjs');
-const {connection} = require('../scripts/mysqlConnection');
-const {generateKey} = require('../scripts/keygen');
+const { hash } = require("bcryptjs");
+const { connection } = require("../scripts/mysqlConnection");
+const { generateKey } = require("../scripts/keygen");
+
 // add user to DB
 async function add(data) {
   const hashedPw = await hash(data.password, 12);
@@ -11,50 +12,67 @@ async function add(data) {
   const name = data.name;
   const email = data.email;
   const image = data.image;
-// check if user already exists
-  connection.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
-    if (err) {
-      console.log('[!SQL!]Error executing query:', err);
-      return 0;
+  // check if user already exists
+  connection.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    (err, results) => {
+      if (err) {
+        console.log("[!SQL!]Error executing query:", err);
+        return 0;
+      }
+      if (results.length > 0) {
+        console.log("User already exists.");
+        return 0;
+      } else {
+        console.log("sql results here: " + results);
+      }
     }
-  if(results.length > 0) {
-    console.log('User already exists.');
-    return 0;
-  }
-  else{console.log("sql results here: "+results)}
-});
-// register to database then return user and email
-  connection.query('INSERT INTO users (email, username, password, type, gender, dateOfBirth, profilepicture) VALUES (?, ?, ?, "user", ?, STR_TO_DATE(?, "%Y-%m-%d"), ?)', [email, name, hashedPw, gender, dateOfBirth,image], (err, results) => {
-    if (err) {
-      console.log("[!SQL!]Error inserting data: "+err);
+  );
+  // register to database then return user and email
+  connection.query(
+    'INSERT INTO users (email, username, password, type, gender, dateOfBirth, profilepicture) VALUES (?, ?, ?, "user", ?, STR_TO_DATE(?, "%Y-%m-%d"), ?)',
+    [email, name, hashedPw, gender, dateOfBirth, image],
+    (err, results) => {
+      if (err) {
+        console.log("[!SQL!]Error inserting data: " + err);
+      }
+      if (results) {
+        return { name, email };
+      }
     }
-    if(results) {
-      return { name, email };
-    }
-  });
+  );
 }
 
-// 
+//
 async function get(data) {
   const email = data.email;
-  connection.query("SELECT * FROM users WHERE email = ?", [email], (_, results) => {
-    if (results.length <= 0) {
-      return 0;
-    } else {
-      return results[0];
+  connection.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    (_, results) => {
+      if (results.length <= 0) {
+        return 0;
+      } else {
+        return results[0];
+      }
     }
-  }); 
+  );
 }
 
 // generate session key for each remembered login
 async function sessionkeygen(email) {
   const key = generateKey();
-  connection.query('INSERT INTO auth_token (email, token) VALUES (?, ?)', [email, key], (err, _) => {
-    if (err) {
-      console.log('[!SQL!]Error inserting new session key: ', err);
-      return 0;
+  connection.query(
+    "INSERT INTO auth_token (email, token) VALUES (?, ?)",
+    [email, key],
+    (err, _) => {
+      if (err) {
+        console.log("[!SQL!]Error inserting new session key: ", err);
+        return 0;
+      }
     }
-  });
+  );
   return key;
 }
 

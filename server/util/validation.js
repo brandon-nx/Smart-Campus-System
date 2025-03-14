@@ -1,29 +1,39 @@
-function isValidText(value, minLength = 1) {
+export function isEmail(email) {
+  const pattern = /^[^@]+@soton\.ac\.uk$/i;
+  return pattern.test(email);
+}
+
+export function isPassword(password) {
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasDigit = /\d/.test(password);
+
+  return hasUppercase && hasLowercase && hasDigit;
+}
+
+export function hasMinLength(value, minLength) {
+  return value.length >= minLength;
+}
+
+export function isEqualsToOtherValue(value, otherValue) {
+  return value === otherValue;
+}
+
+export function isNotEmpty(value) {
+  return value.trim() !== "";
+}
+
+export function isValidText(value, minLength = 1) {
   return value && value.trim().length >= minLength;
 }
 
-function isValidDate(value) {
+export function isValidDate(value) {
   const date = new Date(value);
   return value && date !== 'Invalid Date';
 }
 
-function isValidImageUrl(value) {
+export function isValidImageUrl(value) {
   return value && value.startsWith('http');
 }
 
-function isValidEmail(value) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return value && emailRegex.test(value);;
-}
-
-function isValidPassword(value, minLength = 6) {
-  return value && value.trim().length >= minLength;
-}
-"INSERT INTO users (name, email,gender,dateOfBirth,password) VALUES (?, ?, ?, ?, ?)"
-
-
-exports.isValidText = isValidText;
-exports.isValidDate = isValidDate;
-exports.isValidImageUrl = isValidImageUrl;
-exports.isValidEmail = isValidEmail;
-exports.isValidPassword = isValidPassword;
+// "INSERT INTO users (name, email,gender,dateOfBirth,password) VALUES (?, ?, ?, ?, ?)" <- what is this?
