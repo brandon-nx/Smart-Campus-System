@@ -1,35 +1,25 @@
-import { useFetcher, useSearchParams } from "react-router-dom";
+import { useFetcher, useNavigate, useSearchParams } from "react-router-dom";
 import { use, useEffect } from "react";
 import Modal from "./UI/Modal";
 import AccountRecoveryContext from "./store/AccountRecoveryContext";
+import Button from "./UI/Button";
+import Input from "./UI/Input";
 
 export default function PasswordRecoveryWindow() {
+  const navigate = useNavigate();
   const [searchParam] = useSearchParams();
   const step = searchParam.get("step");
-  const isForgot =
-    step === "forgot" ||
-    step === "otp" ||
-    step === "reset" ||
-    step === "success" ||
-    step === "failed";
 
   const accountRecoveryCtx = use(AccountRecoveryContext);
 
-  function handleCloseRecoveryWindow() {
-    accountRecoveryCtx.hideForgot();
-  }
-
-  function handleGoToCheckout() {
-    userProgressCtx.showCheckout();
+  function handleCloseWindow() {
+    accountRecoveryCtx.hideWindow();
+    navigate("/login");
   }
 
   const fetcher = useFetcher();
 
   const { data, state } = fetcher;
-
-  function handleCloseForgotWindow() {
-    closeForgotWindow();
-  }
 
   useEffect(() => {
     if (state === "idle" && data && data.message) {
@@ -38,19 +28,25 @@ export default function PasswordRecoveryWindow() {
   }, [data, state]);
 
   return (
-    <Modal
-      className="cart"
-      open={userProgressCtx.progress === "cart"}
-      onClose={userProgressCtx.progress === "cart" ? handleCloseCart : null}
-    >
+    <Modal open={accountRecoveryCtx.isOpen} onClose={handleCloseWindow}>
+      <h1>Forgot Password</h1>
+      <h2>OTP Verification</h2>
+      <p>Enter your email address to receive OTP.</p>
       <fetcher.Form method="post" action="/forgotpassword" className="form">
-        <input
+        <Input
+          id="email"
           type="email"
-          placeholder="Sign up for newsletter..."
-          aria-label="Sign up for newsletter"
+          name="email"
+          placeholder="Email"
+          error={data && data.message}
         />
-        <button onClick={closeForgotWindow}>Sign up</button>
+        <p className="form-actions">
+          <Button disabled={state === "loading"}>
+            {state === "loading" ? "LOADING..." : "NEXT"}
+          </Button>
+        </p>
       </fetcher.Form>
+      <Button onClick={handleCloseWindow}>CANCEL</Button>
     </Modal>
   );
 }

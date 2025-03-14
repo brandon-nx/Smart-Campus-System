@@ -112,12 +112,14 @@ button:disabled {
 }
 
 .modal {
-  background-color: #e4ddd4;
+  background-color: #eaeaea ;
+  display:flex;
+  flex-direction: column;
+  text-align: center;
   border-radius: 6px;
   border: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  padding: 1rem;
-  width: 80%;
+  padding: 5rem 2.5rem;
   max-width: 40rem;
   animation: fade-slide-up 0.3s ease-out forwards;
 }

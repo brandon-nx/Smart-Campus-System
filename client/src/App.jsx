@@ -2,7 +2,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login, { action as loginAction } from "./components/routes/LoginPage";
 import RootLayout from "./components/routes/RootLayout";
 import NavigationPage from "./components/routes/NavigationPage";
-import SignupPage, {action as signupAction } from "./components/routes/SignupPage";
+import SignupPage, {
+  action as signupAction,
+} from "./components/routes/SignupPage";
+import AccountRecoveryContextLayout from "./components/routes/AccountRecoveryContextLayout";
 
 const router = createBrowserRouter([
   {
@@ -12,7 +15,10 @@ const router = createBrowserRouter([
     id: "root",
     children: [
       { index: true, element: <NavigationPage /> },
-      { path: "login", element: <Login />, action: loginAction },
+      {
+        element: <AccountRecoveryContextLayout />,
+        children: [{ path: "login", element: <Login />, action: loginAction }],
+      },
       { path: "signup", element: <SignupPage />, action: signupAction },
     ],
   },
