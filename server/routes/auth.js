@@ -8,7 +8,7 @@ const {
   isPassword,
   hasMinLength,
 } = require("../util/validation");
-const { connection } = require("../scripts/mysqlConnection");
+const db = require("../db");
 const { generateKey } = require("../scripts/keygen");
 const router = express.Router();
 
@@ -95,56 +95,53 @@ router.post("/login", async (req, res) => {
     });
   }
 
-  // Proceed with login query
-  connection.query(
-    "SELECT (email, password) FROM users WHERE email = ?",
-    [email],
-    (err, results) => {
-      if (err) {
-        console.log("[!SQL!] Error executing query:", err);
-        return res.status(500).json({
-          message: "Internal server error",
-          status: 500,
-          errors: [],
-        });
-      }
-      if (!results || results.length === 0) {
-        return res.status(401).json({
-          message: "Invalid username or password",
-          status: 401,
-          errors: [{ field: "email", message: "User not found" }],
-        });
-      }
-      // Check if the password matches (replace with proper hash checking in production)
-      if (password !== results[0].password) {
-        return res.status(401).json({
-          message: "Invalid username or password",
-          status: 401,
-          errors: [{ field: "password", message: "Incorrect password" }],
-        });
-      }
+  try {
+    // Query the database with the corrected SQL statement
+    const [results] = await db.query(
+      "SELECT email, password FROM users WHERE email = ?",
+      [email]
+    );
 
-      // If "remember me" is checked, generate a token and save it
-      let token = null;
-      if (rememberMe) {
-        token = generateKey();
-        connection.query(newauthtokenquery, [email, token], (err2) => {
-          if (err2) {
-            console.log("[!SQL!] Error saving token:", err2);
-            // Optionally handle token save error here
-          }
-        });
-      }
-      return res.json({ token });
+    if (!results || results.length === 0) {
+      return res.status(401).json({
+        message: "Invalid username or password",
+        status: 401,
+        errors: [{ field: "email", message: "User not found" }],
+      });
     }
-  );
+
+    // Compare provided password with the one in the database
+    // In production, use hashed passwords and a library like bcrypt
+    if (password !== results[0].password) {
+      return res.status(401).json({
+        message: "Invalid username or password",
+        status: 401,
+        errors: [{ field: "password", message: "Incorrect password" }],
+      });
+    }
+
+    // Optionally handle "remember me"
+    let token = null;
+    if (rememberMe) {
+      token = generateKey(); // Ensure generateKey is defined
+      await connection.query(newauthtokenquery, [email, token]);
+    }
+    return res.json({ token });
+  } catch (err) {
+    console.error("[!SQL!] Error executing query:", err);
+    return res.status(500).json({
+      message: "Internal server error",
+      status: 500,
+      errors: [],
+    });
+  }
 });
 
 router.post("/tokenlogin", async (req, res) => {
   const email = req.body.email;
   const token = req.body.token;
   console.log("[REQ] Get token login request:", email, token);
-  connection.query(
+  db.query(
     "INSERT INTO auth_token (email,token) VALUES (?, ?)",
     [email, token],
     (err, results) => {

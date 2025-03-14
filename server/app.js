@@ -1,59 +1,46 @@
 const bodyParser = require("body-parser");
-const express = require('express');
-const app = express();
-const mysql = require('mysql');
-const cors = require('cors');
+const express = require("express");
 
 const eventRoutes = require("./routes/events");
 const authRoutes = require("./routes/auth");
+const db = require("./db");
 
-app.use(cors());
-
-// Set up the MySQL connection pool
-const db = mysql.createPool({
-  connectionLimit: 10,
-  host: 'localhost',
-  user: 'root',
-  password: 'E(yYM{PT%pvkm~.i',
-  database: 'AppDB',
-});
+const app = express();
 
 // Test the database connection
-app.get('/', (req, res) => {
-  db.query("INSERT INTO test (idtest, testcol) VALUES (1, 'lol')");
+db.query("SELECT 1")
+  .then(([rows]) => console.log("DB test query succeeded:", rows))
+  .catch((err) => console.error("DB test query failed:", err));
+
+// Make the db connection available to routes
+app.use((req, res, next) => {
+  req.db = db;
+  next();
 });
 
-// // (Optional) Make the db connection available to routes
-// app.use((req, res, next) => {
-//   req.db = db;
-//   next();
-// });
-
 // Use body-parser to parse JSON requests
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 
 // Set up CORS headers
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE");
-//   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
-//   next();
-// });
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  next();
+});
 
-// // Set up authentication routes
-// app.use(authRoutes);
+// Set up authentication routes
+app.use(authRoutes);
+app.use("/events", eventRoutes);
 
-// // Set up events routes; these routes will be prefixed with '/events'
-// app.use("/events", eventRoutes);
+// Error-handling middleware
+app.use((error, req, res, next) => {
+  const status = error.status || 500;
+  const message = error.message || "Something went wrong.";
+  res.status(status).json({ message: message });
+});
 
-// // Error-handling middleware
-// app.use((error, req, res, next) => {
-//   const status = error.status || 500;
-//   const message = error.message || "Something went wrong.";
-//   res.status(status).json({ message: message });
-// });
-
-// Start the Express server on a port different from MySQL's port
+//Start server
 app.listen(8080, () => {
-  console.log("Express server is running on http://127.0.0.1:8080");
+  console.log("server is running on port 8080");
 });

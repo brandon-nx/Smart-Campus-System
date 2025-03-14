@@ -64,32 +64,30 @@ export async function action({ request }) {
 
   console.log(authData);
 
-  fetch("http://localhost:8080");
+  const response = await fetch(`http://localhost:8080/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(authData),
+  });
 
-  // const response = await fetch(`http://localhost:8080/`, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify(authData),
-  // });
+  if (response.status === 400 || response.status === 401) {
+    return response;
+  }
 
-  // if (response.status === 400 || response.status === 401) {
-  //   return response;
+  if (!response.ok) {
+    throw new Response(
+      { message: "Something is wrong, authentication failed." },
+      { status: 500 }
+    );
+  }
+
+  // if(response.ok && authData.rememberMe){
+  //   response.json().then(data => {
+  //     //Cookies goes here
+  //   });
   // }
 
-  // if (!response.ok) {
-  //   throw new Response(
-  //     { message: "Something is wrong, authentication failed." },
-  //     { status: 500 }
-  //   );
-  // }
-
-  // // if(response.ok && authData.rememberMe){
-  // //   response.json().then(data => {
-  // //     //Cookies goes here
-  // //   });
-  // // }
-
-  // return redirect("/");
+  return redirect("/");
 }
