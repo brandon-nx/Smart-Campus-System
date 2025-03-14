@@ -121,7 +121,7 @@ router.post("/signup", async (req, res, next) => {
     if (createdUser == 1){return res.status(422).json({
       message: "[!SIGNIN!] User signup failed due to a server error.",
       status: 400,
-      errors: Object.values(errors.email = { field: "email", message: "Email already exists." }),
+      errors: [errors.email = { field: "email", message: "Email already exists." }],
     });
   }
     else if (createdUser == 0){ throw new Error("SQL Error"); }
