@@ -1,13 +1,21 @@
-import React from "react";
-import { Link, redirect} from "react-router-dom";
+import React, { use } from "react";
+import { Link, redirect } from "react-router-dom";
 import classes from "./styles/Login.module.css";
 import logo from "../../assets/images/logo.png";
 import LoginForm from "../LoginForm";
+import AccountRecoveryContext from "../store/AccountRecoveryContext";
+import PasswordRecoveryWindow from "../PasswordRecoveryWindow";
 
 export default function Login() {
+  const accountRecoveryCtx = use(AccountRecoveryContext);
+
+  function handleOpenWindow() {
+    accountRecoveryCtx.showWindow();
+  }
 
   return (
     <>
+      <PasswordRecoveryWindow />
       <div className={classes["login-container"]}>
         <div className={classes["top-bar"]}>
           <Link to="/" className={classes["back-btn"]}>
@@ -25,7 +33,11 @@ export default function Login() {
 
         <LoginForm />
 
-        <Link to="?step=forgot" className={classes["forgot-password"]}>
+        <Link
+          onClick={handleOpenWindow}
+          to="?step=forgotpassword"
+          className={classes["forgot-password"]}
+        >
           Forgot Password?
         </Link>
 
