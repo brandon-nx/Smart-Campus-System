@@ -118,6 +118,13 @@ router.post("/signup", async (req, res, next) => {
   //Sign in issue add(userData)
   try {
     const createdUser = await add(userData);
+    if (createdUser == 1){return res.status(422).json({
+      message: "[!SIGNIN!] User signup failed due to a server error.",
+      status: 400,
+      errors: Object.values(errors.email = { field: "email", message: "Email already exists." }),
+    });
+  }
+    else if (createdUser == 0){ throw new Error("SQL Error"); }
     res.status(201).json({
       message: "[SIGNIN] User successfully created.",
       user: createdUser,

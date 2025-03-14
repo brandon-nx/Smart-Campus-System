@@ -6,6 +6,7 @@ const { generateKey } = require("../scripts/keygen");
 
 // add user to DB
 async function add(data) {
+  
   const hashedPw = await hash(data.password, 12);
   const gender = data.gender;
   const dateOfBirth = data.dateOfBirth;
@@ -15,35 +16,29 @@ async function add(data) {
   // check if user already exists
 
   //ISSUE HERE--->
-  db.query(
-    "SELECT * FROM users WHERE email = ?",
-    [email],
-    (err, results) => {
-      if (err) {
-        console.log("[!SQL!]Error executing query:", err);
-        return 0;
-      }
-      if (results.length > 0) {
-        console.log("User already exists.");
-        return 0;
-      } else {
-        console.log("sql results here: " + results);
-      }
-    }
-  );
+  const existingUser = await db.query("SELECT * FROM users WHERE email = ? OR username = ?", [email, name]);
+
+  if (existingUser.length > 0) {
+    return 1;
+  }
   // register to database then return user and email
-  db.query(
+  try{
+    db.query(
     'INSERT INTO users (email, username, password, type, gender, dateOfBirth, profilepicture) VALUES (?, ?, ?, "user", ?, STR_TO_DATE(?, "%Y-%m-%d"), ?)',
     [email, name, hashedPw, gender, dateOfBirth, profilePicture],
     (err, results) => {
-      if (err) {
-        console.log("[!SQL!]Error inserting data: " + err);
+        if (err) {
+          console.log("[!SQL!]Error inserting data: " + err);
+        }
+        if (results) {
+          return { name, email };
+        }
       }
-      if (results) {
-        return { name, email };
-      }
+    );
+  }
+    catch(err){
+      console.log("error here: "+err);
     }
-  );
 }
 
 //
@@ -56,7 +51,7 @@ async function get(data) {
       if (results.length <= 0) {
         return 0;
       } else {
-        return results[0];
+        return results;
       }
     }
   );
