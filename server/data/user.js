@@ -1,7 +1,7 @@
 // user adding and retrieving functions
 
 const { hash } = require("bcryptjs");
-const { connection } = require("../scripts/mysqlConnection");
+const db = require("../db");
 const { generateKey } = require("../scripts/keygen");
 
 // add user to DB
@@ -11,9 +11,9 @@ async function add(data) {
   const dateOfBirth = data.dateOfBirth;
   const name = data.name;
   const email = data.email;
-  const image = data.image;
+  const profilePicture = data.image;
   // check if user already exists
-  connection.query(
+  db.query(
     "SELECT * FROM users WHERE email = ?",
     [email],
     (err, results) => {
@@ -30,9 +30,9 @@ async function add(data) {
     }
   );
   // register to database then return user and email
-  connection.query(
+  db.query(
     'INSERT INTO users (email, username, password, type, gender, dateOfBirth, profilepicture) VALUES (?, ?, ?, "user", ?, STR_TO_DATE(?, "%Y-%m-%d"), ?)',
-    [email, name, hashedPw, gender, dateOfBirth, image],
+    [email, name, hashedPw, gender, dateOfBirth, profilePicture],
     (err, results) => {
       if (err) {
         console.log("[!SQL!]Error inserting data: " + err);
@@ -47,7 +47,7 @@ async function add(data) {
 //
 async function get(data) {
   const email = data.email;
-  connection.query(
+  db.query(
     "SELECT * FROM users WHERE email = ?",
     [email],
     (_, results) => {
@@ -63,7 +63,7 @@ async function get(data) {
 // generate session key for each remembered login
 async function sessionkeygen(email) {
   const key = generateKey();
-  connection.query(
+  db.query(
     "INSERT INTO auth_token (email, token) VALUES (?, ?)",
     [email, key],
     (err, _) => {

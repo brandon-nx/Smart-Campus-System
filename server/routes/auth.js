@@ -5,57 +5,130 @@ const { add, get } = require("../data/user");
 const {
   isEmail,
   isNotEmpty,
-  isPassword,
-  hasMinLength,
+  isValidText,
+  isValidDate,
+  isValidImageUrl,
+  isEqualsToOtherValue,
+  isRealisticDate,
+  isAtLeast18,
 } = require("../util/validation");
 const db = require("../db");
 const { generateKey } = require("../scripts/keygen");
 const router = express.Router();
 
-// signup requests
 router.post("/signup", async (req, res, next) => {
   const data = req.body;
   console.log("[REQ] Get signup request:", data);
   let errors = {};
-  // check if email is valid
-  if (!isValidEmail(data.email)) {
-    errors.email = "[!SIGNIN!] Invalid email.";
+
+  // Validate email
+  if (!isNotEmpty(data.email)) {
+    errors.email = { field: "email", message: "Email is required." };
+  } else if (!isEmail(data.email)) {
+    errors.email = {
+      field: "email",
+      message: "Invalid email. Must be a valid soton.ac.uk email.",
+    };
   } else {
     try {
-      const existingUser = await get(data);
-      if (!existingUser === 0) {
-        (errors.email = "[!SIGNIN!] Email"), data.email, "exists already.";
+      const existingUser = await get({ email: data.email });
+      // Assuming get returns an array of matching users:
+      if (existingUser && existingUser.length > 0) {
+        errors.email = { field: "email", message: "Email already exists." };
       }
     } catch (error) {
-      console.log("[!SIGNIN!] Error with email:", error);
+      console.log("[!SIGNIN!] Error checking email:", error);
     }
   }
+
+  // Validate name (username)
   if (!isValidText(data.name, 2)) {
     console.log("[!SIGNIN!] Error with name:", data.name);
-    errors.name = "Invalid name. Must not be empty";
+    errors.name = {
+      field: "name",
+      message: "Invalid name. Must be at least 2 characters long.",
+    };
   }
 
-  // check if password is valid
+  // Validate password
   if (!isValidText(data.password, 8)) {
     console.log("[!SIGNIN!] Error with password:", data.password);
-    errors.password = "Invalid password. Must be at least 8 characters long.";
+    errors.password = {
+      field: "password",
+      message: "Invalid password. Must be at least 8 characters long.",
+    };
   }
-  // send error data to app
+  // Validate confirmPassword: must match password
+  if (!isEqualsToOtherValue(data.password, data.confirmPassword)) {
+    errors.confirmPassword = {
+      field: "confirmPassword",
+      message: "Passwords do not match.",
+    };
+  }
+
+  // Validate gender
+  if (data.gender === null || !isNotEmpty(data.gender)) {
+    errors.gender = { field: "gender", message: "Gender is required." };
+  }
+
+  // Validate date of birth
+  if (!isRealisticDate(data.dateOfBirth)) {
+    errors.dateOfBirth = {
+      field: "dateOfBirth",
+      message: "Invalid date of birth. Please enter a realistic date.",
+    };
+  } else if (!isAtLeast18(data.dateOfBirth)) {
+    errors.dateOfBirth = {
+      field: "dateOfBirth",
+      message: "Invalid date of birth. You must be at least 18 years old.",
+    };
+  }
+
+  // For image, if not provided or invalid, use a placeholder URL
+  if (!data.image || !isValidImageUrl(data.image)) {
+    data.image = "https://example.com/placeholder.jpg";
+  }
+
+  // Set a default user type if not provided
+  if (!data.type) {
+    data.type = "user";
+  }
+
+  // If any validation errors exist, send them back
   if (Object.keys(errors).length > 0) {
     return res.status(422).json({
-      message: "[!SIGNIN!]User signup failed due to validation errors.",
-      errors,
+      message: "[!SIGNIN!] User signup failed due to validation errors.",
+      status: 400,
+      errors: Object.values(errors),
     });
   }
 
+  // Prepare the data for insertion to match table columns:
+  // email, username, password, type, gender, dateOfBirth, profilePicture
+  const userData = {
+    email: data.email,
+    name: data.name,
+    password: data.password, // In production, hash this password before storing!
+    type: data.type,
+    gender: data.gender,
+    dateOfBirth: data.dateOfBirth,
+    profilePicture: data.image,
+  };
+
   try {
-    const createdUser = await add(data);
+    const createdUser = await add(userData);
     res.status(201).json({
       message: "[SIGNIN] User successfully created.",
       user: createdUser,
     });
   } catch (error) {
-    next(error);
+    console.error("[!SIGNIN!] Error creating user:", error);
+
+    return res.status(500).json({
+      message: "[!SIGNIN!] User signup failed due to a server error.",
+      errorCode: "SIGNUP_FAILED",
+      errors: [],
+    });
   }
 });
 

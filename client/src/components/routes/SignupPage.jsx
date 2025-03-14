@@ -27,24 +27,8 @@ export default function SignupPage() {
 }
 
 export async function action({ request }) {
-  console.log(request);
 
   const data = await request.formData();
-
-  const password = data.get("password");
-  const confirmPassword = data.get("confirm-password");
-
-  if (password.trim() !== confirmPassword.trim()) {
-    return {
-      message: "User signup failed due to validation errors.",
-      errors: {
-        password: "Password does not match",
-        confirmPassword: "Password does not match",
-      },
-    };
-  }
-
-  console.log(data);
 
   const authData = {
     name: data.get("name"),
@@ -52,6 +36,7 @@ export async function action({ request }) {
     gender: data.get("gender"),
     dateOfBirth: data.get("date-of-birth"),
     password: data.get("password"),
+    confirmPassword: data.get("confirm-password"),
     image: "some_url",
   };
 
@@ -65,7 +50,7 @@ export async function action({ request }) {
     body: JSON.stringify(authData),
   });
 
-  if (response.status === 422 || response.status === 401) {
+  if (response.status === 422) {
     return response;
   }
 
