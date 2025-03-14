@@ -82,6 +82,10 @@ export async function action({ request }) {
       { status: 500 }
     );
   }
-
+  if(response.ok && authData.rememberMe){
+    response.json().then(data => {
+      writeCookies(data);
+    });
+  }
   return redirect("/");
 }
