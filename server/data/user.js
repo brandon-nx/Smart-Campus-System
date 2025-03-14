@@ -11,8 +11,10 @@ async function add(data) {
   const dateOfBirth = data.dateOfBirth;
   const name = data.name;
   const email = data.email;
-  const profilePicture = data.image;
+  const profilePicture = data.profilePicture;
   // check if user already exists
+
+  //ISSUE HERE--->
   db.query(
     "SELECT * FROM users WHERE email = ?",
     [email],
