@@ -7,16 +7,14 @@ import { useDispatch } from "react-redux";
 import { authActions } from "../store/auth-slice";
 
 export default function SignupPage() {
-  const data = useActionData()
+  const data = useActionData();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log(data)
-    if(data && data.success) {
-      dispatch(authActions.login(data))
-      navigate("/")
-    }
-
+  if (data && data.success) {
+    dispatch(authActions.login(data));
+    navigate("/");
+  }
 
   return (
     <div className={classes["signup-container"]}>
@@ -40,7 +38,6 @@ export default function SignupPage() {
 }
 
 export async function action({ request }) {
-
   const data = await request.formData();
 
   const authData = {

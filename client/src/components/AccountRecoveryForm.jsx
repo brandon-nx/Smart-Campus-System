@@ -153,14 +153,14 @@ export default function AccountRecoveryForm() {
           )}
 
           {step === "verify-otp" && (
-            <div class="otp-wrapper">
+            <div className="otp-wrapper">
               <input
                 id="recovery-email"
                 type="hidden"
                 name="recovery-email"
                 value={recoveryEmail}
               />
-              <div class="otp-input-group">
+              <div className="otp-input-group">
                 {[0, 1, 2, 3].map((index) => (
                   <Input
                     key={index}

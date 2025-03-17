@@ -19,11 +19,9 @@ export default function Login() {
     accountRecoveryCtx.showWindow();
   }
 
-  console.log(data)
-
-  if(data && data.success) {
-    dispatch(authActions.login(data))
-    navigate("/")
+  if (data && data.success) {
+    dispatch(authActions.login(data));
+    navigate("/");
   }
 
   return (
