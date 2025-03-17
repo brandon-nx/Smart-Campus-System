@@ -1,4 +1,19 @@
-export default function Input({ id, label, error, type, ...props }) {
+export default function Input({
+  id,
+  label,
+  error,
+  type,
+  showErrorMsg = true,
+  className,
+  ...props
+}) {
+
+  let inputClasses = className;
+
+  if(error) {
+    inputClasses += " invalid"
+  }
+
   if (type === "checkbox") {
     return (
       <div className="check-box">
@@ -11,11 +26,14 @@ export default function Input({ id, label, error, type, ...props }) {
   return (
     <div className="input-box">
       {label && <label htmlFor={id}>{label}</label>}
-      <input className={error ? "invalid" : undefined} id={id} type={type} {...props}/>
+      <input
+        className={inputClasses}
+        id={id}
+        type={type}
+        {...props}
+      />
       {error && (
-        <div className="input-error">
-          <p>{error}</p>
-        </div>
+        <div className="input-error">{showErrorMsg && <p>{error}</p>}</div>
       )}
     </div>
   );

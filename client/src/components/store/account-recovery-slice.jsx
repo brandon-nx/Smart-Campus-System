@@ -4,7 +4,7 @@ const accountRecoverySlice = createSlice({
   name: "accountRecovery",
   initialState: {
     email: "",
-    inputOtp: "",
+    otp: "",
   },
   reducers: {
     setEmail(state, action) {
@@ -12,11 +12,12 @@ const accountRecoverySlice = createSlice({
     },
 
     setInputOtp(state, action) {
-      state.inputOtp = action.payload;
+      state.otp = action.payload;
     },
 
     clear(state) {
-      (state.email = ""), (state.inputOtp = "");
+      state.email = "";
+      state.otp = "";
     },
   },
 });

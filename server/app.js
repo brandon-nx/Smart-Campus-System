@@ -1,11 +1,14 @@
 const bodyParser = require("body-parser");
 const express = require("express");
+const cors = require("cors");
 
 const eventRoutes = require("./routes/events");
 const authRoutes = require("./routes/auth");
 const db = require("./db");
 
 const app = express();
+
+app.use(cors());
 
 // Test the database connection
 db.query("SELECT 1")

@@ -28,6 +28,7 @@ async function add(data) {
     (err, results) => {
       if (err) {
         console.log("[!SQL!]Error inserting data: " + err);
+        return 0
       }
       if (results) {
         return { name, email };

@@ -1,85 +1,27 @@
-export const requestOTP = () => {
+import { accountRecoveryActions } from "./account-recovery-slice";
+
+export const cancelOTPRequest = (recoveryEmail) => {
   return async (dispatch) => {
-    const fetchData = async () => {
-    //   const res = await fetch("");
+    const cancelRequest = async () => {
+      const response = await fetch("http://localhost:8080/cancel-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ recoveryEmail }),
+      });
 
-    //   if (!res.ok) {
-    //     throw new Error("Could not fetch !");
-    //   }
-
-    //   const data = await res.json();
-
-    //   return data;
-    return {email: "test@test.com", otpStatus: "sent"}
-    };
-
-    fetchData();
-
-    // try {
-    //   const cartData = await fetchData();
-    //   dispatch(
-    //     cartActions.replaceCart({
-    //       items: cartData.items || [],
-    //       totalQuantity: cartData.totalQuantity,
-    //     })
-    //   );
-    // } catch (error) {
-    //   dispatch(
-    //     uiActions.showNotification({
-    //       status: "error",
-    //       title: "Error!",
-    //       message: "Fetching cart data failed!",
-    //     })
-    //   );
-    // }
-  };
-};
-
-export const verifyOtp = (inputOtp) => {
-  return async (dispatch) => {
-    dispatch(
-      uiActions.showNotification({
-        status: "pending",
-        title: "Sending...",
-        message: "Sending cart data!",
-      })
-    );
-
-    const sendRequest = async () => {
-      const res = await fetch(
-        "https://cart-practice-608ee-default-rtdb.firebaseio.com/cart.json",
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            items: cart.items,
-            totalQuantity: cart.totalQuantity,
-          }),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Sending Cart Data Failed.");
+      if (!response.ok) {
+        throw new Response(
+          JSON.stringify({ message: "Could not cancel otp request." }),
+          {
+            status: 500,
+          }
+        );
       }
     };
 
-    try {
-      await sendRequest();
-
-      dispatch(
-        uiActions.showNotification({
-          status: "success",
-          title: "Success!",
-          message: "Send cart data successfully!",
-        })
-      );
-    } catch (error) {
-      dispatch(
-        uiActions.showNotification({
-          status: "error",
-          title: "Error!",
-          message: "Send cart data failed!",
-        })
-      );
-    }
+    await cancelRequest();
+    dispatch(accountRecoveryActions.clear());
   };
 };

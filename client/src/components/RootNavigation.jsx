@@ -5,6 +5,7 @@ import signInIcon from "../assets/icons/signInIcon.png";
 import sosIcon from "../assets/icons/sosIcon.png";
 //import readCookies from "./util/cookieHandler.jsx";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 
 
@@ -31,6 +32,8 @@ function signinHandler() {
   return ("/login");
 }
 export default function RootNavigation() {
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
+  
   return (
     <div className={classes["nav-container"]}>
       <NavLink to={"/map"} className={classes["nav-item"]} end>
@@ -41,10 +44,14 @@ export default function RootNavigation() {
         <img src={eventIcon} alt="Event Icon" className={classes["nav-icon"]} />
         <span>Event</span>
       </NavLink>
-      <NavLink to={"/login"} className={classes["nav-item"]}>
+      {!isAuthenticated && <NavLink to={"/login"} className={classes["nav-item"]}>
         <img src={signInIcon} alt="Sign In Icon" className={classes["nav-icon"]} />
         <span>Sign In</span>
-      </NavLink>
+      </NavLink>}
+      {isAuthenticated && <NavLink to={"/logout"} className={classes["nav-item"]}>
+        <img src={signInIcon} alt="Sign In Icon" className={classes["nav-icon"]} />
+        <span>Logout</span>
+      </NavLink>}
       <button onClick={sosHandler} className={classes["sos-btn"]}>
         <img src={sosIcon} alt="SOS" className={classes["sos-icon"]} />
       </button>

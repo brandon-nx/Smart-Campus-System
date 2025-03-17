@@ -6,6 +6,9 @@ import SignupPage, {
   action as signupAction,
 } from "./components/routes/SignupPage";
 import AccountRecoveryContextLayout from "./components/routes/AccountRecoveryContextLayout";
+import { action as forgotPasswordAction } from "./components/routes/ForgotPasswordPage";
+import PublicRoute from "./components/routes/PublicRoute";
+import LogoutPage from "./components/routes/LogoutPage";
 
 const router = createBrowserRouter([
   {
@@ -16,12 +19,22 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <NavigationPage /> },
       {
-        element: <AccountRecoveryContextLayout />,
-        children: [{ path: "login", element: <Login />, action: loginAction }],
+        element: <PublicRoute />,
+        children: [
+          {
+            element: <AccountRecoveryContextLayout />,
+            children: [
+              { path: "login", element: <Login />, action: loginAction },
+            ],
+          },
+
+          { path: "signup", element: <SignupPage />, action: signupAction },
+        ],
       },
-      { path: "signup", element: <SignupPage />, action: signupAction },
     ],
   },
+  { path: "forgotpassword", action: forgotPasswordAction },
+  { path: "logout", element: <LogoutPage /> },
 ]);
 
 function App() {

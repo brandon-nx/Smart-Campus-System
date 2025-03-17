@@ -1,10 +1,23 @@
 import React from "react";
 import classes from "./styles/Signup.module.css";
 import profilepic from "../../assets/images/profilePic.png";
-import { Link, redirect } from "react-router-dom";
+import { Link, useActionData, useNavigate } from "react-router-dom";
 import SignupForm from "../SignupForm";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store/auth-slice";
 
 export default function SignupPage() {
+  const data = useActionData()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  console.log(data)
+    if(data && data.success) {
+      dispatch(authActions.login(data))
+      navigate("/")
+    }
+
+
   return (
     <div className={classes["signup-container"]}>
       <div className={classes["top-bar"]}>
@@ -40,8 +53,6 @@ export async function action({ request }) {
     image: "some_url",
   };
 
-  console.log(authData);
-
   const response = await fetch(`http://localhost:8080/signup`, {
     method: "POST",
     headers: {
@@ -61,5 +72,5 @@ export async function action({ request }) {
     );
   }
 
-  return redirect("/");
+  return response;
 }

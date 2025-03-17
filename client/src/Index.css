@@ -46,6 +46,22 @@
   order: 1;
 }
 
+.otp-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.otp-input-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.otp-input {
+  width:min(60px, 18vw);
+  height: min(60px, 18vw);
+  text-align: center
+}
+
 .input-box {
   display: flex;
   flex-direction: column;
@@ -141,6 +157,12 @@ button:disabled {
 }
 
 /* Responsive adjustments */
+@media (max-width: 480px) {
+  .otp-wrapper {
+    margin-top: 1.5rem;
+  }
+}
+
 @media (max-width: 428px) {
   .button {
     font-size: 1rem;

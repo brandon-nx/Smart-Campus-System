@@ -1,21 +1,34 @@
 import React, { use } from "react";
-import { Link, redirect } from "react-router-dom";
+import { Link, useActionData, useNavigate } from "react-router-dom";
 import classes from "./styles/Login.module.css";
 import logo from "../../assets/images/logo.png";
 import LoginForm from "../LoginForm";
 import AccountRecoveryContext from "../store/AccountRecoveryContext";
 import PasswordRecoveryWindow from "../PasswordRecoveryWindow";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store/auth-slice";
 
 export default function Login() {
   const accountRecoveryCtx = use(AccountRecoveryContext);
+
+  const data = useActionData();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   function handleOpenWindow() {
     accountRecoveryCtx.showWindow();
   }
 
+  console.log(data)
+
+  if(data && data.success) {
+    dispatch(authActions.login(data))
+    navigate("/")
+  }
+
   return (
     <>
-      <PasswordRecoveryWindow />
+      {accountRecoveryCtx.isOpen && <PasswordRecoveryWindow />}
       <div className={classes["login-container"]}>
         <div className={classes["top-bar"]}>
           <Link to="/" className={classes["back-btn"]}>
@@ -35,7 +48,7 @@ export default function Login() {
 
         <Link
           onClick={handleOpenWindow}
-          to="?step=forgotpassword"
+          to="?step=request-otp"
           className={classes["forgot-password"]}
         >
           Forgot Password?
@@ -50,11 +63,7 @@ export default function Login() {
 }
 
 export async function action({ request }) {
-  console.log(request);
-
   const data = await request.formData();
-
-  console.log(data);
 
   const authData = {
     email: data.get("email"),
@@ -89,5 +98,5 @@ export async function action({ request }) {
   //   });
   // }
 
-  return redirect("/");
+  return response;
 }
