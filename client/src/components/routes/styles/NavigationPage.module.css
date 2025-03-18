@@ -28,49 +28,60 @@
   .map-top-search-box {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     background-color: #fff;
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 6px;
     cursor: pointer;
+    justify-content: flex-start; /* Aligns elements to the left */
   }
+
+  .map-top-search-box span {
+      flex-grow: 1; /* Allows text to take available space */
+      text-align: left; /* Align text to the left */
+      margin-left: 10px; /* Adds spacing for clarity */
+  }
+
   
-  /* Icon styling for search box */
-  .search-icon {
+  /* Icon styling */
+  .blue-dot {
     width: 20px;
     height: 20px;
-    margin-right: 10px;
   }
   
-  /* Switch icon styling */
+  .red-pin {
+    width: 20px;
+    height: 20px;
+  }
+
   .switch-icon {
-    width: 30px;
-    height: 30px;
+    width: 15px;
+    height: 15px;
   }
   
   /* Dropdown styling */
   .map-top-dropdown {
-    background-color: #fff;
+    position: absolute;
+    background-color: white;
     border: 1px solid #ccc;
     border-radius: 4px;
-    max-height: 200px; /* Adjust as needed */
+    max-height: 200px;
     overflow-y: auto;
     margin-top: 5px;
+    width: 100%;
+    z-index: 2000; /* Ensures dropdown appears above everything */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Adds shadow effect */
   }
-  
-  .map-top-full-dropdown {
-    max-height: 100vh; /* Spans full device height if needed */
-  }
-  
+
   .map-top-dropdown-item {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      background-color: white;
   }
-  
+
   .map-top-dropdown-item:hover {
-    background-color: #f8f8f8;
+      background-color: #f8f8f8;
   }
   
   /* Middle section: Map placeholder */
@@ -80,6 +91,20 @@
     justify-content: center;
     align-items: center;
     background-color: #eaeaea;
+    position: relative; 
+    overflow: hidden;
+  }
+
+  .campus-map {
+    width: 100%;
+    height: auto;
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain; 
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
   
   .map-placeholder {
