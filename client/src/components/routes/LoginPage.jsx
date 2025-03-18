@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React, { use, useEffect } from "react";
 import { Link, useActionData, useNavigate } from "react-router-dom";
 import classes from "./styles/Login.module.css";
 import logo from "../../assets/images/logo.png";
@@ -19,10 +19,12 @@ export default function Login() {
     accountRecoveryCtx.showWindow();
   }
 
-  if (data && data.success) {
-    dispatch(authActions.login(data));
-    navigate("/");
-  }
+  useEffect(() => {
+    if (data && data.success) {
+      dispatch(authActions.login(data));
+      navigate("/");
+    }
+  },[data, dispatch, navigate])
 
   return (
     <>
@@ -68,8 +70,6 @@ export async function action({ request }) {
     password: data.get("password"),
     rememberMe: data.get("remember-me") !== null,
   };
-
-  console.log(authData);
 
   const response = await fetch(`http://localhost:8080/login`, {
     method: "POST",

@@ -16,6 +16,7 @@ const {
 const db = require("../db");
 const { generateKey } = require("../scripts/keygen");
 const { hash, compare } = require("bcryptjs");
+const { sendMail } = require("../util/mail");
 const router = express.Router();
 
 router.post("/signup", async (req, res, next) => {
@@ -279,6 +280,13 @@ router.post("/request-otp", async (req, res) => {
       otp,
     ]);
 
+    //Send otp to email
+    await sendMail(
+      recoveryEmail,
+      "OTP Request Verification",
+      `Your OTP Code is ${otp}`
+    );
+
     return res.json({
       recoveryEmail,
       requestSuccess: true,
@@ -306,8 +314,6 @@ router.post("/verify-otp", async (req, res) => {
     [recoveryEmail]
   );
 
-  console.log(result);
-
   if (!result) {
     return res.status(422).json({
       message: "[!SIGNIN!] OTP request not found.",
@@ -321,25 +327,22 @@ router.post("/verify-otp", async (req, res) => {
     });
   }
 
-  //EXPIRY NOT WORKING
+  //Expiry validation for otp
+  const now = new Date();
+  const createdAt = new Date(result[0].created_at);
 
-  // //Expiry validation for otp
-  // const now = new Date();
-  // const createdAt = new Date(result[0].created_at);
-  // console.log(createdAt)
-  // console.log(now)
-  // if ((now - createdAt) / 60000 > 10) {
-  //   return res.status(422).json({
-  //     message: "[!SIGNIN!] OTP request expired.",
-  //     status: 422,
-  //     errors: [
-  //       (errors.general = {
-  //         field: "general",
-  //         message: "Sorry, OTP request has expired.",
-  //       }),
-  //     ],
-  //   });
-  // }
+  if ((now - createdAt) / 60000 > 10) {
+    return res.status(422).json({
+      message: "[!SIGNIN!] OTP request expired.",
+      status: 422,
+      errors: [
+        (errors.general = {
+          field: "general",
+          message: "Sorry, OTP request has expired.",
+        }),
+      ],
+    });
+  }
 
   //Compare user entered otp and database otp
   if (result[0].otp !== otp) {
@@ -416,8 +419,6 @@ router.post("/reset-password", async (req, res) => {
     [recoveryEmail]
   );
 
-  console.log(result);
-
   if (!result) {
     return res.status(422).json({
       message: "[!SIGNIN!] Invalid or expired OTP.",
@@ -456,8 +457,6 @@ router.post("/reset-password", async (req, res) => {
 
 router.post("/cancel-otp", async (req, res) => {
   const { recoveryEmail } = req.body;
-
-  console.log(recoveryEmail);
 
   try {
     await db.query("DELETE FROM otp_requests WHERE email = ?", [recoveryEmail]);

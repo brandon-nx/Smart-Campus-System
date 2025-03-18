@@ -19,8 +19,6 @@ export default function SignupForm() {
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
 
-  console.log(data)
-
   useEffect(() => {
     if (data && data.errors) {
       if (data.errors.find((err) => err.field === "name") && nameRef.current) {

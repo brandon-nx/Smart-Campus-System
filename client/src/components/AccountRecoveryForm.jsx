@@ -217,13 +217,13 @@ export default function AccountRecoveryForm() {
             </>
           )}
           <p className="form-actions">
-            <Button disabled={state === "loading"}>
-              {state === "loading" ? "LOADING..." : buttonLabel}
+            <Button disabled={state === "submitting"}>
+              {state === "submitting" ? "LOADING..." : buttonLabel}
             </Button>
           </p>
         </fetcher.Form>
       )}
-      <Button onClick={handleCloseWindow}>
+      <Button disabled={state === "submitting"} onClick={handleCloseWindow}>
         {step === "success" || step === "failed" ? "OK" : "CANCEL"}
       </Button>
     </>

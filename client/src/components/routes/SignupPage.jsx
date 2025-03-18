@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import classes from "./styles/Signup.module.css";
 import profilepic from "../../assets/images/profilePic.png";
 import { Link, useActionData, useNavigate } from "react-router-dom";
@@ -11,10 +11,12 @@ export default function SignupPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  if (data && data.success) {
-    dispatch(authActions.login(data));
-    navigate("/");
-  }
+  useEffect(() => {
+    if (data && data.success) {
+      dispatch(authActions.login(data));
+      navigate("/");
+    }
+  }, [data, dispatch, navigate]);
 
   return (
     <div className={classes["signup-container"]}>
