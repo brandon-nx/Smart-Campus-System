@@ -1,137 +1,137 @@
+/* General container styling */
 .map-container {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 90vh;
-    box-sizing: border-box;
-  }
-  
-  /* Top section */
-  .map-top {
-    padding: 10px 20px;
-    background-color: #f2f2f2;
-    border-bottom: 1px solid #ddd;
-    position: relative;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  /* Container for each search box */
-  .map-top-search-container {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Search box styling */
-  .map-top-search-box {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    justify-content: flex-start; /* Aligns elements to the left */
-  }
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  box-sizing: border-box;
+  position: relative;
+}
 
-  .map-top-search-box span {
-      flex-grow: 1; /* Allows text to take available space */
-      text-align: left; /* Align text to the left */
-      margin-left: 10px; /* Adds spacing for clarity */
-  }
+/* Top section */
+.map-top {
+  padding: 10px 20px;
+  background-color: #f2f2f2;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-  
-  /* Icon styling */
-  .blue-dot {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .red-pin {
-    width: 20px;
-    height: 20px;
-  }
+/* Search box styling */
+.map-top-search-box {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  justify-content: flex-start;
+  width: 100%;
+}
 
-  .switch-icon {
-    width: 15px;
-    height: 15px;
-  }
-  
-  /* Dropdown styling */
-  .map-top-dropdown {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-top: 5px;
-    width: 100%;
-    z-index: 2000; /* Ensures dropdown appears above everything */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Adds shadow effect */
-  }
+.map-top-search-box span {
+  flex-grow: 1;
+  text-align: left;
+  margin-left: 10px;
+}
 
-  .map-top-dropdown-item {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-      background-color: white;
-  }
+/* Icon styling */
+.blue-dot, .red-pin, .switch-icon, .back-icon{
+  width: 20px;
+  height: 20px;
+}
 
-  .map-top-dropdown-item:hover {
-      background-color: #f8f8f8;
-  }
-  
-  /* Middle section: Map placeholder */
-  .map {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #eaeaea;
-    position: relative; 
-    overflow: hidden;
-  }
+/* Dropdown styling */
+.map-top-dropdown {
+  position: fixed;
+  top: 110px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 50px);
+  background-color: rgba(255, 255, 255, 0.98);
+  border-top: 1px solid #ccc;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
+}
 
-  .campus-map {
-    width: 100%;
-    height: auto;
-    max-width: 95%;
-    max-height: 95%;
-    object-fit: contain; 
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
-  .map-placeholder {
-    width: 90%;
-    height: 90%;
-    background-color: #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 428px) {
-    .search-box {
+.map-top-dropdown input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.map-top-dropdown-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.map-top-dropdown-item:hover {
+  background-color: #f8f8f8;
+}
+
+/* Map container */
+.map {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f1f1f1;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.campus-map {
+  width: 100%;
+  height: 100%;
+  position: absolute; 
+  object-fit: cover;
+}
+
+.map-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 428px) {
+  .search-box {
       padding: 8px;
       font-size: 0.9rem;
-    }
-    .search-icon {
+  }
+  .search-icon {
       width: 18px;
       height: 18px;
-    }
-    .switch-icon {
+  }
+  .switch-icon {
       width: 25px;
       height: 25px;
-    }
-    .map-top-dropdown-item {
+  }
+  .map-top-dropdown-item {
       padding: 8px;
-    }
-  } 
+  }
+}
