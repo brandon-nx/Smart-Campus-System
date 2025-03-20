@@ -1,0 +1,45 @@
+.booking-list {
+    padding: 16px;
+  }
+  
+  /* Booking Item (Card) */
+  .booking-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .booking-item:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  }
+  
+  .booking-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .booking-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .booking-subtitle {
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  /* Right arrow icon */
+  .booking-arrow .icon-arrow-right {
+    font-size: 1.2rem;
+    color: #e01a22; /* match brand color or use a neutral color */
+  }

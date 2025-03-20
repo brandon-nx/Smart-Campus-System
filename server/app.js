@@ -6,6 +6,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const eventRoutes = require("./routes/events");
 const authRoutes = require("./routes/auth");
+const bookingRoutes = require("./routes/bookings");
 const db = require("./db");
 
 const app = express();
@@ -38,6 +39,7 @@ app.use(bodyParser.json());
 // Set up authentication routes
 app.use(authRoutes);
 app.use("/events", eventRoutes);
+app.use("/bookings", bookingRoutes);
 
 // Error-handling middleware
 app.use((error, req, res, next) => {

@@ -12,6 +12,10 @@ import LogoutPage from "./components/routes/LogoutPage";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { verifyToken } from "./components/store/auth-actions";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
+import BookingPage, {loader as bookingLoader } from "./components/routes/BookingPage";
+import { queryClient } from "./components/util/http";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +38,10 @@ const router = createBrowserRouter([
           { path: "signup", element: <SignupPage />, action: signupAction },
         ],
       },
+      {
+        element: <ProtectedRoute />,
+        children: [{ path: "bookings", element: <BookingPage />, loader: bookingLoader }],
+      },
     ],
   },
   { path: "forgotpassword", action: forgotPasswordAction },
@@ -46,7 +54,11 @@ function App() {
     dispatch(verifyToken());
   }, [dispatch]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
 }
 
 export default App;

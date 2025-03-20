@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import classes from "./styles/Signup.module.css";
+import classes from "./styles/SignupPage.module.css";
 import profilepic from "../../assets/images/profilePic.png";
 import { Link, useActionData, useNavigate } from "react-router-dom";
 import SignupForm from "../SignupForm";

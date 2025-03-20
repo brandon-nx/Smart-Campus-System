@@ -1,8 +1,6 @@
 # URoute
 
-A brief description of your project goes here.  
-_Example:_  
-This project is an in-building navigation and resource management app that supports booking, events, attendances, and more.
+A navigation and resource management app that supports booking, events, attendances, and more.
 
 ---
 
