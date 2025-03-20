@@ -10,6 +10,8 @@ import CategoryBar from "../UI/CategoryBar";
 import classes from "./styles/BookingPage.module.css";
 import EmptyState from "../UI/EmptyState";
 import LoadingIndicator from "../UI/LoadingIndicator";
+import { FaArrowRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function BookingPage() {
   const { data: categoryData } = useQuery({
@@ -72,20 +74,18 @@ export default function BookingPage() {
           ) : (
             roomsData?.map((room) => {
               return (
-                <div key={room.roomID}>
-                  <div className={classes["booking-item"]}>
-                    <div className={classes["booking-details"]}>
-                      <h2 className={classes["booking-title"]}>
-                        {room.roomName}
-                      </h2>
-                      <p className={classes["booking-subtitle"]}>
-                        {room.roomDescription}
-                      </p>
-                    </div>
+                <div key={room.roomID} className={classes["booking-item"]}>
+                  <div className={classes["booking-details"]}>
+                    <h2 className={classes["booking-title"]}>
+                      {room.roomName}
+                    </h2>
+                    <p className={classes["booking-subtitle"]}>
+                      {room.roomDescription}
+                    </p>
                   </div>
-                  <div className={classes["booking-arrow"]}>
-                    <span className={classes["icon-arrow-right"]}></span>
-                  </div>
+                  <Link to={room.roomID} className={classes["booking-arrow-button"]}>
+                    <FaArrowRight size={20} color="#f9f9f9" />
+                  </Link>
                 </div>
               );
             })

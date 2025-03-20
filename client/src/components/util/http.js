@@ -45,3 +45,20 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
   
     return data;
   }
+
+  export async function fetchBookingRoom({ id, signal }) {
+    const response = await fetch(`http://localhost:8080/bookings/rooms/${id}`, {
+      signal,
+    });
+  
+    if (!response.ok) {
+      const error = new Error("An error occurred while fetching the room");
+      error.code = response.status;
+      error.info = await response.json();
+      throw error;
+    }
+  
+    const data = await response.json();
+  
+    return data;
+  }

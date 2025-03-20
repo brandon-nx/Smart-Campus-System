@@ -1,0 +1,147 @@
+.booking-details-page {
+  /* For mobile: full width, but add a little side padding */
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* 3) Header with full-width image */
+.booking-header {
+  width: 100%;
+  height: 200px; /* adjust as needed for mobile */
+  overflow: hidden;
+  position: relative;
+}
+
+.booking-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ensures the image fills the container without squishing */
+  display: block;
+}
+
+/* 4) Main content container */
+.booking-content {
+  background-color: #fff;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* subtle card-like shadow */
+}
+
+/* Title & Info */
+.booking-info {
+  margin-bottom: 1rem;
+}
+
+.booking-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.booking-operation {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.booking-location {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+/* 5) Amenities */
+.booking-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* 6) Date Input */
+.booking-date {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.date-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.date-input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* 7) Bottom Action Buttons */
+.booking-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem; /* space between buttons */
+}
+
+.cancel-button,
+.book-button {
+  flex: 1;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Cancel button styling */
+.cancel-button {
+  background-color: #f1f1f1;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: #e5e5e5;
+}
+
+/* Book button styling */
+.book-button {
+  background-color: #ff3b30; /* or your brand color */
+  color: #fff;
+  transition: background-color 0.2s;
+}
+
+.book-button:hover {
+  background-color: #e32e24;
+}
+
+/* 8) Media Query for Larger Screens */
+@media (min-width: 768px) {
+  .booking-details-page {
+    /* Constrain the layout to a max width for desktop */
+    max-width: 600px;
+    margin: 2rem auto;
+  }
+
+  .booking-header {
+    height: 300px; /* give more vertical space for the image on desktop */
+  }
+
+  .booking-content {
+    padding: 2rem;
+  }
+
+  .booking-title {
+    font-size: 1.5rem;
+  }
+}
