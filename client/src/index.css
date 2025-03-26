@@ -1,8 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
+@import "tailwindcss";
 
 /* Global CSS Styling */
 * {
@@ -63,9 +59,9 @@
 }
 
 .otp-input {
-  width:min(60px, 18vw);
+  width: min(60px, 18vw);
   height: min(60px, 18vw);
-  text-align: center
+  text-align: center;
 }
 
 .input-box {
@@ -134,8 +130,8 @@ button:disabled {
 }
 
 .modal {
-  background-color: #eaeaea ;
-  display:flex;
+  background-color: #eaeaea;
+  display: flex;
   flex-direction: column;
   text-align: center;
   border-radius: 6px;
@@ -493,7 +489,12 @@ button:disabled {
   justify-content: center;
   align-items: center;
 
-  background-color: rgba(255, 255, 255, 0.8); /* optional: add a translucent background */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* optional: add a translucent background */
 }
 
 /* Existing spinner styles */
@@ -573,6 +574,3 @@ button:disabled {
     font-size: 1rem;
   }
 }
-
-
-
