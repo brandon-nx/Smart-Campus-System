@@ -5,10 +5,11 @@
   flex-direction: column;
   height: 90vh;
   box-sizing: border-box;
+  overflow-y: auto;
   position: relative;
 }
 
-/* Top section */
+/* Top Bar: Searc Input*/
 .map-top {
   padding: 10px 20px;
   background-color: #f2f2f2;
@@ -20,7 +21,10 @@
   gap: 10px;
 }
 
-/* Search box styling */
+.map-top-search-container {
+  width: 100%;
+}
+
 .map-top-search-box {
   display: flex;
   align-items: center;
@@ -30,7 +34,6 @@
   border-radius: 6px;
   cursor: pointer;
   justify-content: flex-start;
-  width: 100%;
 }
 
 .map-top-search-box span {
@@ -43,6 +46,14 @@
 .blue-dot, .red-pin, .switch-icon, .back-icon{
   width: 20px;
   height: 20px;
+}
+
+.switch-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  cursor: pointer;
 }
 
 /* Dropdown styling */
@@ -81,38 +92,72 @@
   background-color: #f8f8f8;
 }
 
-/* Map container */
+/* Map viewer area */
 .map {
   flex: 1;
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f1f1f1;
   position: relative;
   overflow: hidden;
+  background-color: #f1f1f1;
+  display: flex;
+  flex-direction: column;
 }
 
 .map-inner {
+  flex: 1;
   width: 100%;
   height: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
+.map-zoom-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  touch-action: none;
+}
+
+/* Map image with overlays */
 .campus-map {
   width: 100%;
   height: 100%;
-  position: absolute; 
-  object-fit: cover;
+  object-fit: contain;
+  flex: 1;
+  user-select: none;
+  touch-action: none;
 }
 
-.map-overlay {
-  width: 100%;
-  height: 100%;
+.map-overlay-wrapper {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; 
+  z-index: 5;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* Location Markers */
+.current-location-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  z-index: 10;
   pointer-events: none;
 }
 

@@ -1,151 +1,198 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import blueDot from "../../assets/icons/blueDot.png";
 import redPin from "../../assets/icons/redPin.png";
 import switchLocation from "../../assets/icons/switchLocation.png";
 import backIcon from "../../assets/icons/back.png";
 import secondFloorMap from "../../assets/maps/SecondFloor.svg";
-import thirdFloorMap from "../../assets/maps/ThirdFloor.svg";
+import locations from "../util/second_floor_locations";
 import classes from "./styles/NavigationPage.module.css";
 
-
-// Use database
-const locations = {
-  "Entrance": { x: 50, y: 400, floor: "second" },
-  "Lecture Hall 2R029": { x: 300, y: 100, floor: "second" },
-  "Library": { x: 450, y: 250, floor: "third" },
-  "Admin Office": { x: 200, y: 300, floor: "third" }
-};
-
 export default function NavigationPage() {
+  // State hooks for user input, selected locations, and map image load status
   const [searchQueries, setSearchQueries] = useState({ start: "", destination: "" });
-  const [startLocation, setStartLocation] = useState(null);
+  const [startLocation, setStartLocation] = useState("main-entrance");
   const [destination, setDestination] = useState(null);
-  const [floor, setFloor] = useState("second");
-  const [editing, setEditing] = useState({ start: false, destination: false }); // New state to track edit mode
-  const canvasRef = useRef(null);
+  const [editing, setEditing] = useState({ start: false, destination: false });
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  // Function to open dropdown menu
+  // Refs for accessing canvas and transform controls
+  const canvasRef = useRef(null);
+  const transformRef = useRef(null);
+
+  // Handle selection from dropdown
   const handleDropdownSelect = (location, type) => {
-    if (type === "start") {
-      setStartLocation(location);
-      setSearchQueries({ ...searchQueries, start: location });
-      setEditing({ ...editing, start: false }); // Close input mode
-    } else {
-      setDestination(location);
-      setSearchQueries({ ...searchQueries, destination: location });
-      setEditing({ ...editing, destination: false }); // Close input mode
-    }
+    const updatedQueries = { ...searchQueries, [type]: location };
+    const updatedEditing = { ...editing, [type]: false };
+
+    if (type === "start") setStartLocation(location);
+    else setDestination(location);
+
+    setSearchQueries(updatedQueries);
+    setEditing(updatedEditing);
   };
 
+  // Convert raw svg id attribute to human-readable display names
+  const formatDisplayName = (key) => {
+    if (!key) return "";
+    const loc = locations[key];
+    if (loc?.label) return loc.label;
+
+    return key
+      .split("-")
+      .filter(Boolean)
+      .map((word) =>
+        /^[0-9]/.test(word)
+          ? word.toUpperCase()
+          : word.charAt(0).toUpperCase() + word.slice(1)
+      )
+      .join(" ");
+  };
+  
+
+  // Renders dropdown menu for either start or destination
   const renderDropdown = (type) => (
     <div className={classes["map-top-dropdown"]}>
       {Object.keys(locations)
         .filter((loc) => loc.toLowerCase().includes(searchQueries[type].toLowerCase()))
         .map((loc) => (
-          <div key={loc} onClick={() => handleDropdownSelect(loc, type)} className={classes["map-top-dropdown-item"]}>
-            {loc}
+          <div
+            key={loc}
+            onClick={() => handleDropdownSelect(loc, type)}
+            className={classes["map-top-dropdown-item"]}
+          >
+            {formatDisplayName(loc)}
           </div>
         ))}
     </div>
   );
 
-  // Function to switch location
+  // Swap the start and destination values
   const handleSwitchLocations = () => {
     setStartLocation(destination);
     setDestination(startLocation);
-    setSearchQueries({ start: destination || "", destination: startLocation || "" }); // Ensure search queries are updated
+    setSearchQueries({ start: destination || "", destination: startLocation || "" });
   };
 
-  // Draw path from current location to destiantion using a pathfinding algorithm
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  // Calculates position of blue dot relative to scaled map
+  const getScaledPosition = (x, y) => {
+    const img = document.querySelector(`.${classes["campus-map"]}`);
+    if (!img) return { left: 0, top: 0 };
 
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const { width, height } = img.getBoundingClientRect();
+    const { naturalWidth, naturalHeight } = img;
+    const scaleX = width / naturalWidth;
+    const scaleY = height / naturalHeight;
 
-    if (startLocation && destination) {
-      const startPos = locations[startLocation];
-      const endPos = locations[destination];
-
-      if (startPos && endPos && startPos.floor === endPos.floor) {
-        setFloor(startPos.floor);
-
-        ctx.beginPath();
-        ctx.moveTo(startPos.x, startPos.y);
-        ctx.lineTo(endPos.x, endPos.y);
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
-        ctx.stroke();
-      }
-    }
-  }, [startLocation, destination]);
-
+    return {
+      left: x * scaleX,
+      top: y * scaleY,
+    };
+  };
+  
   return (
     <div className={classes["map-container"]}>
+      {/* Top bar with search inputs */}
       <div className={classes["map-top"]}>
-        {/* Start Location */}
-        <div className={classes["map-top-search-container"]}>
-          {editing.start ? (
-            <div className={classes["map-top-search-box"]}>
-              <img src={backIcon} alt="Back" className={classes["back-icon"]} onClick={() => setEditing({ ...editing, start: false })} />
-              <input
-                type="text"
-                placeholder="Search location..."
-                value={searchQueries.start}
-                onChange={(e) => setSearchQueries({ ...searchQueries, start: e.target.value })}
-                className={classes["search-input"]}
-              />
-              {renderDropdown("start")}
-            </div>
-          ) : (
-            <div className={classes["map-top-search-box"]} onClick={() => setEditing({ ...editing, start: true })}>
-              <img src={blueDot} alt="Location Icon" className={classes["blue-dot"]} />
-              <span>{startLocation || "Your Location"}</span>
-            </div>
-          )}
-        </div>
+        {["start", "destination"].map((type) => (
+          <div className={classes["map-top-search-container"]} key={type}>
+            {editing[type] ? (
+              <div className={classes["map-top-search-box"]}>
+                <img
+                  src={backIcon}
+                  alt="Back"
+                  className={classes["back-icon"]}
+                  onClick={() => setEditing({ ...editing, [type]: false })}
+                />
 
-        {/* Destination Location */}
-        <div className={classes["map-top-search-container"]}>
-          {editing.destination ? (
-            <div className={classes["map-top-search-box"]}>
-              <img src={backIcon} alt="Back" className={classes["back-icon"]} onClick={() => setEditing({ ...editing, destination: false })} />
-              <input
-                type="text"
-                placeholder="Search destination..."
-                value={searchQueries.destination}
-                onChange={(e) => setSearchQueries({ ...searchQueries, destination: e.target.value })}
-                className={classes["search-input"]}
-              />
-              {renderDropdown("destination")}
-            </div>
-          ) : (
-            <div className={classes["map-top-search-box"]} onClick={() => setEditing({ ...editing, destination: true })}>
-              <img src={redPin} alt="Search Icon" className={classes["red-pin"]} />
-              <span onClick={() => setEditing({ ...editing, destination: true })}>{destination || "Search Destination"}</span>
-              <img
-                src={switchLocation}
-                alt="Switch Icon"
-                className={classes["switch-icon"]}
-                onClick={handleSwitchLocations}
-              />
-            </div>
-          )}
-        </div>
+                <input
+                  type="text"
+                  placeholder={`Search ${type}...`}
+                  value={searchQueries[type]}
+                  onChange={(e) =>
+                    setSearchQueries({ ...searchQueries, [type]: e.target.value })
+                  }
+                  className={classes["search-input"]}
+                />
+                {renderDropdown(type)}
+              </div>
+            ) : (
+              <div className={classes["map-top-search-box"]} onClick={() => setEditing({ ...editing, [type]: true })}>
+                <img
+                  src={type === "start" ? blueDot : redPin}
+                  alt="Icon"
+                  className={classes[type === "start" ? "blue-dot" : "red-pin"]}
+                />
+
+                <span>
+                  {type === "start"
+                    ? formatDisplayName(startLocation)
+                    : destination
+                    ? formatDisplayName(destination)
+                    : "Search Destination"}
+                </span>
+                
+                {type === "destination" && (
+                  <div
+                    className={classes["switch-icon-wrapper"]}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSwitchLocations();
+                    }}
+                  >
+                    <img
+                      src={switchLocation}
+                      alt="Switch Icon"
+                      className={classes["switch-icon"]}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
-      {/* Map Section */}
+      {/* Interactive map viewer */}
       <div className={classes["map"]}>
         <div className={classes["map-inner"]}>
-          {/* Map Image */}
-          <img 
-            src={floor === "second" ? secondFloorMap : thirdFloorMap} 
-            alt={`${floor} Floor Map`} 
-            className={classes["campus-map"]} 
-          />
-          {/* Canvas Overlay for Drawing Paths */}
-          <canvas ref={canvasRef} className={classes["map-overlay"]} />
+          <TransformWrapper
+            ref={transformRef}
+            onInit={(utils) => {transformRef.current = utils;}}
+            initialScale={1}
+            wheel={{ disabled: false }}
+            doubleClick={{ disabled: true }}
+            pinch={{ disabled: false }}
+            panning={{ velocityDisabled: true }}
+          >
+            <TransformComponent wrapperClass={classes["map-zoom-wrapper"]}>
+              <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                <img
+                  src={secondFloorMap}
+                  alt="Second Floor Map"
+                  className={classes["campus-map"]}
+                  onLoad={() => setMapLoaded(true)}
+                />
+
+                {/* Current location blue dot */}
+                {mapLoaded && startLocation === "main-entrance" && (
+                  <img
+                    src={blueDot}
+                    alt="Current Location"
+                    className={classes["current-location-dot"]}
+                    style={(() => {
+                      const { x, y } = locations["main-entrance"];
+                      const { left, top } = getScaledPosition(x, y);
+                      return { left: `${left}px`, top: `${top}px` };
+                    })()}
+                  />
+                )}
+
+                {/* Canvas for path drawing */}
+                <canvas ref={canvasRef}className={classes["map-overlay"]}/>
+              </div>
+            </TransformComponent>
+          </TransformWrapper>
         </div>
       </div>
     </div>
