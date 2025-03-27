@@ -575,4 +575,18 @@ router.get("/verify-token", async (req, res) => {
   }
 });
 
+router.get("/timetable-sync", async (req, res) => {
+  const cohort = req.body
+  const data = await db.query("SELECT * FROM timetable where cohort = $1", [cohort]);
+  console.log(data)
+  return res.json({data})
+});
+
+router.get("/event-timetable-sync", async (req, res) => {
+  const cohort = req.body
+  const data = await db.query("SELECT * FROM events WHERE eventend >= CURRENT_TIMESTAMP ORDER BY eventstart;", [cohort]);
+  console.log(data)
+  return res.json({data})
+});
+
 module.exports = router;
