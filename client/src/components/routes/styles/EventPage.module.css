@@ -1,368 +1,91 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Global CSS Styling */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.form {
-  width: 100%;
-  max-width: 320px;
-  display: flex;
-  flex-direction: column;
-}
-
-.form input {
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-.form select {
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-.check-box {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: flex-start;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.check-box label {
-  order: 2;
-}
-
-.check-box input[type="checkbox"] {
-  margin-right: 8px;
-  order: 1;
-}
-
-.otp-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.otp-input-group {
-  display: flex;
-  gap: 1rem;
-}
-
-.otp-input {
-  width: min(60px, 18vw);
-  height: min(60px, 18vw);
-  text-align: center;
-}
-
-.input-box {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-box .invalid {
-  outline: 2px solid red;
-}
-
-.input-error {
-  color: red;
-  font-size: 0.8rem;
-  padding: 0.1rem 0 0.8rem;
-}
-
-.input-error p {
-  margin: 0;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-start;
-  gap: 1rem;
-}
-
-.button {
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  margin: 0.2rem 0;
-  border-radius: 8px;
-  border: none;
-  background-color: #ad000b;
-  color: white;
-  cursor: pointer;
-  flex: 1;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.button:hover:enabled {
-  background-color: #b80a15;
-}
-
-.button:focus {
-  outline: 2px solid #b80a15;
-  outline-offset: 2px;
-}
-
-.button-flat {
-  background-color: transparent;
-  color: #9cbaba;
-}
-
-.button-flat:hover:enabled,
-.button-flat:focus {
-  background-color: transparent;
-  color: #869999;
-}
-
-button:disabled {
-  background-color: #ccc; /* Gray background */
-  color: #666; /* Dark gray text */
-  cursor: not-allowed; /* Not-allowed cursor */
-  opacity: 0.6; /* Slightly faded */
-}
-
-.header-bar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  height: 60px;
-  padding: 0 16px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.header-logo {
-  width: 42px;
-  height: 42px;
-  object-fit: cover;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.header-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-left: 16px;
-  padding: 0;
-}
-
-.icon {
-  display: inline-block;
-  line-height: 1;
-}
-
-.category-slider {
-  display: flex;
-  overflow-x: auto;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  padding: 8px;
-  gap: 8px;
-}
-
-.category-slider::-webkit-scrollbar {
-  display: none;
-}
-
-.category-button {
-  flex: 0 0 auto;
-  background-color: #f2f2f2;
-  border: none;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  border-radius: 20px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.2s ease;
-}
-
-.category-button:hover {
-  background-color: #e6e6e6;
-}
-
-.category-button.active {
-  background-color: #e01a22;
-  color: #fff;
-}
-
-.empty-state-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f7f7f7;
-  text-align: center;
-}
-
-.empty-state-content {
-  max-width: 500px;
-  padding: 20px;
-}
-
-.empty-state-icon {
-  font-size: 72px;
-  opacity: 0.4;
+/* Event Card Styles */
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dddddd;
   margin-bottom: 16px;
 }
 
-.empty-state-title {
-  font-size: 1.8rem;
-  margin-bottom: 8px;
-  color: #333;
+.imageContainer {
+  position: relative;
+  height: 160px;
 }
 
-.empty-state-message {
-  font-size: 1rem;
-  color: #aaa;
-}
-
-.modal {
-  background-color: #eaeaea;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  border-radius: 6px;
-  border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  padding: 5rem 2.5rem;
-  max-width: 40rem;
-  animation: fade-slide-up 0.3s ease-out forwards;
-}
-
-.modal::backdrop {
-  background-color: rgba(0, 0, 0, 0.55);
-}
-
-@keyframes fade-slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(4rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.loading-indicator-container {
-  position: fixed;
-  top: 0;
-  left: 0;
+.image {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+}
 
+.content {
+  padding: 16px;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: #333333;
+  margin-bottom: 4px;
+}
+
+.location {
+  font-size: 0.875rem;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.date {
+  font-size: 0.875rem;
+  color: #666666;
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #333333;
+  margin-bottom: 12px;
+}
+
+.actions {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-
-  background-color: rgba(255, 255, 255, 0.8); /* optional: add a translucent background */
+  margin-top: 8px;
 }
 
-/* Existing spinner styles */
-.lds-ring {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 1rem 0;
-}
-
-.lds-ring div {
-  box-sizing: border-box;
-  display: block;
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  margin: 8px;
-  border: 8px solid #e30d5b;
+.phoneButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #e30d5b transparent transparent transparent;
+  border: 1px solid #dddddd;
+  background: none;
+  cursor: pointer;
 }
 
-.lds-ring div:nth-child(1) {
-  animation-delay: -0.45s;
+.phoneIcon {
+  color: #ad000b;
+  width: 20px;
+  height: 20px;
 }
 
-.lds-ring div:nth-child(2) {
-  animation-delay: -0.3s;
+.rsvpButton {
+  background-color: #ad000b;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.lds-ring div:nth-child(3) {
-  animation-delay: -0.15s;
+.rsvpButton:hover {
+  background-color: #b80a15;
 }
-
-@keyframes lds-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Animation for modal */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .otp-wrapper {
-    margin-top: 1.5rem;
-  }
-}
-
-@media (max-width: 428px) {
-  .button {
-    font-size: 1rem;
-  }
-
-  .form input,
-  .form select {
-    padding: 10px;
-    font-size: 1rem;
-  }
-}
-

@@ -6,6 +6,8 @@ import { Search, MapPin, Calendar, LogIn, Bell } from "lucide-react";
 import EventCard from "./event-card";
 import { events } from "@/data/events";
 
+
+
 const EventCalendar = () => {
   const [activeCategory, setActiveCategory] = useState("seminar");
 

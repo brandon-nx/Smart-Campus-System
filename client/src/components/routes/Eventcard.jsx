@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Phone } from "lucide-react";
 import EventModal from "./event-modal";
 
+
 const EventCard = ({ event }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 

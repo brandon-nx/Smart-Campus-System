@@ -3,14 +3,15 @@
 import { useState } from "react";
 import { Search, Phone } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEvents } from "../../../lib/http";
+import { fetchEvents } from "/lib/http";
 import EventModal from "./event-modal";
-import logo from "/src/assets/images/logo.png"; 
-import styles from "./styles/EventPage.module.css";
+import NotificationBell from "./NotificationBell";
+import Logo from "../../assets/images/logo.png";
+import "./styles/main.css";
 
 
-
-const EventCalendarPage = () => { 
+export default function EventCalendarPage() {
+  // Using React Query to fetch events
   const { data: eventsData = [], isLoading } = useQuery({
     queryKey: ["events"],
     queryFn: () => fetchEvents(),
@@ -21,16 +22,19 @@ const EventCalendarPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex-col min-h-screen">
       {/* Top Navigation */}
-      <header className="header-bar">
+      <header className="header">
         <div className="header-left">
-          <img src={logo} alt="Logo" className="header-logo w-10 h-10" />
+          <img src={Logo} alt="Logo" width={42} height={42} className="header-logo" /> {/* ✅ Fixed Image */}
           <h1 className="header-title">Event Calendar</h1>
         </div>
-        <button className="icon-button">
-          <Search className="w-5 h-5 text-gray-600" />
-        </button>
+        <div className="header-right" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <NotificationBell count={3} />
+          <button className="icon-button">
+            <Search className="nav-icon" />
+          </button>
+        </div>
       </header>
 
       {/* Category Filter */}
@@ -47,10 +51,10 @@ const EventCalendarPage = () => {
       </div>
 
       {/* Event List */}
-      <div className="flex-1 p-4 space-y-4">
+      <div style={{ flex: 1, padding: "1rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
         {isLoading ? (
-          <div className="loading-indicator-container">
-            <div className="lds-ring">
+          <div className="loading-container">
+            <div className="loading-spinner">
               <div></div>
               <div></div>
               <div></div>
@@ -59,25 +63,21 @@ const EventCalendarPage = () => {
           </div>
         ) : (
           eventsData?.map((event) => (
-            <div key={event.id} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 mb-4">
-              <div className="relative h-40">
-                <img
-                  src={event.image || "/images/seminar.png"}
-                  alt={event.title}
-                  className="object-cover w-full h-40"
-                />
+            <div key={event.id} className="event-card">
+              <div className="event-image-container">
+                <img src={event.image || "/placeholder.svg"} alt={event.title} className="event-image" /> {/* ✅ Fixed Image */}
               </div>
-              <div className="p-4">
-                <h2 className="font-bold text-xl text-gray-900">{event.title}</h2>
-                <p className="text-sm text-gray-500 mt-1">{event.location}</p>
-                <p className="text-sm text-gray-500 mt-0.5 mb-2">{event.date}</p>
-                <p className="text-sm text-gray-600 mb-3">{event.description}</p>
-                <div className="flex justify-between items-center mt-2">
-                  <button className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300">
-                    <Phone className="w-5 h-5 text-red-600" />
+              <div className="event-content">
+                <h2 className="event-title">{event.title}</h2>
+                <p className="event-location">{event.location}</p>
+                <p className="event-date">{event.date}</p>
+                <p className="event-description">{event.description}</p>
+                <div className="event-actions">
+                  <button className="phone-button">
+                    <Phone className="phone-icon" />
                   </button>
                   <button
-                    className="bg-red-700 text-white text-sm font-medium py-2 px-6 rounded-md hover:bg-red-800"
+                    className="rsvp-button"
                     onClick={() => {
                       setSelectedEvent(event);
                       setIsModalOpen(true);
@@ -96,7 +96,4 @@ const EventCalendarPage = () => {
       <EventModal event={selectedEvent} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
-};
-
-
-export default EventCalendarPage;
+}
