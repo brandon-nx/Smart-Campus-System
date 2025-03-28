@@ -1,76 +1,112 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { ArrowLeft, Calendar, Clock, MapPin } from "lucide-react";
+import { useState, useEffect } from "react"
+import { Calendar, Clock, MapPin } from "lucide-react"
 
-const EventModal = ({ event, isOpen, onClose }) => {
-  const [mounted, setMounted] = useState(false);
+export default function EventModal({ event, isOpen, onClose }) {
+  const [mounted, setMounted] = useState(false)
 
+  // Handle escape key press
   useEffect(() => {
-    setMounted(true);
+    setMounted(true)
 
     const handleEscape = (e) => {
-      if (e.key === "Escape") onClose();
-    };
+      if (e.key === "Escape") onClose()
+    }
 
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, [onClose]);
+    window.addEventListener("keydown", handleEscape)
+    return () => window.removeEventListener("keydown", handleEscape)
+  }, [onClose])
 
-  if (!mounted || !isOpen || !event) return null;
+  // Prevent body scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [isOpen])
+
+  if (!mounted || !isOpen || !event) return null
 
   // Extract date and time from the event date string
-  const dateTimeParts = event.date.split("|");
-  const date = dateTimeParts[0]?.trim() || "";
-  const time = dateTimeParts[1]?.trim() || "";
+  const dateTimeParts = event.date.split("|")
+  const date = dateTimeParts[0]?.trim() || ""
+  const time = dateTimeParts[1]?.trim() || ""
+
+  const handleModalClick = (e) => {
+    e.stopPropagation()
+  }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-start overflow-y-auto pt-4 pb-20">
-      <div className="bg-white w-full max-w-md rounded-lg overflow-hidden shadow-xl mx-4 animate-fade-in">
-        <div className="relative">
-          <button onClick={onClose} className="absolute top-4 left-4 z-10 bg-white/80 p-2 rounded-full">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div className="h-48 relative">
-            <img src={event.image || "/placeholder.svg"} alt={event.title} className="object-cover w-full h-full" />
-          </div>
-        </div>
+    <div
+      className="overlay"
+      onClick={(e) => {
+        e.preventDefault()
+        onClose()
+      }}
+    >
+      <div className="content" onClick={handleModalClick}>
+        <div className="body">
+          {/* Event Image with better resolution handling */}
+          <img
+            src={event.image || "/fallback-image.jpg"}
+            alt={event.title}
+            className="eventImage"
+          />
 
-        <div className="p-4">
-          <h2 className="text-2xl font-bold text-gray-900">{event.title}</h2>
+          <h2 className="title">{event.title}</h2>
 
-          <div className="mt-4 space-y-3">
-            <div className="flex items-center">
-              <Calendar className="w-5 h-5 text-gray-500 mr-3" />
-              <span className="text-gray-700">{date}</span>
+          <div className="info">
+            <div className="infoItem">
+              <Calendar className="infoIcon" />
+              <span className="infoText">{date}</span>
             </div>
 
-            <div className="flex items-center">
-              <Clock className="w-5 h-5 text-gray-500 mr-3" />
-              <span className="text-gray-700">{time}</span>
+            <div className="infoItem">
+              <Clock className="infoIcon" />
+              <span className="infoText">{time}</span>
             </div>
 
-            <div className="flex items-center">
-              <MapPin className="w-5 h-5 text-gray-500 mr-3" />
-              <span className="text-gray-700">{event.location}</span>
+            <div className="infoItem">
+              <MapPin className="infoIcon" />
+              <span className="infoText">{event.location}</span>
             </div>
           </div>
 
-          <div className="mt-6">
-            <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-            <p className="text-gray-700 text-sm whitespace-pre-line">{event.description}</p>
+          <div className="descriptionSection">
+            <h3 className="descriptionTitle">Description</h3>
+            <p className="descriptionText">{event.description}</p>
           </div>
 
-          <div className="mt-8 flex justify-between">
-            <button onClick={onClose} className="px-6 py-3 bg-gray-200 text-gray-800 rounded-md font-medium">
+          <div className="modalActions">
+            <button
+              className="cancelButton"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onClose()
+              }}
+            >
               CANCEL
             </button>
-            <button className="px-6 py-3 bg-red-700 text-white rounded-md font-medium">RSVP</button>
+            <button
+              className="rsvpButton"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                console.log("Modal RSVP button clicked")
+              }}
+            >
+              RSVP
+            </button>
           </div>
         </div>
       </div>
     </div>
-  );
-};
-
-export default EventModal;
+  )
+}

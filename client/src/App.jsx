@@ -17,7 +17,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import BookingDetailsPage, { loader as bookingDetailsLoader } from "./components/routes/BookingDetailsPage";
 import EventCalendarPage from "./components/routes/eventcalenderpage"; 
 
-
 const router = createBrowserRouter([
   {
     path: "/",
