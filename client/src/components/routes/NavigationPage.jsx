@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import blueDot from "../../assets/icons/blueDot.png";
 import redPin from "../../assets/icons/redPin.png";
@@ -6,6 +6,8 @@ import switchLocation from "../../assets/icons/switchLocation.png";
 import backIcon from "../../assets/icons/back.png";
 import secondFloorMap from "../../assets/maps/SecondFloor.svg";
 import locations from "../util/second_floor_locations";
+import graph from "../util/graph";
+import { dijkstra } from "../util/dijkstra";
 import classes from "./styles/NavigationPage.module.css";
 
 export default function NavigationPage() {
@@ -89,6 +91,40 @@ export default function NavigationPage() {
       top: y * scaleY,
     };
   };
+
+  // Draw path using Dijisktra Path Finding Algorithm
+  const drawPath = (path) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!ctx || !mapLoaded || path.length === 0) return;
+  
+    // Adjust canvas size to match image
+    const img = document.querySelector(`.${classes["campus-map"]}`);
+    canvas.width = img.clientWidth;
+    canvas.height = img.clientHeight;
+  
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+  
+    path.forEach((locKey, i) => {
+      const { x, y } = locations[locKey];
+      const { left, top } = getScaledPosition(x, y);
+      if (i === 0) ctx.moveTo(left, top);
+      else ctx.lineTo(left, top);
+    });
+  
+    ctx.stroke();
+  };
+
+  useEffect(() => {
+    if (mapLoaded && startLocation && destination) {
+      const path = dijkstra(graph, startLocation, destination);
+      drawPath(path);
+    }
+  }, [startLocation, destination, mapLoaded]);
+  
   
   return (
     <div className={classes["map-container"]}>
