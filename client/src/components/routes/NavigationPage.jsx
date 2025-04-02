@@ -5,10 +5,13 @@ import redPin from "../../assets/icons/redPin.png";
 import switchLocation from "../../assets/icons/switchLocation.png";
 import backIcon from "../../assets/icons/back.png";
 import secondFloorMap from "../../assets/maps/SecondFloor.svg";
-import locations from "../util/second_floor_locations";
-import graph from "../util/graph";
 import { dijkstra } from "../util/dijkstra";
+import { getDistance } from "../util/distance";
+import locationRooms from "../util/second_floor_locations"; 
+import locationWaypoints from "../util/second_floor_locations_waypoints"; 
+import graph from "../util/graph";
 import classes from "./styles/NavigationPage.module.css";
+
 
 export default function NavigationPage() {
   // State hooks for user input, selected locations, and map image load status
@@ -17,6 +20,9 @@ export default function NavigationPage() {
   const [destination, setDestination] = useState(null);
   const [editing, setEditing] = useState({ start: false, destination: false });
   const [mapLoaded, setMapLoaded] = useState(false);
+
+  // All Locations 
+  const locations = { ...locationRooms, ...locationWaypoints };
 
   // Refs for accessing canvas and transform controls
   const canvasRef = useRef(null);
@@ -96,34 +102,76 @@ export default function NavigationPage() {
   const drawPath = (path) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!ctx || !mapLoaded || path.length === 0) return;
+    if (!ctx || !mapLoaded || !path || path.length === 0) return;
   
-    // Adjust canvas size to match image
     const img = document.querySelector(`.${classes["campus-map"]}`);
-    canvas.width = img.clientWidth;
-    canvas.height = img.clientHeight;
+    const displayWidth = img.clientWidth;
+    const displayHeight = img.clientHeight;
+    const scale = window.devicePixelRatio || 1;
+  
+    // Fix canvas scaling
+    canvas.width = displayWidth * scale;
+    canvas.height = displayHeight * scale;
+    canvas.style.width = `${displayWidth}px`;
+    canvas.style.height = `${displayHeight}px`;
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
   
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "red";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2]); // Optional: Dash-dot pattern
   
-    path.forEach((locKey, i) => {
-      const { x, y } = locations[locKey];
-      const { left, top } = getScaledPosition(x, y);
+    ctx.beginPath();
+    path.forEach((key, i) => {
+      const loc = locations[key];
+      if (!loc) return;
+      const { left, top } = getScaledPosition(loc.x, loc.y);
       if (i === 0) ctx.moveTo(left, top);
       else ctx.lineTo(left, top);
     });
   
     ctx.stroke();
+    ctx.setLineDash([]);
+  };
+  
+  
+  
+  // Find nearest waypoint (corridor)
+  const findNearestWaypoint = (point) => {
+    let nearest = null;
+    let minDist = Infinity;
+  
+    for (const [id, wp] of Object.entries(locationWaypoints)) {
+      const dist = getDistance(point, wp);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = id;
+      }
+    }
+  
+    return nearest;
   };
 
   useEffect(() => {
-    if (mapLoaded && startLocation && destination) {
-      const path = dijkstra(graph, startLocation, destination);
-      drawPath(path);
-    }
+    if (!mapLoaded || !startLocation || !destination) return;
+
+    const startPoint = locations[startLocation];
+    const endPoint = locations[destination];
+    if (!startPoint || !endPoint) return;
+
+    const startWP = findNearestWaypoint(startPoint);
+    const endWP = findNearestWaypoint(endPoint);
+
+    if (!startWP || !endWP) return;
+
+    const waypointPath = dijkstra(graph, startWP, endWP);
+    if (!waypointPath || waypointPath.length === 0) return;
+
+    const fullPath = [startWP, ...waypointPath, destination];
+    drawPath(fullPath);
   }, [startLocation, destination, mapLoaded]);
+
+  
   
   
   return (
@@ -217,7 +265,8 @@ export default function NavigationPage() {
                     alt="Current Location"
                     className={classes["current-location-dot"]}
                     style={(() => {
-                      const { x, y } = locations["main-entrance"];
+                      const nearestWP = findNearestWaypoint(locations["main-entrance"]);
+                      const { x, y } = locations[nearestWP];
                       const { left, top } = getScaledPosition(x, y);
                       return { left: `${left}px`, top: `${top}px` };
                     })()}
