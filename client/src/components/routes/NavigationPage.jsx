@@ -20,7 +20,6 @@ export default function NavigationPage() {
   const [destination, setDestination] = useState(null);
   const [editing, setEditing] = useState({ start: false, destination: false });
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [refreshCanvas, setRefreshCanvas] = useState(false);
   const [imgDimensions, setImgDimensions] = useState({ width: 1, height: 1 });
 
   // Refs for DOM and images
@@ -225,9 +224,7 @@ export default function NavigationPage() {
             wheel={{ disabled: false }}
             doubleClick={{ disabled: true }}
             pinch={{ disabled: false }}
-            panning={{ velocityDisabled: true }}
-            onZoomStop={() => setRefreshCanvas(prev => !prev)}
-            onPanningStop={() => setRefreshCanvas(prev => !prev)}            
+            panning={{ velocityDisabled: true }}          
           >
             <TransformComponent wrapperClass={classes["map-zoom-wrapper"]}>
               <div style={{ position: "relative", width: "100%", height: "100%" }}>
