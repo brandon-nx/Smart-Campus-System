@@ -4,231 +4,210 @@ import blueDot from "../../assets/icons/blueDot.png";
 import redPin from "../../assets/icons/redPin.png";
 import switchLocation from "../../assets/icons/switchLocation.png";
 import backIcon from "../../assets/icons/back.png";
+import closeIcon from "../../assets/icons/closeIcon.png";
 import secondFloorMap from "../../assets/maps/SecondFloor.svg";
 import { dijkstra } from "../util/dijkstra";
 import { getDistance } from "../util/distance";
-import locationRooms from "../util/second_floor_locations"; 
-import locationWaypoints from "../util/second_floor_locations_waypoints"; 
+import locationRooms from "../util/second_floor_locations";
+import locationWaypoints from "../util/second_floor_locations_waypoints";
 import graph from "../util/graph";
 import classes from "./styles/NavigationPage.module.css";
 
-
 export default function NavigationPage() {
-  // State hooks for user input, selected locations, and map image load status
+  // State management
   const [searchQueries, setSearchQueries] = useState({ start: "", destination: "" });
   const [startLocation, setStartLocation] = useState("main-entrance");
   const [destination, setDestination] = useState(null);
   const [editing, setEditing] = useState({ start: false, destination: false });
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [refreshCanvas, setRefreshCanvas] = useState(false);
+  const [imgDimensions, setImgDimensions] = useState({ width: 1, height: 1 });
 
-  // All Locations 
-  const locations = { ...locationRooms, ...locationWaypoints };
-
-  // Refs for accessing canvas and transform controls
+  // Refs for DOM and images
   const canvasRef = useRef(null);
   const transformRef = useRef(null);
+  const startMarkerRef = useRef(null);
 
-  // Handle selection from dropdown
+  // Merge room and waypoint data
+  const locations = { ...locationRooms, ...locationWaypoints };
+
+  // Load blue dot marker once
+  useEffect(() => {
+    const img = new Image();
+    img.src = blueDot;
+    startMarkerRef.current = img;
+  }, []);
+
+  // Handle dropdown item selection
   const handleDropdownSelect = (location, type) => {
-    const updatedQueries = { ...searchQueries, [type]: location };
-    const updatedEditing = { ...editing, [type]: false };
-
-    if (type === "start") setStartLocation(location);
-    else setDestination(location);
-
-    setSearchQueries(updatedQueries);
-    setEditing(updatedEditing);
+    setSearchQueries(prev => ({ ...prev, [type]: location }));
+    setEditing(prev => ({ ...prev, [type]: false }));
+    type === "start" ? setStartLocation(location) : setDestination(location);
   };
 
-  // Convert raw svg id attribute to human-readable display names
+  // Format raw location key into readable text
   const formatDisplayName = (key) => {
     if (!key) return "";
     const loc = locations[key];
-    if (loc?.label) return loc.label;
-
-    return key
-      .split("-")
-      .filter(Boolean)
-      .map((word) =>
-        /^[0-9]/.test(word)
-          ? word.toUpperCase()
-          : word.charAt(0).toUpperCase() + word.slice(1)
-      )
-      .join(" ");
+    return loc?.label || key.split("-").filter(Boolean).map(word => /^[0-9]/.test(word) ? word.toUpperCase() : word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
   };
-  
 
-  // Renders dropdown menu for either start or destination
+  // Render dropdown based on type (start/destination)
   const renderDropdown = (type) => (
     <div className={classes["map-top-dropdown"]}>
       {Object.keys(locations)
-        .filter((loc) => loc.toLowerCase().includes(searchQueries[type].toLowerCase()))
-        .map((loc) => (
-          <div
-            key={loc}
-            onClick={() => handleDropdownSelect(loc, type)}
-            className={classes["map-top-dropdown-item"]}
-          >
+        .filter(loc => loc.toLowerCase().includes(searchQueries[type].toLowerCase()))
+        .map(loc => (
+          <div key={loc} onClick={() => handleDropdownSelect(loc, type)} className={classes["map-top-dropdown-item"]}>
             {formatDisplayName(loc)}
           </div>
         ))}
     </div>
   );
 
-  // Swap the start and destination values
+  // Swap start and destination
   const handleSwitchLocations = () => {
     setStartLocation(destination);
     setDestination(startLocation);
     setSearchQueries({ start: destination || "", destination: startLocation || "" });
+    setMapLoaded(false);
+    setTimeout(() => setMapLoaded(true), 0);
   };
 
-  // Calculates position of blue dot relative to scaled map
-  const getScaledPosition = (x, y) => {
-    const img = document.querySelector(`.${classes["campus-map"]}`);
-    if (!img) return { left: 0, top: 0 };
-
-    const { width, height } = img.getBoundingClientRect();
-    const { naturalWidth, naturalHeight } = img;
-    const scaleX = width / naturalWidth;
-    const scaleY = height / naturalHeight;
-
-    return {
-      left: x * scaleX,
-      top: y * scaleY,
-    };
+  // Clear the canvas overlay
+  const clearCanvas = () => {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
   };
 
-  // Draw path using Dijisktra Path Finding Algorithm
+  // Find nearest corridor waypoint
+  const findNearestWaypoint = (point) => {
+    return Object.entries(locationWaypoints).reduce((nearest, [id, wp]) => {
+      const dist = getDistance(point, wp);
+      return dist < nearest.minDist ? { id, minDist: dist } : nearest;
+    }, { id: null, minDist: Infinity }).id;
+  };
+
+  // Draw only the blue start marker
+  const drawStartMarkerOnly = () => {
+    const ctx = canvasRef.current?.getContext("2d");
+    const startLoc = locations[startLocation];
+    const img = startMarkerRef.current;
+
+    if (!ctx || !startLoc || !mapLoaded) return;
+    clearCanvas();
+    if (img?.complete) ctx.drawImage(img, startLoc.x - 35, startLoc.y - 15, 70, 70);
+    else img.onload = () => ctx.drawImage(img, startLoc.x - 35, startLoc.y - 15, 70, 70);
+  };
+
+  // Draw full path and markers
   const drawPath = (path) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!ctx || !mapLoaded || !path || path.length === 0) return;
-  
-    const img = document.querySelector(`.${classes["campus-map"]}`);
-    const displayWidth = img.clientWidth;
-    const displayHeight = img.clientHeight;
-    const scale = window.devicePixelRatio || 1;
-  
-    // Fix canvas scaling
-    canvas.width = displayWidth * scale;
-    canvas.height = displayHeight * scale;
-    canvas.style.width = `${displayWidth}px`;
-    canvas.style.height = `${displayHeight}px`;
-    ctx.setTransform(scale, 0, 0, scale, 0, 0);
-  
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx || !mapLoaded || !path?.length) return;
+
+    clearCanvas();
     ctx.strokeStyle = "red";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([2]); // Optional: Dash-dot pattern
-  
+    ctx.lineWidth = 4;
+    ctx.setLineDash([6, 4]);
     ctx.beginPath();
+
     path.forEach((key, i) => {
-      const loc = locations[key];
-      if (!loc) return;
-      const { left, top } = getScaledPosition(loc.x, loc.y);
-      if (i === 0) ctx.moveTo(left, top);
-      else ctx.lineTo(left, top);
+      const { x, y } = locations[key] || {};
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     });
-  
+
     ctx.stroke();
     ctx.setLineDash([]);
-  };
-  
-  
-  
-  // Find nearest waypoint (corridor)
-  const findNearestWaypoint = (point) => {
-    let nearest = null;
-    let minDist = Infinity;
-  
-    for (const [id, wp] of Object.entries(locationWaypoints)) {
-      const dist = getDistance(point, wp);
-      if (dist < minDist) {
-        minDist = dist;
-        nearest = id;
-      }
-    }
-  
-    return nearest;
+
+    // Draw start and end markers
+    const startLoc = locations[path[0]];
+    const endLoc = locations[path[path.length - 1]];
+
+    const startMarker = new Image();
+    const endMarker = new Image();
+    startMarker.src = blueDot;
+    endMarker.src = redPin;
+
+    startMarker.onload = () => ctx.drawImage(startMarker, startLoc.x - 35, startLoc.y - 15, 70, 70);
+    endMarker.onload = () => ctx.drawImage(endMarker, endLoc.x - 15, endLoc.y - 30, 70, 70);
   };
 
+  // Re-draw on location or map changes
   useEffect(() => {
-    if (!mapLoaded || !startLocation || !destination) return;
+    if (!mapLoaded || !startLocation) return;
+    if (!destination) return drawStartMarkerOnly();
 
-    const startPoint = locations[startLocation];
-    const endPoint = locations[destination];
-    if (!startPoint || !endPoint) return;
+    const start = locations[startLocation];
+    const end = locations[destination];
+    if (!start || !end) return;
 
-    const startWP = findNearestWaypoint(startPoint);
-    const endWP = findNearestWaypoint(endPoint);
-
+    const startWP = findNearestWaypoint(start);
+    const endWP = findNearestWaypoint(end);
     if (!startWP || !endWP) return;
 
-    const waypointPath = dijkstra(graph, startWP, endWP);
-    if (!waypointPath || waypointPath.length === 0) return;
-
-    const fullPath = [startWP, ...waypointPath, destination];
+    const fullPath = [startLocation, ...dijkstra(graph, startWP, endWP), destination];
     drawPath(fullPath);
   }, [startLocation, destination, mapLoaded]);
 
+  // Automatically center and zoom to start location
+  useEffect(() => {
+    if (!mapLoaded || !startLocation || !transformRef.current) return;
   
+    const start = locations[startLocation];
+    const img = document.querySelector(`.${classes["campus-map"]}`);
+    const wrapper = document.querySelector(`.${classes["map-zoom-wrapper"]}`);
+    if (!img || !wrapper) return;
   
+    const imgRect = img.getBoundingClientRect();
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const scaleX = imgRect.width / img.naturalWidth;
+    const scaleY = imgRect.height / img.naturalHeight;
+    const pointX = start.x * scaleX;
+    const pointY = start.y * scaleY;
+    const desiredZoom = 4;
+    const positionX = (wrapperRect.width / 2) - (pointX * desiredZoom);
+    const positionY = (wrapperRect.height / 2) - (pointY * desiredZoom);
   
+    transformRef.current.setTransform(positionX, positionY, desiredZoom, 400, "easeOut");
+  }, [mapLoaded]);
+  
+
+  // On map image load, set dimensions
+  const onMapLoad = ({ target: img }) => {
+    setMapLoaded(true);
+    setImgDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+  };
+
   return (
     <div className={classes["map-container"]}>
-      {/* Top bar with search inputs */}
+      {/* Top Search Inputs */}
       <div className={classes["map-top"]}>
         {["start", "destination"].map((type) => (
           <div className={classes["map-top-search-container"]} key={type}>
             {editing[type] ? (
               <div className={classes["map-top-search-box"]}>
-                <img
-                  src={backIcon}
-                  alt="Back"
-                  className={classes["back-icon"]}
-                  onClick={() => setEditing({ ...editing, [type]: false })}
-                />
-
-                <input
-                  type="text"
-                  placeholder={`Search ${type}...`}
-                  value={searchQueries[type]}
-                  onChange={(e) =>
-                    setSearchQueries({ ...searchQueries, [type]: e.target.value })
-                  }
-                  className={classes["search-input"]}
-                />
+                <img src={backIcon} alt="Back" className={classes["back-icon"]} onClick={() => setEditing({ ...editing, [type]: false })} />
+                <div className={classes["search-input-wrapper"]}>
+                  <input
+                    type="text"
+                    placeholder={`Search ${type}...`}
+                    value={searchQueries[type]}
+                    onChange={(e) => setSearchQueries({ ...searchQueries, [type]: e.target.value })}
+                    className={classes["search-input"]}
+                  />
+                  {searchQueries[type] && (
+                    <img src={closeIcon} alt="Clear" className={classes["clear-icon"]} onClick={() => setSearchQueries({ ...searchQueries, [type]: "" })} />
+                  )}
+                </div>
                 {renderDropdown(type)}
               </div>
             ) : (
               <div className={classes["map-top-search-box"]} onClick={() => setEditing({ ...editing, [type]: true })}>
-                <img
-                  src={type === "start" ? blueDot : redPin}
-                  alt="Icon"
-                  className={classes[type === "start" ? "blue-dot" : "red-pin"]}
-                />
-
-                <span>
-                  {type === "start"
-                    ? formatDisplayName(startLocation)
-                    : destination
-                    ? formatDisplayName(destination)
-                    : "Search Destination"}
-                </span>
-                
+                <img src={type === "start" ? blueDot : redPin} alt="Icon" className={classes[type === "start" ? "blue-dot" : "red-pin"]} />
+                <span>{type === "start" ? formatDisplayName(startLocation) : destination ? formatDisplayName(destination) : "Search Destination"}</span>
                 {type === "destination" && (
-                  <div
-                    className={classes["switch-icon-wrapper"]}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSwitchLocations();
-                    }}
-                  >
-                    <img
-                      src={switchLocation}
-                      alt="Switch Icon"
-                      className={classes["switch-icon"]}
-                    />
+                  <div className={classes["switch-icon-wrapper"]} onClick={(e) => { e.stopPropagation(); handleSwitchLocations(); }}>
+                    <img src={switchLocation} alt="Switch Icon" className={classes["switch-icon"]} />
                   </div>
                 )}
               </div>
@@ -237,44 +216,29 @@ export default function NavigationPage() {
         ))}
       </div>
 
-      {/* Interactive map viewer */}
+      {/* Map Viewer */}
       <div className={classes["map"]}>
         <div className={classes["map-inner"]}>
           <TransformWrapper
             ref={transformRef}
-            onInit={(utils) => {transformRef.current = utils;}}
             initialScale={1}
             wheel={{ disabled: false }}
             doubleClick={{ disabled: true }}
             pinch={{ disabled: false }}
             panning={{ velocityDisabled: true }}
+            onZoomStop={() => setRefreshCanvas(prev => !prev)}
+            onPanningStop={() => setRefreshCanvas(prev => !prev)}            
           >
             <TransformComponent wrapperClass={classes["map-zoom-wrapper"]}>
               <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                <img
-                  src={secondFloorMap}
-                  alt="Second Floor Map"
-                  className={classes["campus-map"]}
-                  onLoad={() => setMapLoaded(true)}
+                <img src={secondFloorMap} alt="Second Floor Map" className={classes["campus-map"]} onLoad={onMapLoad} />
+                <canvas
+                  ref={canvasRef}
+                  className={classes["map-overlay"]}
+                  width={imgDimensions.width}
+                  height={imgDimensions.height}
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
                 />
-
-                {/* Current location blue dot */}
-                {mapLoaded && startLocation === "main-entrance" && (
-                  <img
-                    src={blueDot}
-                    alt="Current Location"
-                    className={classes["current-location-dot"]}
-                    style={(() => {
-                      const nearestWP = findNearestWaypoint(locations["main-entrance"]);
-                      const { x, y } = locations[nearestWP];
-                      const { left, top } = getScaledPosition(x, y);
-                      return { left: `${left}px`, top: `${top}px` };
-                    })()}
-                  />
-                )}
-
-                {/* Canvas for path drawing */}
-                <canvas ref={canvasRef}className={classes["map-overlay"]}/>
               </div>
             </TransformComponent>
           </TransformWrapper>
