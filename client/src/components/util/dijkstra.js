@@ -28,6 +28,9 @@ export function dijkstra(graph, start, end) {
 
     const path = [];
     for (let at = end; at; at = prev[at]) path.unshift(at);
+
+    console.log("Dijkstra path:", path);
+
     return path;
 }
   

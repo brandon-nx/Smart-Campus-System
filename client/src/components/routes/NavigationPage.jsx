@@ -1,16 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+
 import blueDot from "../../assets/icons/blueDot.png";
 import redPin from "../../assets/icons/redPin.png";
 import switchLocation from "../../assets/icons/switchLocation.png";
 import backIcon from "../../assets/icons/back.png";
 import closeIcon from "../../assets/icons/closeIcon.png";
+
 import secondFloorMap from "../../assets/maps/SecondFloor.svg";
+import thirdFloorMap from "../../assets/maps/ThirdFloor.svg";
+import locationRooms from "../util/locations";
+import locationWaypoints from "../util/waypoints";
+import graph from "../util/graph";
+
 import { dijkstra } from "../util/dijkstra";
 import { getDistance } from "../util/distance";
-import locationRooms from "../util/second_floor_locations";
-import locationWaypoints from "../util/second_floor_locations_waypoints";
-import graph from "../util/graph";
+
 import classes from "./styles/NavigationPage.module.css";
 
 export default function NavigationPage() {
@@ -21,6 +26,8 @@ export default function NavigationPage() {
   const [editing, setEditing] = useState({ start: false, destination: false });
   const [mapLoaded, setMapLoaded] = useState(false);
   const [imgDimensions, setImgDimensions] = useState({ width: 1, height: 1 });
+  const [activeFloor, setActiveFloor] = useState("second");
+  const [path, setPath] = useState([]);
 
   // Refs for DOM and images
   const canvasRef = useRef(null);
@@ -82,10 +89,11 @@ export default function NavigationPage() {
   // Find nearest corridor waypoint
   const findNearestWaypoint = (point) => {
     return Object.entries(locationWaypoints).reduce((nearest, [id, wp]) => {
+      if (wp.floor !== point.floor) return nearest; // 👈 Add this!
       const dist = getDistance(point, wp);
       return dist < nearest.minDist ? { id, minDist: dist } : nearest;
     }, { id: null, minDist: Infinity }).id;
-  };
+  };  
 
   // Draw only the blue start marker
   const drawStartMarkerOnly = () => {
@@ -100,53 +108,98 @@ export default function NavigationPage() {
   };
 
   // Draw full path and markers
-  const drawPath = (path) => {
+  const drawPath = (fullPath) => {
     const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx || !mapLoaded || !path?.length) return;
-
+    if (!ctx || !mapLoaded || !fullPath?.length) return;
+  
     clearCanvas();
+  
+    const { floor2Path, floor3Path } = splitPathByLift(fullPath);
+    const path = activeFloor === "second" ? floor2Path : floor3Path;
+  
     ctx.strokeStyle = "red";
     ctx.lineWidth = 4;
     ctx.setLineDash([6, 4]);
     ctx.beginPath();
-
+  
     path.forEach((key, i) => {
       const { x, y } = locations[key] || {};
+      if (typeof x !== "number" || typeof y !== "number") return;
       i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     });
-
+  
     ctx.stroke();
     ctx.setLineDash([]);
-
-    // Draw start and end markers
+  
+    // Draw start/end markers on each floor's segment
     const startLoc = locations[path[0]];
     const endLoc = locations[path[path.length - 1]];
-
+    if (!startLoc || !endLoc) return;
+  
     const startMarker = new Image();
     const endMarker = new Image();
     startMarker.src = blueDot;
     endMarker.src = redPin;
-
+  
     startMarker.onload = () => ctx.drawImage(startMarker, startLoc.x - 35, startLoc.y - 15, 70, 70);
     endMarker.onload = () => ctx.drawImage(endMarker, endLoc.x - 15, endLoc.y - 30, 70, 70);
+  };  
+
+  const findLiftLobbyOnCurrentFloor = () => {
+    return path.find(node => 
+      node.toLowerCase().includes("lift-lobby") &&
+      locations[node]?.floor === activeFloor
+    );
+  };  
+
+  const splitPathByLift = (fullPath) => {
+    const lift2 = "lift-lobby-(Level 2 Right Wing)";
+    const lift3 = "lift-lobby (Level 3 Right Wing)";
+  
+    const index2 = fullPath.indexOf(lift2);
+    const index3 = fullPath.indexOf(lift3);
+  
+    if (index2 === -1 || index3 === -1) return { floor2Path: fullPath, floor3Path: [] };
+  
+    const lower = Math.min(index2, index3);
+    const upper = Math.max(index2, index3);
+  
+    return {
+      floor2Path: fullPath.slice(0, upper + 1),
+      floor3Path: fullPath.slice(lower)
+    };
   };
+  
 
   // Re-draw on location or map changes
   useEffect(() => {
     if (!mapLoaded || !startLocation) return;
     if (!destination) return drawStartMarkerOnly();
-
+  
     const start = locations[startLocation];
     const end = locations[destination];
     if (!start || !end) return;
 
+    if (start.floor !== activeFloor && end.floor !== activeFloor) {
+      return; // wait for floor switch
+    }
+
     const startWP = findNearestWaypoint(start);
     const endWP = findNearestWaypoint(end);
     if (!startWP || !endWP) return;
+  
+    const dijkstraPath = dijkstra(graph, startWP, endWP);
+    const fullPath = [startLocation, ...dijkstraPath, destination];
+    setPath(fullPath);
 
-    const fullPath = [startLocation, ...dijkstra(graph, startWP, endWP), destination];
+    console.log("📍 Start WP:", startWP);
+    console.log("📍 End WP:", endWP);
+    console.log(graph[startWP]);
+
+
     drawPath(fullPath);
-  }, [startLocation, destination, mapLoaded]);
+  }, [startLocation, destination, mapLoaded, activeFloor]);
+  
 
   // Automatically center and zoom to start location
   useEffect(() => {
@@ -156,6 +209,8 @@ export default function NavigationPage() {
     const img = document.querySelector(`.${classes["campus-map"]}`);
     const wrapper = document.querySelector(`.${classes["map-zoom-wrapper"]}`);
     if (!img || !wrapper) return;
+
+    if (img.naturalWidth === 0 || img.naturalHeight === 0) return;
   
     const imgRect = img.getBoundingClientRect();
     const wrapperRect = wrapper.getBoundingClientRect();
@@ -166,17 +221,43 @@ export default function NavigationPage() {
     const desiredZoom = 4;
     const positionX = (wrapperRect.width / 2) - (pointX * desiredZoom);
     const positionY = (wrapperRect.height / 2) - (pointY * desiredZoom);
-  
-    transformRef.current.setTransform(positionX, positionY, desiredZoom, 400, "easeOut");
-  }, [mapLoaded]);
+
+    if (
+      !isNaN(positionX) &&
+      !isNaN(positionY) &&
+      !isNaN(desiredZoom)
+    ) {
+      transformRef.current.setTransform(positionX, positionY, desiredZoom, 400, "easeOut");
+    }
+  }, [mapLoaded, startLocation, activeFloor]);
   
 
   // On map image load, set dimensions
   const onMapLoad = ({ target: img }) => {
-    setMapLoaded(true);
-    setImgDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+    const width = img.naturalWidth;
+    const height = img.naturalHeight;
+  
+    // Only proceed if valid dimensions
+    if (width && height) {
+      setImgDimensions({ width, height });
+      setMapLoaded(true);
+    } else {
+      console.warn("❗️Image not fully loaded when onMapLoad triggered");
+    }
   };
 
+  // Get current active map
+  const getActiveMap = () => {
+    console.log("Current activeFloor map:", activeFloor);
+    switch (activeFloor) {
+      case "third":
+        return thirdFloorMap;
+      case "second":
+      default:
+        return secondFloorMap;
+    }
+  };
+  
   return (
     <div className={classes["map-container"]}>
       {/* Top Search Inputs */}
@@ -228,7 +309,7 @@ export default function NavigationPage() {
           >
             <TransformComponent wrapperClass={classes["map-zoom-wrapper"]}>
               <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                <img src={secondFloorMap} alt="Second Floor Map" className={classes["campus-map"]} onLoad={onMapLoad} />
+                <img src={getActiveMap()} alt={`${activeFloor} Floor Map`} className={classes["campus-map"]} onLoad={onMapLoad} />
                 <canvas
                   ref={canvasRef}
                   className={classes["map-overlay"]}
@@ -236,6 +317,41 @@ export default function NavigationPage() {
                   height={imgDimensions.height}
                   style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
                 />
+                {(() => {
+                  const liftNode = findLiftLobbyOnCurrentFloor();
+                  if (!liftNode) return null;
+
+                  const lift = locations[liftNode];
+                  return (
+                    <button
+                      onClick={() => {
+                        setActiveFloor(prev => (prev === "second" ? "third" : "second"));
+                        console.log("Switching floor to:", activeFloor === "second" ? "third" : "second");
+                        setPath([]);
+                        setMapLoaded(false);
+                        setTimeout(() => setMapLoaded(true), 0);
+                      }}
+                      style={{
+                        position: "absolute",
+                        height: "10px",
+                        width: "20px",
+                        top: `${(lift.y / imgDimensions.height) * 100}%`,
+                        left: `${(lift.x / imgDimensions.width) * 100}%`,
+                        transform: "translate(-50%, -100%)",
+                        zIndex: 999,
+                        background: "red",
+                        color: "white",
+                        border: "1px solid black",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: "3px",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                      }}
+                    >
+                      Switch Floor
+                    </button>
+                  );
+                })()}
               </div>
             </TransformComponent>
           </TransformWrapper>

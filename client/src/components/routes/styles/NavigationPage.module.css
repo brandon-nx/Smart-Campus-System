@@ -177,6 +177,12 @@
   height: 100%;
 }
 
+.floor-indicator {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
 /* Responsive adjustments */
 @media (max-width: 428px) {
   .search-box {
