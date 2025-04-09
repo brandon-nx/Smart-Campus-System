@@ -16,7 +16,7 @@ export default function EventCalendarPage() {
     queryKey: ["events"],
     queryFn: () => fetchEvents(),
   });
-
+ 
   const [activeCategory, setActiveCategory] = useState("Seminar");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
