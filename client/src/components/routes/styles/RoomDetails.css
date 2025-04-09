@@ -1,0 +1,405 @@
+/* Room Details Page Styles */
+.room-details-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  height: 100%;
+  background-color: #f9fafb;
+  position: relative;
+}
+
+/* Header */
+.room-details-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.back-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.trash-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #6b7280;
+}
+
+/* Room Image */
+.room-image-container {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.room-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-upload-input {
+  display: none;
+}
+
+/* Form Container */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Form Fields */
+.form-field {
+  position: relative;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.form-field-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+}
+
+.field-label {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.chevron-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #6b7280;
+}
+
+.field-input {
+  width: 100%;
+  padding: 0.75rem 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Visible Select */
+.field-select-visible {
+  width: 100%;
+  padding: 0.75rem 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+/* Capacity Field */
+.capacity-container {
+  display: flex;
+  align-items: center;
+}
+
+.capacity-input {
+  width: auto;
+  padding: 0.75rem 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.capacity-input::-webkit-outer-spin-button,
+.capacity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.capacity-label {
+  margin-left: 0.25rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+/* Operation Hours */
+.operation-hours {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-select {
+  background-color: #f3f4f6;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Amenities */
+.amenities-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plus-icon-small {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #6b7280;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.cancel-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background-color: #e5e7eb;
+  color: #1f2937;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.edit-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background-color: #b91c1c;
+  color: white;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.edit-button:hover {
+  background-color: #991b1b;
+}
+
+/* Delete Confirmation Dialog */
+.delete-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.delete-confirm-dialog {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.delete-confirm-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  color: #1f2937;
+}
+
+.delete-confirm-message {
+  font-size: 0.875rem;
+  margin: 0 0 1.5rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.delete-confirm-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.cancel-delete-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  background-color: #e5e7eb;
+  color: #1f2937;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.confirm-delete-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.confirm-delete-button:hover {
+  background-color: #dc2626;
+}
+
+/* Loading and Error States */
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.error-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1rem;
+  color: #ef4444;
+  text-align: center;
+  gap: 1rem;
+}
+
+.retry-button,
+.back-to-list-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  background-color: #b91c1c;
+  color: white;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+/* Delete Confirmation Dialog Styles */
+.delete-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.delete-confirm-dialog {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.delete-confirm-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.delete-confirm-message {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.delete-confirm-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.cancel-button,
+.confirm-button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.375rem;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cancel-button {
+  background-color: #e5e7eb; /* Light gray */
+  color: #1f2937; /* Dark text */
+}
+
+.confirm-button {
+  background-color: #b91c1c; /* Red */
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #d1d5db; /* Slightly darker gray */
+}
+
+.confirm-button:hover {
+  background-color: #dc2626; /* Darker red */
+}

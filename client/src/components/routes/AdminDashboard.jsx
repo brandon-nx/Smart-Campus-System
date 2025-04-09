@@ -1,4 +1,4 @@
-import { ArrowLeft, Calendar, Search, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles/AdminDashboard.css";
@@ -15,6 +15,10 @@ export default function AdminDashboard() {
   const handleManageRooms = () => {
     navigate("/manage-rooms");
   };
+
+  const handleManageEvents = () => {
+    navigate("/manage-events")
+  }
 
   return (
     <div className="dashboard-container">
@@ -130,9 +134,6 @@ export default function AdminDashboard() {
               <div className="x-label">Name of colour →</div>
             </div>
           </div>
-          <div className="share-button">
-            <Share2 className="share-icon" />
-          </div>
         </div>
       </div>
 
@@ -196,9 +197,6 @@ export default function AdminDashboard() {
               <div className="x-label">Month →</div>
             </div>
           </div>
-          <div className="share-button">
-            <Share2 className="share-icon" />
-          </div>
         </div>
       </div>
 
@@ -244,9 +242,6 @@ export default function AdminDashboard() {
               <div className="x-label">Week →</div>
             </div>
           </div>
-          <div className="share-button">
-            <Share2 className="share-icon" />
-          </div>
         </div>
       </div>
 
@@ -255,7 +250,8 @@ export default function AdminDashboard() {
         <button className="manage-button" onClick={handleManageRooms}>
           Manage Rooms
         </button>
-        <button className="manage-button">Manage Events</button>
+        <button className="manage-button" onClick={handleManageEvents}>
+          Manage Events</button>
         <button className="manage-button">Manage Bookings</button>
       </div>
     </div>

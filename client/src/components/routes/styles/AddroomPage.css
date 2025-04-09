@@ -1,0 +1,184 @@
+/* Add Room Page Styles */
+.add-room-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  height: 100%;
+  background-color: #f9fafb;
+}
+
+/* Header */
+.add-room-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.back-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  flex-grow: 1;
+}
+
+/* Form Container */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Image Upload Area */
+.image-upload-area {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+}
+
+.plus-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #9ca3af;
+}
+
+/* Form Fields */
+.form-field {
+  position: relative;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.form-field-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+}
+
+.field-label {
+  font-size: 0.875rem;
+}
+
+.chevron-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #6b7280;
+}
+
+.field-select {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  cursor: pointer;
+}
+
+.field-input {
+  width: 100%;
+  padding: 0.75rem 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+}
+
+/* Operation Hours */
+.operation-hours {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-select {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+}
+
+/* Amenities */
+.amenities-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+}
+
+.amenities-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.amenities-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.amenity-tag {
+  background-color: #e5e7eb;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.cancel-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background-color: #e5e7eb;
+  color: #1f2937;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-button-primary {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background-color: #b91c1c;
+  color: white;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-button-primary:hover {
+  background-color: #991b1b;
+}
