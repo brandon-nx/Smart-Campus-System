@@ -18,7 +18,6 @@ export default function EventModal({ event, isOpen, onClose }) {
     return () => window.removeEventListener("keydown", handleEscape)
   }, [onClose])
 
-  // Prevent body scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden"
