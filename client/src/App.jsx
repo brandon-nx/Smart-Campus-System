@@ -21,13 +21,13 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import BookingDetailsPage, {
   loader as bookingDetailsLoader,
 } from "./components/routes/BookingDetailsPage";
-import ProfilePage from "./components/routes/ProfilePage"; 
+import ProfilePage from "./components/routes/ProfilePage";
+import AdminProfile from "./components/routes/AdminProfile"; // <-- Imported AdminProfile
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
-    // errorElement: <ErrorPage />,
     id: "root",
     children: [
       { index: true, element: <NavigationPage /> },
@@ -57,7 +57,8 @@ const router = createBrowserRouter([
               },
             ],
           },
-          { path: "profile", element: <ProfilePage /> }, 
+          { path: "profile", element: <ProfilePage /> },
+          { path: "admin", element: <AdminProfile /> }, // <-- New /admin route
         ],
       },
     ],
