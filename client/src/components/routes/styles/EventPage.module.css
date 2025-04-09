@@ -6,17 +6,24 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   border: 1px solid #dddddd;
   margin-bottom: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px); /* Slight lift effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* More prominent shadow */
 }
 
 .imageContainer {
   position: relative;
   height: 160px;
+  overflow: hidden; /* Ensure no overflow from the image */
 }
 
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Ensures the image covers the space without stretching */
 }
 
 .content {
@@ -47,6 +54,7 @@
   font-size: 0.875rem;
   color: #333333;
   margin-bottom: 12px;
+  line-height: 1.5; /* Improved line-height for readability */
 }
 
 .actions {
@@ -66,6 +74,11 @@
   border: 1px solid #dddddd;
   background: none;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.phoneButton:hover {
+  background-color: #f0f0f0; /* Slight background change on hover */
 }
 
 .phoneIcon {
