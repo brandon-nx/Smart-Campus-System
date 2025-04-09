@@ -1,7 +1,7 @@
-import { ChevronRight, Bell, User, Languages, LayoutDashboard } from "lucide-react"
-import "./styles/profilepage.css"
-import profilePic from "../../assets/images/profilePic.png"; 
-
+import { ChevronRight, Bell, User, Languages, LayoutDashboard } from "lucide-react";
+import "./styles/profilepage.css";
+import profilePic from "../../assets/images/profilePic.png";
+import { Link } from "react-router-dom"; 
 
 export default function UserProfile() {
   return (
@@ -65,7 +65,8 @@ export default function UserProfile() {
             </a>
           </li>
           <li>
-            <a href="#" className="menu-item">
+            {/* Replaced <a href="#"> with <Link to="/admin/dashboard"> */}
+            <Link to="/admin/dashboard" className="menu-item">
               <div className="menu-content">
                 <div className="icon-container">
                   <LayoutDashboard className="icon" />
@@ -76,7 +77,7 @@ export default function UserProfile() {
                 </div>
               </div>
               <ChevronRight className="chevron" />
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
@@ -103,5 +104,5 @@ export default function UserProfile() {
       {/* Logout Button */}
       <button className="logout-button">Logout</button>
     </div>
-  )
+  );
 }

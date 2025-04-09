@@ -22,7 +22,8 @@ import BookingDetailsPage, {
   loader as bookingDetailsLoader,
 } from "./components/routes/BookingDetailsPage";
 import ProfilePage from "./components/routes/ProfilePage";
-import AdminProfile from "./components/routes/AdminProfile"; // <-- Imported AdminProfile
+import AdminProfile from "./components/routes/AdminProfile";
+import AdminDashboard from "./components/routes/AdminDashboard"; // <-- Import the new component
 
 const router = createBrowserRouter([
   {
@@ -58,7 +59,8 @@ const router = createBrowserRouter([
             ],
           },
           { path: "profile", element: <ProfilePage /> },
-          { path: "admin", element: <AdminProfile /> }, // <-- New /admin route
+          { path: "admin", element: <AdminProfile /> },
+          { path: "admin/dashboard", element: <AdminDashboard /> }, // <-- New route
         ],
       },
     ],
