@@ -1,0 +1,146 @@
+/* Reset list styling */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Main container */
+  .profile-container {
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  
+  /* Profile card */
+  .profile-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .avatar-container {
+    position: relative;
+    height: 2.5rem;
+    width: 2.5rem;
+    flex-shrink: 0; /* Prevent avatar from shrinking */
+  }
+  
+  .avatar {
+    border-radius: 9999px;
+    background-color: #b91c1c;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .username {
+    font-weight: 500;
+    margin: 0;
+  }
+  
+  .user-handle {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+  }
+  
+  /* Settings list */
+  .settings-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.5rem;
+    overflow: hidden; /* Ensure border radius applies to children */
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .menu-item:hover {
+    background-color: #f9fafb;
+  }
+  
+  .menu-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .icon-container {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: #f3f4f6;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+  }
+  
+  .icon {
+    width: 1rem;
+    height: 1rem;
+    color: #6b7280;
+  }
+  
+  .chevron {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #9ca3af;
+  }
+  
+  .menu-title {
+    font-weight: 500;
+    margin: 0;
+  }
+  
+  .menu-description {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0;
+  }
+  
+  /* Support card */
+  .support-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  
+  /* Logout button */
+  .logout-button {
+    width: 100%;
+    background-color: #b91c1c;
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .logout-button:hover {
+    background-color: #991b1b;
+  }
+  

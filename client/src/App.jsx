@@ -21,6 +21,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import BookingDetailsPage, {
   loader as bookingDetailsLoader,
 } from "./components/routes/BookingDetailsPage";
+import ProfilePage from "./components/routes/ProfilePage"; 
 
 const router = createBrowserRouter([
   {
@@ -39,7 +40,6 @@ const router = createBrowserRouter([
               { path: "login", element: <Login />, action: loginAction },
             ],
           },
-
           { path: "signup", element: <SignupPage />, action: signupAction },
         ],
       },
@@ -57,6 +57,7 @@ const router = createBrowserRouter([
               },
             ],
           },
+          { path: "profile", element: <ProfilePage /> }, 
         ],
       },
     ],
