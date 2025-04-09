@@ -95,6 +95,17 @@ export default function NavigationPage() {
     }, { id: null, minDist: Infinity }).id;
   };  
 
+  const splitPathByLift = (fullPath) => {
+    const lifts = fullPath.filter(p => p.toLowerCase().includes("lift-lobby"));
+    if (lifts.length < 2) return { floor2Path: fullPath, floor3Path: [] };
+    const lift2Idx = fullPath.findIndex(p => locations[p]?.floor === "second" && p.toLowerCase().includes("lift-lobby"));
+    const lift3Idx = fullPath.findIndex(p => locations[p]?.floor === "third" && p.toLowerCase().includes("lift-lobby"));
+    return {
+      floor2Path: fullPath.slice(0, lift3Idx + 1),
+      floor3Path: fullPath.slice(lift2Idx)
+    };
+  };
+
   // Draw only the blue start marker
   const drawStartMarkerOnly = () => {
     const ctx = canvasRef.current?.getContext("2d");
@@ -106,6 +117,7 @@ export default function NavigationPage() {
     if (img?.complete) ctx.drawImage(img, startLoc.x - 35, startLoc.y - 15, 70, 70);
     else img.onload = () => ctx.drawImage(img, startLoc.x - 35, startLoc.y - 15, 70, 70);
   };
+  
 
   // Draw full path and markers
   const drawPath = (fullPath) => {
@@ -130,44 +142,37 @@ export default function NavigationPage() {
   
     ctx.stroke();
     ctx.setLineDash([]);
-  
-    // Draw start/end markers on each floor's segment
+
     const startLoc = locations[path[0]];
     const endLoc = locations[path[path.length - 1]];
     if (!startLoc || !endLoc) return;
-  
     const startMarker = new Image();
     const endMarker = new Image();
     startMarker.src = blueDot;
     endMarker.src = redPin;
-  
-    startMarker.onload = () => ctx.drawImage(startMarker, startLoc.x - 35, startLoc.y - 15, 70, 70);
-    endMarker.onload = () => ctx.drawImage(endMarker, endLoc.x - 15, endLoc.y - 30, 70, 70);
+    if (startLoc.floor === activeFloor) {
+      startMarker.onload = () => ctx.drawImage(startMarker, startLoc.x - 35, startLoc.y - 15, 70, 70);
+    }
+    if (endLoc.floor === activeFloor) {
+      endMarker.onload = () => ctx.drawImage(endMarker, endLoc.x - 15, endLoc.y - 30, 70, 70);
+    }
   };  
 
+  const findNearestLift = (point, floor) => {
+    const liftOptions = Object.entries(locations).filter(([id, loc]) =>
+      id.toLowerCase().includes("lift-lobby") && loc.floor === floor
+    );
+    return liftOptions.reduce((nearest, [id, loc]) => {
+      const dist = getDistance(point, loc);
+      return dist < nearest.minDist ? { id, minDist: dist } : nearest;
+    }, { id: null, minDist: Infinity }).id;
+  };
+
   const findLiftLobbyOnCurrentFloor = () => {
-    return path.find(node => 
+    return path.find(node =>
       node.toLowerCase().includes("lift-lobby") &&
       locations[node]?.floor === activeFloor
     );
-  };  
-
-  const splitPathByLift = (fullPath) => {
-    const lift2 = "lift-lobby-(Level 2 Right Wing)";
-    const lift3 = "lift-lobby (Level 3 Right Wing)";
-  
-    const index2 = fullPath.indexOf(lift2);
-    const index3 = fullPath.indexOf(lift3);
-  
-    if (index2 === -1 || index3 === -1) return { floor2Path: fullPath, floor3Path: [] };
-  
-    const lower = Math.min(index2, index3);
-    const upper = Math.max(index2, index3);
-  
-    return {
-      floor2Path: fullPath.slice(0, upper + 1),
-      floor3Path: fullPath.slice(lower)
-    };
   };
   
 
@@ -180,24 +185,76 @@ export default function NavigationPage() {
     const end = locations[destination];
     if (!start || !end) return;
 
-    if (start.floor !== activeFloor && end.floor !== activeFloor) {
-      return; // wait for floor switch
-    }
+    if (start.floor !== activeFloor && end.floor !== activeFloor) return;
 
     const startWP = findNearestWaypoint(start);
     const endWP = findNearestWaypoint(end);
     if (!startWP || !endWP) return;
-  
-    const dijkstraPath = dijkstra(graph, startWP, endWP);
-    const fullPath = [startLocation, ...dijkstraPath, destination];
+
+    let fullPath = [];
+
+    if (start.floor !== end.floor) {
+      const lift2 = findNearestLift(start, "second");
+
+      const lift3 = Object.keys(locations).find(
+        k =>
+          k.toLowerCase().includes("lift-lobby") &&
+          locations[k].floor === "third" &&
+          k.toLowerCase().includes(lift2.toLowerCase().includes("left") ? "left" : "right")
+      );
+
+      console.log("Entering:", lift2);
+      console.log("Exiting:", lift3);
+
+      const pathToLift = dijkstra(graph, startWP, lift2);
+      
+      // TEMP: Clone graph without reverse lift connection
+      const graphClone = JSON.parse(JSON.stringify(graph));
+
+      // Prevent back-travel from 3rd floor lift to 2nd
+      if (graphClone[lift3]) {
+        delete graphClone[lift3]["lift-lobby (Level 2 Left Wing)"];
+        delete graphClone[lift3]["lift-lobby (Level 2 Right Wing)"];
+      }
+
+      // Also prevent stair re-entry if used
+      if (graphClone[lift3]) {
+        Object.keys(graphClone[lift3]).forEach(neighbor => {
+          if (neighbor.includes("main-stair")) {
+            delete graphClone[lift3][neighbor];
+          }
+        });
+      }
+
+      console.log("➡️ From Lift:", lift3);
+      console.log("➡️ To EndWP:", endWP);
+      console.log("➡️ Neighbors of Lift3 in graph:", graph[lift3]);
+      console.log("Manual Test:", dijkstra(graph, "wp-111", "wp-155")); // adjust to actual lift3/endWP
+
+      const entryWP = Object.keys(graph[lift3]).find(k => k.startsWith("wp-"));
+      if (!entryWP) {
+        console.warn("❌ No valid entry WP from lift3");
+        return;
+      }
+      const pathFromLift = dijkstra(graphClone, entryWP, endWP);
+      fullPath = [startLocation, ...pathToLift, lift2, lift3, entryWP, ...pathFromLift, destination];
+
+
+
+      if (!pathToLift.length || !pathFromLift.length) {
+        console.warn("🚫 Path to/from lift is broken");
+        return;
+      }
+
+      fullPath = [startLocation, ...pathToLift, lift2, lift3, entryWP, ...pathFromLift, destination];
+    } else {
+      const dijkstraPath = dijkstra(graph, startWP, endWP);
+      fullPath = [startLocation, ...dijkstraPath, destination];
+    }
+
     setPath(fullPath);
-
-    console.log("📍 Start WP:", startWP);
-    console.log("📍 End WP:", endWP);
-    console.log(graph[startWP]);
-
-
     drawPath(fullPath);
+    
   }, [startLocation, destination, mapLoaded, activeFloor]);
   
 
@@ -208,9 +265,7 @@ export default function NavigationPage() {
     const start = locations[startLocation];
     const img = document.querySelector(`.${classes["campus-map"]}`);
     const wrapper = document.querySelector(`.${classes["map-zoom-wrapper"]}`);
-    if (!img || !wrapper) return;
-
-    if (img.naturalWidth === 0 || img.naturalHeight === 0) return;
+    if (!img || !wrapper || img.naturalWidth === 0 || img.naturalHeight === 0) return;
   
     const imgRect = img.getBoundingClientRect();
     const wrapperRect = wrapper.getBoundingClientRect();
@@ -222,11 +277,7 @@ export default function NavigationPage() {
     const positionX = (wrapperRect.width / 2) - (pointX * desiredZoom);
     const positionY = (wrapperRect.height / 2) - (pointY * desiredZoom);
 
-    if (
-      !isNaN(positionX) &&
-      !isNaN(positionY) &&
-      !isNaN(desiredZoom)
-    ) {
+    if (!isNaN(positionX) && !isNaN(positionY)) {
       transformRef.current.setTransform(positionX, positionY, desiredZoom, 400, "easeOut");
     }
   }, [mapLoaded, startLocation, activeFloor]);
@@ -236,13 +287,9 @@ export default function NavigationPage() {
   const onMapLoad = ({ target: img }) => {
     const width = img.naturalWidth;
     const height = img.naturalHeight;
-  
-    // Only proceed if valid dimensions
     if (width && height) {
       setImgDimensions({ width, height });
       setMapLoaded(true);
-    } else {
-      console.warn("❗️Image not fully loaded when onMapLoad triggered");
     }
   };
 
