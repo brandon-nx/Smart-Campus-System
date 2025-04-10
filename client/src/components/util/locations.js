@@ -61,7 +61,7 @@ const locations = {
   "emergency-stair-3 (Level 2 Left Wing)": { "x": 14.66, "y": 64.64, "floor": "second" },
   "main-stair (Level 2 Right Wing)": { "x": 2726.57, "y": 741.86, "floor": "second" },
   "lift-lobby (Level 2 Right Wing)": { "x": 2597.55, "y": 1549.86, "floor": "second" },
-  "lift-lobby (Level 2 Left Wing)": { "x": 1730.66, "y": 320.86, "floor": "second" },
+  "lift-lobby (Level 2 Left Wing)": { "x": 1770, "y": 350, "floor": "second" },
 
   "meeting-2l003": { "x": 1430.33, "y": 132.64, "floor": "second" },
   "meeting-room-2l017": { "x": 109.65, "y": 412.86, "floor": "second" },
@@ -146,12 +146,11 @@ const locations = {
   "emergency-stair-1 (Level 3 Left Wing)": { "x": 2.5, "y": 3.5, "floor": "third" },
   "emergency-stair-2 (Level 3 Right Wing)": { "x": 3381.5, "y": 106.5, "floor": "third" },
   "emergency-stair-3 (Level 3 Right Wing)": { "x": 2780.5, "y": 1466.5, "floor": "third" },
-  "main-stair (Level 3 Right Wing)": { "x": 2511.5, "y": 737.0, "floor": "third" },
-  "lift-lobby (Level 3 Right Wing)": { "x": 2510, "y": 1464, "floor": "third" },
-  "lift-lobby (Level 3 Left Wing)": { "x": 1662.5, "y": 235.5, "floor": "third" },
+  "main-stair (Level 3 Right Wing)": { "x": 2726, "y": 741.0, "floor": "third" },
+  "lift-lobby (Level 3 Right Wing)": { "x": 2597, "y": 1550, "floor": "third" },
+  "lift-lobby (Level 3 Left Wing)": { "x": 1770, "y": 350, "floor": "third" },
   "lobby-3r041": { "x": 3309.87, "y": 3.5, "floor": "third" },
   "lobby-3l003": { "x": 1409.5, "y": 235.5, "floor": "third" },
-
   "entrance-lobby": { "x": 2054.49, "y": 202.864, "floor": "third" },
 };
 export default locations;

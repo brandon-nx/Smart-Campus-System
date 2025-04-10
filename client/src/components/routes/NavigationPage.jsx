@@ -13,7 +13,7 @@ import locationRooms from "../util/locations";
 import locationWaypoints from "../util/waypoints";
 import graph from "../util/graph";
 
-import { dijkstra } from "../util/dijkstra";
+import { dijkstra, getConstrainedPath } from "../util/dijkstra";
 import { getDistance } from "../util/distance";
 
 import classes from "./styles/NavigationPage.module.css";
@@ -203,40 +203,25 @@ export default function NavigationPage() {
           k.toLowerCase().includes(lift2.toLowerCase().includes("left") ? "left" : "right")
       );
 
-      console.log("Entering:", lift2);
-      console.log("Exiting:", lift3);
-
       const pathToLift = dijkstra(graph, startWP, lift2);
-      
-      // TEMP: Clone graph without reverse lift connection
-      const graphClone = JSON.parse(JSON.stringify(graph));
-
-      // Prevent back-travel from 3rd floor lift to 2nd
-      if (graphClone[lift3]) {
-        delete graphClone[lift3]["lift-lobby (Level 2 Left Wing)"];
-        delete graphClone[lift3]["lift-lobby (Level 2 Right Wing)"];
-      }
-
-      // Also prevent stair re-entry if used
-      if (graphClone[lift3]) {
-        Object.keys(graphClone[lift3]).forEach(neighbor => {
-          if (neighbor.includes("main-stair")) {
-            delete graphClone[lift3][neighbor];
-          }
-        });
-      }
-
-      console.log("➡️ From Lift:", lift3);
-      console.log("➡️ To EndWP:", endWP);
-      console.log("➡️ Neighbors of Lift3 in graph:", graph[lift3]);
-      console.log("Manual Test:", dijkstra(graph, "wp-111", "wp-155")); // adjust to actual lift3/endWP
+      console.log("🟦 lift3:", lift3); // Should be 'lift-lobby (Level 3 Left Wing)'
+      console.log("🟦 graph[lift3]:", graph[lift3]); // Should contain 'wp-111'
 
       const entryWP = Object.keys(graph[lift3]).find(k => k.startsWith("wp-"));
-      if (!entryWP) {
-        console.warn("❌ No valid entry WP from lift3");
-        return;
-      }
-      const pathFromLift = dijkstra(graphClone, entryWP, endWP);
+      console.log("🚪 entryWP:", entryWP); // Should be 'wp-111'
+      console.log("🔗 entryWP neighbors:", graph[entryWP]); // Should include 'wp-112'
+
+      console.log("🎯 endWP:", endWP); // Should be something like 'wp-155'
+
+      const constraints = [
+        ["lift-lobby (Level 3 Left Wing)", "lift-lobby (Level 2 Left Wing)"],
+        ["lift-lobby (Level 3 Right Wing)", "lift-lobby (Level 2 Right Wing)"],
+        ["main-stair (Level 3 Right Wing)", "main-stair (Level 2 Right Wing)"],
+      ];
+      
+      const pathFromLift = getConstrainedPath(graph, entryWP, endWP, constraints);
+      console.log("🧭 Path from lift to end:", pathFromLift);
+      
       fullPath = [startLocation, ...pathToLift, lift2, lift3, entryWP, ...pathFromLift, destination];
 
 
@@ -295,7 +280,6 @@ export default function NavigationPage() {
 
   // Get current active map
   const getActiveMap = () => {
-    console.log("Current activeFloor map:", activeFloor);
     switch (activeFloor) {
       case "third":
         return thirdFloorMap;
