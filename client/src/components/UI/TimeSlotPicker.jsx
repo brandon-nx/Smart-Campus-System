@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { convert24To12 } from "../util/converter";
 
 export default function TimeSlotPicker({
   onChange,
@@ -24,16 +25,17 @@ export default function TimeSlotPicker({
     <div className="time-slot-selector">
       {/* Hidden input for form submission */}
       <input type="hidden" id={name} name={name} value={selectedSlot} />
-      {timeSlots.map((slot) => (
+      {timeSlots.map(({slot, status}) => (
         <button
           key={slot}
+          disabled={status === 'unavailable'}
           className={`time-slot-button ${
             selectedSlot === slot ? "selected" : ""
           }`}
           onClick={() => handleSlotClick(slot)}
           type="button"
         >
-          {slot}
+          {convert24To12(slot)}
         </button>
       ))}
     </div>

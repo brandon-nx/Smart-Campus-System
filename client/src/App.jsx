@@ -20,6 +20,7 @@ import { queryClient } from "./components/util/http";
 import { QueryClientProvider } from "@tanstack/react-query";
 import BookingDetailsPage, {
   loader as bookingDetailsLoader,
+  action as bookingDetailsAction
 } from "./components/routes/BookingDetailsPage";
 
 const router = createBrowserRouter([
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
             path: "bookings/:id",
             element: <BookingDetailsPage />,
             loader: bookingDetailsLoader,
+            action: bookingDetailsAction,
             children: [
               {
                 path: "bookings/:id/edit",

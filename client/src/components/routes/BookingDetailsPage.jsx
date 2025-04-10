@@ -7,7 +7,12 @@ import {
 } from "react-router-dom";
 import classes from "./styles/BookingDetailsPage.module.css";
 import { useQuery } from "@tanstack/react-query";
-import { fetchBookingRoom, queryClient } from "../util/http";
+import {
+  fetchBookingEndSlots,
+  fetchBookingRoom,
+  fetchBookingStartSlots,
+  queryClient,
+} from "../util/http";
 import { convert24To12 } from "../util/converter";
 import {
   FaChair,
@@ -23,12 +28,26 @@ import { useEffect, useRef, useState } from "react";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import TimeSlotPicker from "../UI/TimeSlotPicker";
-import { generateTimeSlots } from "../util/generator";
+import LoadingIndicator from "../UI/LoadingIndicator";
+import { useSelector } from "react-redux";
+import Modal from "../UI/Modal";
+
+const amenityIcons = {
+  Seating: FaChair,
+  Whiteboard: FaChalkboardTeacher,
+  '52" LED': FaTv,
+  "Wifi Available": FaWifi,
+  Projector: FaVideo,
+  "Air Conditioning": FaSnowflake,
+  "Sound System": FaVolumeUp,
+};
 
 export default function BookingDetailsPage() {
   const navigation = useNavigation();
-  const data = useActionData();
+  const navigate = useNavigate();
+  const actionData = useActionData();
   const isSubmitting = navigation.state === "submitting";
+  const accountEmail = useSelector((state) => state.auth.email);
 
   const today = new Date().toISOString().split("T")[0];
   const oneMonthLater = new Date();
@@ -36,25 +55,54 @@ export default function BookingDetailsPage() {
 
   const maxDate = oneMonthLater.toISOString().split("T")[0];
 
-  const [hours, setHours] = useState(null);
+  const bookingDateRef = useRef();
+
+  const [selectedDate, setSelectedDate] = useState("");
   const [selectedStartSlot, setSelectedStartSlot] = useState("");
   const [selectedEndSlot, setSelectedEndSlot] = useState("");
 
-  const amenityIcons = {
-    Seating: FaChair,
-    Whiteboard: FaChalkboardTeacher,
-    '52" LED': FaTv,
-    "Wifi Available": FaWifi,
-    Projector: FaVideo,
-    "Air Conditioning": FaSnowflake,
-    "Sound System": FaVolumeUp,
-  };
+  console.log(selectedDate, selectedStartSlot, selectedEndSlot);
 
   const params = useParams();
   const { data: roomData } = useQuery({
     queryKey: ["bookings", "rooms", params.id],
     queryFn: ({ signal }) => fetchBookingRoom({ signal, id: params.id }),
   });
+
+  const {
+    data: startSlotsData,
+    error: startSlotsError,
+    isError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["bookings", "rooms", params.id, { bookingDate: selectedDate }],
+    queryFn: ({ signal }) =>
+      fetchBookingStartSlots({
+        signal,
+        id: params.id,
+        bookingDate: selectedDate,
+      }),
+    enabled: !!selectedDate,
+  });
+
+  const { data: endSlotsData } = useQuery({
+    queryKey: [
+      "bookings",
+      "rooms",
+      params.id,
+      { startTime: selectedStartSlot },
+    ],
+    queryFn: ({ signal }) =>
+      fetchBookingEndSlots({
+        signal,
+        id: params.id,
+        bookingDate: selectedDate,
+        startTime: selectedStartSlot,
+      }),
+    enabled: !!selectedStartSlot,
+  });
+
+  console.log(endSlotsData);
 
   const {
     roomName,
@@ -64,132 +112,153 @@ export default function BookingDetailsPage() {
     roomDescription,
   } = roomData;
 
-  const bookingDateRef = useRef();
-
   function handleDateChange() {
-    const bookingDate = bookingDateRef.current.value;
+    const bookingDate = bookingDateRef.current;
     if (bookingDate) {
-      const bookingDateObj = new Date(bookingDate);
-      const dayIndex = bookingDateObj.getDay();
-      const daysOfWeek = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ];
-
-      const dayName = daysOfWeek[dayIndex];
-
-      const opHour = operationalHours.find((op) => op.day === dayName);
-      setHours(opHour);
+      setSelectedDate(bookingDate.value);
+      setSelectedStartSlot("");
+      setSelectedEndSlot("");
     }
   }
 
+  function handleBack(event) {
+    event.preventDefault();
+    navigate("/bookings");
+  }
+
   useEffect(() => {
-    if (data && data.errors) {
-      if (
-        data.errors.find((err) => err.field === "bookingDate") &&
-        bookingDateRef.current
-      ) {
-        bookingDateRef.current.value = "";
-        bookingDateRef.current.focus();
-      }
+    if (
+      startSlotsData?.errors?.find((err) => err.field === "bookingDate") &&
+      bookingDateRef.current
+    ) {
+      bookingDateRef.current.value = "";
+      bookingDateRef.current.focus();
     }
-  }, [data]);
+  }, [startSlotsData]);
+
+  useEffect(() => {
+    setSelectedEndSlot("");
+  }, [selectedStartSlot]);
+
+  function handleCloseWindow() {
+    return true;
+  }
 
   return (
-    <div className={classes["booking-details-page"]}>
-      {/* Header / Image */}
-      <div className={classes["booking-header"]}>
-        <img
-          className={classes["booking-image"]}
-          src="/path/to/your-image.jpg"
-          alt={roomName}
-        />
-      </div>
-      {/* Title and Basic Info */}
-      <div className={classes["booking-info"]}>
-        <h1 className={classes["booking-title"]}>{roomName}</h1>
-        <div className={classes["booking-operation"]}>
-          <h3 className={classes["booking-subheading"]}>Operation Hours</h3>
-          {operationalHours.length === 0 && (
-            <div className={classes["no-hours"]}>
-              <p>Not Operational</p>
-            </div>
-          )}
-          {operationalHours.length !== 0 && (
-            <div className={classes["operational-hours-scroll"]}>
-              {operationalHours.map(({ day, open, close }) => (
-                <div key={day} className={classes["day-card"]}>
-                  <div className={classes["day"]}>{day}</div>
-                  <div className={classes["time"]}>
-                    {convert24To12(open)} – {convert24To12(close)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <p className={classes["booking-description"]}>{roomDescription}</p>
-      </div>
-      {/* Amenities */}
-      <h3 className={classes["booking-subheading"]}>Amenities</h3>
-      <div className={classes["booking-amenities"]}>
-        <div className={classes["amenity-item"]}>
-          <FaChair className={classes["amenity-icon"]} />
-          <span className={classes["amenity-text"]}>{roomCapacity} Seats</span>
-        </div>
-
-        {amenities.length !== 0 &&
-          amenities.map((amenity) => {
-            const Icon = amenityIcons[amenity.name] || FaQuestionCircle;
-            return (
-              <div key={amenity.id} className={classes["amenity-item"]}>
-                <Icon className={classes["amenity-icon"]} />
-                <span className={classes["amenity-text"]}>52" LED</span>
-              </div>
-            );
-          })}
-      </div>
-      <Form method="post" className="form">
-        <div className={classes["booking-date"]}>
-          <Input
-            label="Booking Date"
-            id="booking-date"
-            type="date"
-            name="booking-date"
-            ref={bookingDateRef}
-            min={today}
-            max={maxDate}
-            onChange={handleDateChange}
-            error={
-              data?.errors?.find((err) => err.field === "bookingDate")
-                ?.message || null
-            }
+    <>
+      {actionData && (
+        <Modal open={actionData} onClose={handleCloseWindow}>
+          <h1>{actionData.message}</h1>
+        </Modal>
+      )}
+      <div className={classes["booking-details-page"]}>
+        <div className={classes["booking-header"]}>
+          <img
+            className={classes["booking-image"]}
+            src="/path/to/your-image.jpg"
+            alt={roomName}
           />
         </div>
-        {hours && (
-          <>
-            <h2>Select Booking Start Time</h2>
-            <TimeSlotPicker
-              name="start-time"
-              onChange={setSelectedStartSlot}
-              timeSlots={generateTimeSlots(hours.open, hours.close)}
-            />
-          </>
-        )}
+        <div className={classes["booking-info"]}>
+          <h1 className={classes["booking-title"]}>{roomName}</h1>
+          <div className={classes["booking-operation"]}>
+            <h3 className={classes["booking-subheading"]}>Operation Hours</h3>
+            {operationalHours.length === 0 && (
+              <div className={classes["no-hours"]}>
+                <p>Not Operational</p>
+              </div>
+            )}
+            {operationalHours.length !== 0 && (
+              <div className={classes["operational-hours-scroll"]}>
+                {operationalHours.map(({ day, open, close }) => (
+                  <div key={day} className={classes["day-card"]}>
+                    <div className={classes["day"]}>{day}</div>
+                    <div className={classes["time"]}>
+                      {convert24To12(open)} – {convert24To12(close)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <p className={classes["booking-description"]}>{roomDescription}</p>
+        </div>
+        <h3 className={classes["booking-subheading"]}>Amenities</h3>
+        <div className={classes["booking-amenities"]}>
+          <div className={classes["amenity-item"]}>
+            <FaChair className={classes["amenity-icon"]} />
+            <span className={classes["amenity-text"]}>
+              {roomCapacity} Seats
+            </span>
+          </div>
 
-        <p className="form-actions">
-          <Button disabled={isSubmitting}>
-            {isSubmitting ? "Booking..." : "BOOK"}
-          </Button>
-          <Button disabled={isSubmitting}>CANCEL</Button>
-        </p>
-      </Form>
-    </div>
+          {amenities.length !== 0 &&
+            amenities.map((amenity) => {
+              const Icon = amenityIcons[amenity.name] || FaQuestionCircle;
+              return (
+                <div key={amenity.id} className={classes["amenity-item"]}>
+                  <Icon className={classes["amenity-icon"]} />
+                  <span className={classes["amenity-text"]}>52" LED</span>
+                </div>
+              );
+            })}
+        </div>
+        <Form method="post" className="form">
+          <div className={classes["booking-date"]}>
+            <input type="hidden" id="email" name="email" value={accountEmail} />
+            <Input
+              label="Booking Date"
+              id="booking-date"
+              type="date"
+              name="booking-date"
+              ref={bookingDateRef}
+              min={today}
+              max={maxDate}
+              onChange={handleDateChange}
+              error={
+                startSlotsData?.errors?.find(
+                  (err) => err.field === "bookingDate"
+                )?.message || null
+              }
+            />
+          </div>
+          {isLoading && <LoadingIndicator />}
+          {isError && <>{startSlotsError.info?.message}</>}
+          {selectedDate && startSlotsData && startSlotsData.success && (
+            <>
+              <h2>Select Booking Start Time</h2>
+              <TimeSlotPicker
+                name="start-time"
+                onChange={setSelectedStartSlot}
+                timeSlots={startSlotsData.startSlots}
+              />
+            </>
+          )}
+          {selectedStartSlot && endSlotsData && endSlotsData.success && (
+            <>
+              <h2>Select Booking End Time</h2>
+              <TimeSlotPicker
+                name="end-time"
+                onChange={setSelectedEndSlot}
+                timeSlots={endSlotsData.endSlots}
+              />
+            </>
+          )}
+
+          <p className="form-actions">
+            <Button disabled={isSubmitting}>
+              {isSubmitting ? "Booking..." : "BOOK"}
+            </Button>
+            <Button
+              onClick={(event) => handleBack(event)}
+              disabled={isSubmitting}
+            >
+              CANCEL
+            </Button>
+          </p>
+        </Form>
+      </div>
+    </>
   );
 }
 
@@ -198,4 +267,43 @@ export function loader({ params }) {
     queryKey: ["bookings", "rooms", params.id],
     queryFn: ({ signal }) => fetchBookingRoom({ signal, id: params.id }),
   });
+}
+
+export async function action({ request, params }) {
+  const id = params.id;
+  const data = await request.formData();
+
+  const bookingData = {
+    id: id,
+    date: data.get("booking-date"),
+    email: data.get("email"),
+    startSlot: data.get("start-time"),
+    endSlot: data.get("end-time"),
+  };
+
+  console.log(bookingData);
+
+  const response = await fetch(
+    `http://localhost:8080/bookings/rooms/${id}/book`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bookingData),
+    }
+  );
+
+  if (response.status === 422) {
+    return response;
+  }
+
+  if (!response.ok) {
+    throw new Response(
+      { message: "Something is wrong, booking failed." },
+      { status: 500 }
+    );
+  }
+
+  return response;
 }

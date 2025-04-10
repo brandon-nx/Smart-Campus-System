@@ -1,8 +1,8 @@
 import { formatDateTo24HourString, parseTimeToDate } from "./converter";
 
-export function generateTimeSlots(startTime, endTime, incrementMinutes = 30) {
-  const startDate = parseTimeToDate(startTime);
-  const endDate = parseTimeToDate(endTime);
+export function generateTimeSlots(openTime, closeTime, incrementMinutes = 30) {
+  const startDate = parseTimeToDate(openTime);
+  const endDate = parseTimeToDate(closeTime);
   const slots = [];
   let current = new Date(startDate);
 

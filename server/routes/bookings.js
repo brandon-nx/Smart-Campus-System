@@ -1,6 +1,11 @@
 // handle app requests here
 const express = require("express");
 const db = require("../db");
+const {
+  isValidBookingDate,
+  isBookingDateTomorrow,
+} = require("../util/validation");
+const { getDayName } = require("../util/get");
 const router = express.Router();
 
 router.get("/categories", async (req, res) => {
@@ -134,6 +139,270 @@ router.get("/rooms/:id", async (req, res) => {
   } catch (error) {
     console.error("Error fetching room:", error);
     return res.status(500).json({ message: "Failed to fetch room" });
+  }
+});
+
+router.get("/rooms/:id/start-slots", async (req, res) => {
+  const { id } = req.params;
+  const { date } = req.query;
+
+  let errors = {};
+
+  if (!isBookingDateTomorrow(date)) {
+    console.log("[!SIGNIN!] Error with date (not tomorrow):", date);
+    errors.bookingDate = {
+      field: "bookingDate",
+      message:
+        "Invalid Date. Must be at least tomorrow. Same-day bookings are not allowed.",
+    };
+  } else if (!isValidBookingDate(date)) {
+    console.log("[!SIGNIN!] Error with date (not within 1 month):", date);
+    errors.bookingDate = {
+      field: "bookingDate",
+      message: "Invalid Date. Must be at least within one month from today.",
+    };
+  }
+
+  // If any validation errors exist, send them back
+  if (Object.keys(errors).length > 0) {
+    return res.status(422).json({
+      message:
+        "[!SIGNIN!] Retrieve booking time slots (start) failed due to validation errors.",
+      status: 422,
+      errors: Object.values(errors),
+    });
+  }
+
+  const dayName = getDayName(date);
+
+  try {
+    const [hourRows] = await db.query(
+      `SELECT open_time, close_time FROM operational_hours WHERE roomID = ? AND day_of_week = ?`,
+      [id, dayName]
+    );
+
+    console.log(hourRows, "Date" + date, "id" + id);
+    // If no rows found, return 404
+    if (hourRows.length === 0) {
+      return res.status(404).json({
+        message:
+          "No time slots found! This room may not be operational at this date.",
+      });
+    }
+
+    const { open_time, close_time } = hourRows[0];
+
+    const [rows] = await db.query(
+      `
+    WITH RECURSIVE timeslots AS (
+      SELECT CAST(? AS TIME) AS slot
+      UNION ALL
+      SELECT ADDTIME(slot, '00:30:00') 
+      FROM timeslots 
+      WHERE slot < SUBTIME(?, '01:00:00')
+    )
+    SELECT 
+      ts.slot,
+      CASE 
+        WHEN EXISTS (
+          SELECT 1 
+          FROM bookings b
+          WHERE b.roomID = ?
+            AND b.booking_date = ?
+            AND b.booking_status IN ('pending', 'confirmed')
+            AND (
+              TIME_TO_SEC(b.start_time) < TIME_TO_SEC(ADDTIME(ts.slot, '01:00:00'))
+              AND TIME_TO_SEC(b.end_time) > TIME_TO_SEC(ts.slot)
+            )
+        )
+        THEN 'unavailable'
+        ELSE 'available'
+      END AS status
+    FROM timeslots ts
+    ORDER BY ts.slot;
+  `,
+      [open_time, close_time, id, date]
+    );
+
+    console.log(rows);
+
+    // 3) Send the combined result
+    const result = {
+      id,
+      date,
+      day: dayName,
+      open_time,
+      close_time,
+      startSlots: rows,
+      success: true,
+    };
+
+    console.log(result);
+
+    return res.json(result);
+  } catch (error) {
+    console.error("Error retrieving start time slots:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch time slots(start)" });
+  }
+});
+
+router.get("/rooms/:id/end-slots", async (req, res) => {
+  const { id } = req.params;
+  const { date, start } = req.query;
+
+  const dayName = getDayName(date);
+
+  try {
+    const [hourRows] = await db.query(
+      `SELECT open_time, close_time FROM operational_hours WHERE roomID = ? AND day_of_week = ?`,
+      [id, dayName]
+    );
+
+    console.log(hourRows);
+    // If no rows found, return 404
+    if (hourRows.length === 0) {
+      return res.status(404).json({
+        message:
+          "No time slots found! This room may not be operational at this date.",
+      });
+    }
+
+    const { open_time, close_time } = hourRows[0];
+
+    const [rows] = await db.query(
+      `
+      WITH RECURSIVE endTimes AS (
+        -- Starting candidate: selectedStart + 1 hour
+        SELECT ADDTIME(?, '01:00:00') AS slot
+        UNION ALL
+        -- Next candidate: add 30 minutes
+        SELECT ADDTIME(slot, '00:30:00') AS slot
+        FROM endTimes
+        WHERE slot < ? -- slot must be less than close_time
+      )
+      SELECT 
+        slot,
+        CASE 
+          WHEN EXISTS (
+            SELECT 1 
+            FROM bookings b
+            WHERE b.roomID = ?
+              AND b.booking_date = ?
+              AND b.booking_status IN ('pending', 'confirmed')
+              AND (
+                TIME_TO_SEC(b.start_time) < TIME_TO_SEC(endTimes.slot)
+                AND TIME_TO_SEC(b.end_time) > TIME_TO_SEC(?)
+              )
+          )
+          THEN 'unavailable'
+          ELSE 'available'
+        END AS status
+      FROM endTimes
+      ORDER BY slot;
+    `,
+      [start, close_time, id, date, start]
+    );
+
+    console.log(rows);
+
+    // 3) Send the combined result
+    const result = {
+      id,
+      date,
+      day: dayName,
+      open_time,
+      close_time,
+      start,
+      endSlots: rows,
+      success: true,
+    };
+
+    console.log(result);
+
+    return res.json(result);
+  } catch (error) {
+    console.error("Error retrieving end time slots:", error);
+    return res.status(500).json({ message: "Failed to fetch time slots(end)" });
+  }
+});
+
+router.post("/rooms/:id/book", async (req, res, next) => {
+  const { id, date, email, startSlot, endSlot } = req.body;
+  console.log(
+    "[REQ] Get booking request:",
+    id,
+    date,
+    email,
+    startSlot,
+    endSlot
+  );
+
+  // Validate email
+  if (!email || !date || !startSlot || !id || !endSlot) {
+    return res.status(422).json({
+      message: "Booking failed: Missing required booking fields.",
+      status: 422,
+    });
+  }
+
+  try {
+    const [rows] = await db.query(
+      `
+    INSERT INTO bookings (
+      user_email,
+      roomID,
+      booking_date,
+      start_time,
+      end_time,
+      created_at
+    )
+    SELECT ?, ?, ?, ?, ?, NOW()
+    FROM DUAL
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM bookings
+      WHERE booking_date = ?
+        AND start_time = ?
+        AND end_time = ?
+        AND roomID = ?
+    )
+  `,
+      [email, id, date, startSlot, endSlot, date, startSlot, endSlot, id]
+    );
+
+    if (rows.affectedRows === 0) {
+      return res.status(422).json({
+        message:
+          "Booking failed: The booking date, " +
+          date +
+          " from " +
+          startSlot +
+          " to " +
+          endSlot +
+          " has already been booked",
+        status: 422,
+      });
+    }
+
+    return res.json({
+      message:
+        "Successfully booked for " +
+        date +
+        " from " +
+        startSlot +
+        " to " +
+        endSlot,
+      success: true,
+    });
+  } catch (error) {
+    console.error("[!SIGNIN!] Error booking:", error);
+
+    return res.status(500).json({
+      message: "User signup failed due to a server error.",
+      status: 500,
+    });
   }
 });
 
