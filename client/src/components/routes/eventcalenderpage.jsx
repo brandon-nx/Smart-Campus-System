@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Search, Phone } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEvents } from "/lib/http";
+import { fetchEvents } from "../util/http";
 import EventModal from "./event-modal";
 import NotificationBell from "./NotificationBell";
 import Logo from "../../assets/images/logo.png";
@@ -12,14 +12,26 @@ import "./styles/main.css";
 
 export default function EventCalendarPage() {
   // Using React Query to fetch events
-  const { data: eventsData = [], isLoading } = useQuery({
-    queryKey: ["events"],
-    queryFn: () => fetchEvents(),
-  });
- 
   const [activeCategory, setActiveCategory] = useState("Seminar");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+ const {
+    data: eventsData,
+    isLoading,
+    isError: isEventsError,
+    error: eventsError,
+  } = useQuery({
+    queryKey: ["bookings", activeCategory, "rooms"],
+    queryFn: ({ signal }) =>
+      fetchEvents({
+        signal,
+        categoryId: activeCategory,
+      }),
+    enabled: !!activeCategory,
+  });
+
+  console.log(eventsData);
+
 
   return (
     <div className="flex-col min-h-screen">
@@ -62,16 +74,16 @@ export default function EventCalendarPage() {
             </div>
           </div>
         ) : (
-          eventsData?.map((event) => (
-            <div key={event.id} className="event-card">
+          eventsData?.map((event) => {return (
+            <div key={event.idevent} className="event-card">
               <div className="event-image-container">
-                <img src={event.image || "/placeholder.svg"} alt={event.title} className="event-image" /> {/* ✅ Fixed Image */}
+                <img src={event.image || "/placeholder.svg"} alt={event.idevent} className="event-image" /> {/* ✅ Fixed Image */}
               </div>
               <div className="event-content">
-                <h2 className="event-title">{event.title}</h2>
-                <p className="event-location">{event.location}</p>
-                <p className="event-date">{event.date}</p>
-                <p className="event-description">{event.description}</p>
+                <h2 className="event-title">{event.eventname}</h2>
+                <p className="event-location">null</p>
+                <p className="event-date">{event.eventstart}</p>
+                <p className="event-description">{event.eventdescription}</p>
                 <div className="event-actions">
                   <button className="phone-button">
                     <Phone className="phone-icon" />
@@ -88,7 +100,7 @@ export default function EventCalendarPage() {
                 </div>
               </div>
             </div>
-          ))
+          )})
         )}
       </div>
 
@@ -96,4 +108,10 @@ export default function EventCalendarPage() {
       <EventModal event={selectedEvent} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
+}
+export function loader() {
+  return queryClient.fetchQuery({
+    queryKey: ["bookings", "categories"],
+    queryFn: ({ signal }) => fetchBookingCategories({ signal }),
+  });
 }

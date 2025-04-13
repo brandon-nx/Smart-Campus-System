@@ -1,4 +1,6 @@
-const express = require('express');
+const express = require("express");
+const db = require("../db");
+const router = express.Router();
 
 const { getAll, get, add, replace, remove } = require('../data/event');
 const {
@@ -6,8 +8,6 @@ const {
   isValidDate,
   isValidImageUrl,
 } = require('../util/validation');
-
-const router = express.Router();
 
 router.get('/', async (req, res, next) => {
   console.log(req.token);
@@ -17,6 +17,31 @@ router.get('/', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+router.get("/event-timetable-sync", async (req, res, next) => {
+  console.log("sending request");
+  try {
+    console.log("Fetching all events for timetable sync");
+    const [events] = await db.query("SELECT * FROM event ORDER BY eventstart;");
+    return res.json(events);
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    next(error);
+  }
+});
+
+router.get("/event-sync", async (req,res) => {
+  console.log("Get sync one event")
+  const data = await db.query("SELECT * FROM event WHERE eventid = ? and eventend >= CURRENT_TIMESTAMP ORDER BY eventstart;",[req.body.id]);
+  return res.json({data})
+});
+router.get("/eventbook", async (req,res) => {
+  console.log("Get sync one event")
+  const userid = req.body.userid
+  const event = req.body.eventid
+  const data = await db.query("insert into eventreservations (username,eventid) values (?,?)",[userid,event]);
+  return res.json({data})
 });
 
 router.get('/:id', async (req, res, next) => {
@@ -111,5 +136,6 @@ router.delete('/:id', async (req, res, next) => {
     next(error);
   }
 });
+
 
 module.exports = router;

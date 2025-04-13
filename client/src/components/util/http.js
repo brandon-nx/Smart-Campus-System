@@ -62,3 +62,36 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
   
     return data;
   }
+
+  //event items below
+  export async function bookEventID({ id, signal }) {
+    const response = await fetch(`http://localhost:8080/events/rooms/${id}`, {
+      signal,
+    });
+  
+    if (!response.ok) {
+      const error = new Error("An error occurred while fetching the room");
+      error.code = response.status;
+      error.info = await response.json();
+      throw error;
+    }
+  
+    const data = await response.json();
+  
+    return data;
+  }
+
+  export async function fetchEvents({ signal }) {
+    const response = await fetch(`http://localhost:8080/events/event-timetable-sync`,  {signal});
+    console.log (response)
+    if (!response.ok) {
+      const error = new Error("An error occurred while fetching the room");
+      error.code = response.status;
+      error.info = await response.json();
+      throw error;
+    }
+  
+    const data = await response.json();
+  
+    return data;
+  }
