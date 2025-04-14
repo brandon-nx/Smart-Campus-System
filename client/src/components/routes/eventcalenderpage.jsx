@@ -74,15 +74,18 @@ export default function EventCalendarPage() {
             </div>
           </div>
         ) : (
-          eventsData?.map((event) => {return (
+          eventsData?.map((event) => {
+            const start = new Date(event.eventstart)
+            const end = new Date(event.eventend)
+            return (
             <div key={event.idevent} className="event-card">
               <div className="event-image-container">
-                <img src={event.image || "/placeholder.svg"} alt={event.idevent} className="event-image" /> {/* ✅ Fixed Image */}
+                <img src={event.eventimage || "/placeholder.svg"} alt={event.idevent} className="event-image" /> {/* ✅ Fixed Image */}
               </div>
               <div className="event-content">
                 <h2 className="event-title">{event.eventname}</h2>
-                <p className="event-location">null</p>
-                <p className="event-date">{event.eventstart}</p>
+                <p className="event-location">{event.roomName}</p>
+                <p className="event-date">{start.toISOString().slice(0, 10) + ' ' + start.toISOString().slice(11, 16)} || {end.toISOString().slice(0, 10) + ' ' + end.toISOString().slice(11, 16)}</p>
                 <p className="event-description">{event.eventdescription}</p>
                 <div className="event-actions">
                   <button className="phone-button">

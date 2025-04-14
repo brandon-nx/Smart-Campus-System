@@ -18,12 +18,20 @@ router.get('/', async (req, res, next) => {
     next(error);
   }
 });
-
+// ADD LINE TO QUERY WHEN NOT TESTING : WHERE event.eventstart >= NOW() AND event.eventend <= NOW()
 router.get("/event-timetable-sync", async (req, res, next) => {
   console.log("sending request");
   try {
     console.log("Fetching all events for timetable sync");
-    const [events] = await db.query("SELECT * FROM event ORDER BY eventstart;");
+    const [events] = await db.query(`SELECT event.idevent,
+      event.eventname,event.eventstart,
+      event.eventend,
+      event.eventdescription,event.eventcapacity,
+      event.eventimage,venue.roomName
+      FROM event
+      INNER JOIN venue On event.roomID = venue.roomID
+      
+      ORDER BY eventstart;`);
     return res.json(events);
   } catch (error) {
     console.error("Error fetching events:", error);

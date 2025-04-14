@@ -33,10 +33,14 @@ export default function EventModal({ event, isOpen, onClose }) {
   if (!mounted || !isOpen || !event) return null
 
   // Extract date and time from the event date string
-  const dateTimeParts = event.date.split("|")
-  const date = dateTimeParts[0]?.trim() || ""
-  const time = dateTimeParts[1]?.trim() || ""
-
+  const startRawDate = new Date(event.eventstart)
+  const endRawDate = new Date(event.eventstart)
+  let date = "0000-00-00 || 0000-00-00"
+  if (startRawDate.toISOString().slice(0, 10) === endRawDate.toISOString().slice(0, 10)){
+    date = startRawDate.toISOString().slice(0, 10)
+  }
+  else{ date = startRawDate.toISOString().slice(0, 10) + " || "+ endRawDate.toISOString().slice(0, 10) }
+  const time = startRawDate.toISOString().slice(11, 16) || endRawDate.toISOString().slice(11, 16)
   const handleModalClick = (e) => {
     e.stopPropagation()
   }
@@ -53,12 +57,12 @@ export default function EventModal({ event, isOpen, onClose }) {
         <div className="body">
           {/* Event Image with better resolution handling */}
           <img
-            src={event.image || "/fallback-image.jpg"}
-            alt={event.title}
+            src={event.eventimage || "/fallback-image.jpg"}
+            alt={event.eventname}
             className="eventImage"
           />
 
-          <h2 className="title">{event.title}</h2>
+          <h2 className="title">{event.eventname}</h2>
 
           <div className="info">
             <div className="infoItem">
@@ -73,13 +77,13 @@ export default function EventModal({ event, isOpen, onClose }) {
 
             <div className="infoItem">
               <MapPin className="infoIcon" />
-              <span className="infoText">{event.location}</span>
+              <span className="infoText">{event.roomName}</span>
             </div>
           </div>
 
           <div className="descriptionSection">
             <h3 className="descriptionTitle">Description</h3>
-            <p className="descriptionText">{event.description}</p>
+            <p className="descriptionText">{event.eventdescription}</p>
           </div>
 
           <div className="modalActions">
