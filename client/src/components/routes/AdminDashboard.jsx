@@ -12,6 +12,10 @@ export default function AdminDashboard() {
     navigate(-1);
   };
 
+  const handleManageBookings = () => {
+    navigate("/manage-bookings");
+  }
+  
   const handleManageRooms = () => {
     navigate("/manage-rooms");
   };
@@ -60,13 +64,12 @@ export default function AdminDashboard() {
         </div>
         <div className="date-container">
           <input
-            type="text"
+            type="date"
             className="date-input"
-            placeholder="YYYY/MM/DD"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
-          <Calendar className="calendar-icon" />
+          <Calendar className="calendar--icon" />
         </div>
       </div>
 
@@ -252,7 +255,7 @@ export default function AdminDashboard() {
         </button>
         <button className="manage-button" onClick={handleManageEvents}>
           Manage Events</button>
-        <button className="manage-button">Manage Bookings</button>
+        <button className="manage-button" onClick={handleManageBookings}>Manage Bookings</button>
       </div>
     </div>
   );

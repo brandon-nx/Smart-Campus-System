@@ -159,10 +159,10 @@ export default function AddRoom() {
 
         {/* Action Buttons */}
         <div className="action-buttons">
-          <button className="cancel-button" onClick={handleCancel}>
+          <button className="cancel-button-roomspage" onClick={handleCancel}>
             CANCEL
           </button>
-          <button className="add-button-primary" onClick={handleAddRoom}>
+          <button className="add-main-button-roomspage" onClick={handleAddRoom}>
             ADD
           </button>
         </div>

@@ -1,21 +1,21 @@
-import { ArrowLeft, ChevronRight, Plus } from 'lucide-react';
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronRight, Plus } from 'lucide-react'
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import "./styles/managerooms.css"
 
 export default function ManageEvents() {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Conference");
+  const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState("Conference")
 
   const handleBack = () => {
-    navigate(-1); // go back
-  };
-
-  const handleAddEvent = () => {
-    navigate("add-events")  // Correct usage of useNavigate
+    navigate(-1)
   }
 
-  const tabs = ["Conference", "Workshop", "Seminar", "Meeting","Competition"];
+  const handleAddEvent = () => {
+    navigate("add-events")
+  }
+
+  const tabs = ["Conference", "Workshop", "Seminar", "Meeting", "Competition"]
 
   const events = [
     { id: "E001", name: "Annual Tech Conference", location: "Main Auditorium" },
@@ -23,7 +23,7 @@ export default function ManageEvents() {
     { id: "E003", name: "Data Science Seminar", location: "Laboratory 3R024" },
     { id: "E004", name: "Faculty Meeting", location: "Conference Room 3R025" },
     { id: "E005", name: "Student Orientation", location: "Main Hall" },
-  ];
+  ]
 
   return (
     <div className="manage-rooms-container">
@@ -56,17 +56,19 @@ export default function ManageEvents() {
       {/* Event List */}
       <div className="room-list">
         {events.map((event) => (
-          <div key={event.id} className="room-item">
+          <div
+            key={event.id}
+            className="room-item"
+            onClick={() => navigate(`event-details/${event.id}`)} // Navigate on full item click
+          >
             <div className="room-info">
               <h3 className="room-name">{event.name}</h3>
               <p className="room-location">{event.location}</p>
             </div>
-            <button className="room-action">
-              <ChevronRight className="chevron--icon" />
-            </button>
+            <ChevronRight className="chevron--icon" />
           </div>
         ))}
       </div>
     </div>
-  );
+  )
 }
