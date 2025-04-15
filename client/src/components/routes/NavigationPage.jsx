@@ -13,8 +13,7 @@ import locationRooms from "../util/locations";
 import locationWaypoints from "../util/waypoints";
 import graph from "../util/graph";
 
-import { dijkstra, getConstrainedPath } from "../util/dijkstra";
-import { getDistance } from "../util/distance";
+import { generatePath } from "../util/createPath";
 
 import classes from "./styles/NavigationPage.module.css";
 
@@ -86,15 +85,6 @@ export default function NavigationPage() {
     if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
   };
 
-  // Find nearest corridor waypoint
-  const findNearestWaypoint = (point) => {
-    return Object.entries(locationWaypoints).reduce((nearest, [id, wp]) => {
-      if (wp.floor !== point.floor) return nearest; // 👈 Add this!
-      const dist = getDistance(point, wp);
-      return dist < nearest.minDist ? { id, minDist: dist } : nearest;
-    }, { id: null, minDist: Infinity }).id;
-  };  
-
   const splitPathByLift = (fullPath) => {
     const lifts = fullPath.filter(p => p.toLowerCase().includes("lift-lobby"));
     if (lifts.length < 2) return { floor2Path: fullPath, floor3Path: [] };
@@ -158,16 +148,6 @@ export default function NavigationPage() {
     }
   };  
 
-  const findNearestLift = (point, floor) => {
-    const liftOptions = Object.entries(locations).filter(([id, loc]) =>
-      id.toLowerCase().includes("lift-lobby") && loc.floor === floor
-    );
-    return liftOptions.reduce((nearest, [id, loc]) => {
-      const dist = getDistance(point, loc);
-      return dist < nearest.minDist ? { id, minDist: dist } : nearest;
-    }, { id: null, minDist: Infinity }).id;
-  };
-
   const findLiftLobbyOnCurrentFloor = () => {
     return path.find(node =>
       node.toLowerCase().includes("lift-lobby") &&
@@ -180,66 +160,22 @@ export default function NavigationPage() {
   useEffect(() => {
     if (!mapLoaded || !startLocation) return;
     if (!destination) return drawStartMarkerOnly();
-  
+
     const start = locations[startLocation];
     const end = locations[destination];
     if (!start || !end) return;
-
-    if (start.floor !== activeFloor && end.floor !== activeFloor) return;
-
-    const startWP = findNearestWaypoint(start);
-    const endWP = findNearestWaypoint(end);
-    if (!startWP || !endWP) return;
-
-    let fullPath = [];
-
-    if (start.floor !== end.floor) {
-      const lift2 = findNearestLift(start, "second");
-
-      const lift3 = Object.keys(locations).find(
-        k =>
-          k.toLowerCase().includes("lift-lobby") &&
-          locations[k].floor === "third" &&
-          k.toLowerCase().includes(lift2.toLowerCase().includes("left") ? "left" : "right")
-      );
-
-      const pathToLift = dijkstra(graph, startWP, lift2);
-      console.log("🟦 lift3:", lift3); // Should be 'lift-lobby (Level 3 Left Wing)'
-      console.log("🟦 graph[lift3]:", graph[lift3]); // Should contain 'wp-111'
-
-      const entryWP = Object.keys(graph[lift3]).find(k => k.startsWith("wp-"));
-      console.log("🚪 entryWP:", entryWP); // Should be 'wp-111'
-      console.log("🔗 entryWP neighbors:", graph[entryWP]); // Should include 'wp-112'
-
-      console.log("🎯 endWP:", endWP); // Should be something like 'wp-155'
-
-      const constraints = [
-        ["lift-lobby (Level 3 Left Wing)", "lift-lobby (Level 2 Left Wing)"],
-        ["lift-lobby (Level 3 Right Wing)", "lift-lobby (Level 2 Right Wing)"],
-        ["main-stair (Level 3 Right Wing)", "main-stair (Level 2 Right Wing)"],
-      ];
-      
-      const pathFromLift = getConstrainedPath(graph, entryWP, endWP, constraints);
-      console.log("🧭 Path from lift to end:", pathFromLift);
-      
-      fullPath = [startLocation, ...pathToLift, lift2, lift3, entryWP, ...pathFromLift, destination];
-
-
-
-      if (!pathToLift.length || !pathFromLift.length) {
-        console.warn("🚫 Path to/from lift is broken");
-        return;
-      }
-
-      fullPath = [startLocation, ...pathToLift, lift2, lift3, entryWP, ...pathFromLift, destination];
-    } else {
-      const dijkstraPath = dijkstra(graph, startWP, endWP);
-      fullPath = [startLocation, ...dijkstraPath, destination];
+  
+    const fullPath = generatePath({
+      startLoc: { ...start, id: startLocation },
+      endLoc: { ...end, id: destination },
+      graph,
+      locations,
+    });
+  
+    if (fullPath.length) {
+      setPath(fullPath);
+      drawPath(fullPath);
     }
-
-    setPath(fullPath);
-    drawPath(fullPath);
-    
   }, [startLocation, destination, mapLoaded, activeFloor]);
   
 
