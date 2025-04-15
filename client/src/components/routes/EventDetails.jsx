@@ -247,7 +247,7 @@ export default function EventDetails() {
                 Cancel
               </button>
               <button className="confirm-delete-button" onClick={confirmDelete}>
-                Confirm
+                CONFIRM
               </button>
             </div>
           </div>

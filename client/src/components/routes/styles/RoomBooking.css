@@ -186,6 +186,7 @@
 
 .book-button {
   width: 100%;
+  font-family: system-ui, -apple-system, sans-serif;
   background-color: #b91c1c;
   color: white;
   border: none;
@@ -394,6 +395,7 @@
 
 .confirm-button {
   padding: 0.25rem 3.2rem;
+  font-family: system-ui, -apple-system, sans-serif;
   border-radius: 0.375rem;
   background-color: #b91c1c;
   color: white;

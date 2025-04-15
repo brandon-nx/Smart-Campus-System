@@ -197,8 +197,8 @@ export default function AddEvent() {
             <div className="modal-title">Confirm Add</div>
             <div className="modal-message">Are you sure you want to add this event?</div>
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancelConfirmation}>Cancel</button>
-              <button className="confirm-delete-button" onClick={handleConfirmAdd}>Confirm</button>
+              <button className="cancel-button" onClick={handleCancelConfirmation}>CANCEL</button>
+              <button className="confirm-delete-button" onClick={handleConfirmAdd}>CONFIRM</button>
             </div>
           </div>
         </div>

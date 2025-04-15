@@ -180,7 +180,7 @@ export default function AddRoom() {
                 Cancel
               </button>
               <button className="add-main-button-roomspage" onClick={confirmAddRoom}>
-                Confirm
+                CONFIRM
               </button>
             </div>
           </div>

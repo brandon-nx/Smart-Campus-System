@@ -183,10 +183,10 @@ export default function RoomBooking() {
             </p>
             <div className="modal-buttons">
               <button className="cancel-button" onClick={handleCancelBooking}>
-                Cancel
+                CANCEL
               </button>
               <button className="confirm-button" onClick={handleConfirmBooking}>
-                Confirm
+                CONFIRM
               </button>
             </div>
           </div>

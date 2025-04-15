@@ -289,7 +289,7 @@ function RoomDetails() {
                 Cancel
               </button>
               <button className="confirm-button" onClick={confirmDelete}>
-                Confirm
+                CONFIRM
               </button>
             </div>
           </div>
