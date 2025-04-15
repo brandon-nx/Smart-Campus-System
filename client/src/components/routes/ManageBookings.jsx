@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { ArrowLeft, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import "./styles/Managebookings.css"; // Make sure the path is correct
+import { Link, useNavigate } from "react-router-dom"; // 👈 Add useNavigate
+import "./styles/Managebookings.css";
 
 const ManageBookings = () => {
   const [activeTab, setActiveTab] = useState("Lecture Hall");
+  const navigate = useNavigate(); // 👈 Initialize navigate
 
   const tabs = ["Lecture Hall", "Lecture Room", "Laboratory", "Workshop"];
 
@@ -19,7 +20,7 @@ const ManageBookings = () => {
   return (
     <div className="bookings-container">
       <header className="bookings-header">
-        <button onClick={() => window.history.back()} className="back-button">
+        <button onClick={() => navigate("/admin/dashboard")} className="back-button">
           <ArrowLeft className="back-icon" />
         </button>
         <h1 className="header-title">Manage Bookings</h1>

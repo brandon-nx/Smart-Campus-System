@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Plus, ChevronDown, Calendar } from "lucide-react"
-import "./styles/AddeventPage.css";
+import "./styles/AddeventPage.css"
 
 export default function AddEvent() {
   const navigate = useNavigate()
@@ -12,35 +12,16 @@ export default function AddEvent() {
   const [endTime, setEndTime] = useState("6:00PM")
   const [description, setDescription] = useState("")
   const [imageFile, setImageFile] = useState(null)
+  const [showConfirmation, setShowConfirmation] = useState(false)
 
   const fileInputRef = useRef(null)
   const dateInputRef = useRef(null)
 
-  const handleBack = () => {
-    navigate(-1)
-  }
-
-  const handleCancel = () => {
-    navigate(-1)
-  }
-
-  const handleAddEvent = () => {
-    console.log({
-      eventName,
-      eventVenue,
-      eventDate,
-      startTime,
-      endTime,
-      description,
-      hasImage: !!imageFile,
-    })
-    navigate(-1)
-  }
+  const handleBack = () => navigate(-1)
+  const handleCancel = () => navigate(-1)
 
   const handleImageClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click()
-    }
+    fileInputRef.current?.click()
   }
 
   const handleImageChange = (e) => {
@@ -54,7 +35,6 @@ export default function AddEvent() {
     if (dateInputRef.current) {
       dateInputRef.current.focus()
       dateInputRef.current.click()
-
       if (typeof dateInputRef.current.showPicker === "function") {
         try {
           dateInputRef.current.showPicker()
@@ -64,6 +44,23 @@ export default function AddEvent() {
       }
     }
   }
+
+  const handleShowConfirmation = () => setShowConfirmation(true)
+  const handleConfirmAdd = () => {
+    console.log({
+      eventName,
+      eventVenue,
+      eventDate,
+      startTime,
+      endTime,
+      description,
+      hasImage: !!imageFile,
+    })
+    setShowConfirmation(false)
+    navigate(-1)
+  }
+
+  const handleCancelConfirmation = () => setShowConfirmation(false)
 
   return (
     <div className="add-event-container">
@@ -76,7 +73,7 @@ export default function AddEvent() {
       </header>
 
       <div className="form-container">
-        {/* Image Upload Area */}
+        {/* Image Upload */}
         <div className="image-upload-area" onClick={handleImageClick}>
           {imageFile ? (
             <img src={imageFile || "/placeholder.svg"} alt="Event preview" className="image-preview" />
@@ -85,7 +82,6 @@ export default function AddEvent() {
           )}
         </div>
 
-        {/* Hidden file input */}
         <input
           type="file"
           ref={fileInputRef}
@@ -188,11 +184,25 @@ export default function AddEvent() {
           <button type="button" className="cancel-button-eventspage" onClick={handleCancel}>
             CANCEL
           </button>
-          <button type="button" className="add-button-primary-eventspage" onClick={handleAddEvent}>
+          <button type="button" className="add-button-primary-eventspage" onClick={handleShowConfirmation}>
             ADD
           </button>
         </div>
       </div>
+
+      {/* Modal */}
+      {showConfirmation && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-title">Confirm Add</div>
+            <div className="modal-message">Are you sure you want to add this event?</div>
+            <div className="modal-buttons">
+              <button className="cancel-button" onClick={handleCancelConfirmation}>Cancel</button>
+              <button className="confirm-delete-button" onClick={handleConfirmAdd}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

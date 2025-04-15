@@ -239,6 +239,7 @@
   gap: 1rem;
   margin-top: 1.5rem;
   margin-bottom: 1rem;
+  
 }
 
 .cancel-button-eventspage,
@@ -257,6 +258,8 @@
   justify-content: center;
   text-transform: uppercase;
   letter-spacing: 0.025em;
+  font-family: system-ui, -apple-system, sans-serif;
+
 }
 
 .add-button-eventspage,
@@ -277,4 +280,43 @@
 
 .cancel-button-eventspage:hover {
   background-color: #d1d5db;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.modal-message {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
 }

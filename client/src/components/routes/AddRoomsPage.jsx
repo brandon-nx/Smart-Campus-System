@@ -1,21 +1,35 @@
 import React, { useState, useRef } from "react"
 import { ArrowLeft, Plus, ChevronDown } from "lucide-react"
-import { useNavigate } from "react-router-dom" // Use react-router-dom's useNavigate instead
+import { useNavigate } from "react-router-dom"
 import "./styles/AddroomPage.css"
 
 export default function AddRoom() {
-  const navigate = useNavigate() // Use navigate from react-router-dom
+  const navigate = useNavigate()
   const fileInputRef = useRef(null)
+
   const [roomName, setRoomName] = useState("")
   const [startTime, setStartTime] = useState("9:00AM")
   const [endTime, setEndTime] = useState("6:00PM")
   const [amenities, setAmenities] = useState([])
   const [newAmenity, setNewAmenity] = useState("")
   const [image, setImage] = useState(null)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
 
-  const handleBack = () => navigate(-1) // Use navigate to go back
-  const handleCancel = () => navigate(-1) // Use navigate to go back
-  const handleAddRoom = () => navigate(-1) // Redirect to another page after adding the room
+  const handleBack = () => navigate(-1)
+  const handleCancel = () => navigate(-1)
+
+  const handleAddRoom = () => {
+    setShowConfirmModal(true)
+  }
+
+  const confirmAddRoom = () => {
+    setShowConfirmModal(false)
+    navigate(-1) // Add submission logic here
+  }
+
+  const cancelAddRoom = () => {
+    setShowConfirmModal(false)
+  }
 
   const addAmenity = () => {
     if (newAmenity.trim()) {
@@ -25,25 +39,20 @@ export default function AddRoom() {
   }
 
   const handleImageClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click()
-    }
+    fileInputRef.current?.click()
   }
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
-      reader.onload = () => {
-        setImage(reader.result)
-      }
+      reader.onload = () => setImage(reader.result)
       reader.readAsDataURL(file)
     }
   }
 
   return (
     <div className="add-room-container">
-      {/* Header */}
       <header className="add-room-header">
         <button className="back-button" onClick={handleBack}>
           <ArrowLeft className="back-icon" />
@@ -52,17 +61,15 @@ export default function AddRoom() {
       </header>
 
       <div className="form-container">
-        {/* Image Upload Area */}
         <div className="image-upload-area" onClick={handleImageClick}>
           {image ? (
-            <img src={image || "/placeholder.svg"} alt="Room preview" className="uploaded-image" />
+            <img src={image} alt="Room preview" className="uploaded-image" />
           ) : (
             <Plus className="plus-icon" />
           )}
         </div>
         <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange} />
 
-        {/* Room Type */}
         <div className="form-field">
           <div className="form-field-with-icon">
             <label className="field-label">Room Type</label>
@@ -77,7 +84,6 @@ export default function AddRoom() {
           </select>
         </div>
 
-        {/* Room Name */}
         <div className="form-field">
           <input
             type="text"
@@ -88,7 +94,6 @@ export default function AddRoom() {
           />
         </div>
 
-        {/* Operation Hours */}
         <div className="form-field">
           <div className="form-field-with-icon">
             <label className="field-label">Operation Hour:</label>
@@ -110,7 +115,6 @@ export default function AddRoom() {
           </div>
         </div>
 
-        {/* Amenities Dropdown */}
         <div className="form-field">
           <div className="form-field-with-icon">
             <label className="field-label">Amenities</label>
@@ -125,7 +129,6 @@ export default function AddRoom() {
           </select>
         </div>
 
-        {/* Add Custom Amenity */}
         <div className="form-field">
           <div className="amenities-header">
             <label className="field-label">Custom Amenities</label>
@@ -146,7 +149,6 @@ export default function AddRoom() {
           />
         </div>
 
-        {/* Display added amenities */}
         {amenities.length > 0 && (
           <div className="amenities-tags">
             {amenities.map((amenity, index) => (
@@ -157,7 +159,6 @@ export default function AddRoom() {
           </div>
         )}
 
-        {/* Action Buttons */}
         <div className="action-buttons">
           <button className="cancel-button-roomspage" onClick={handleCancel}>
             CANCEL
@@ -167,6 +168,24 @@ export default function AddRoom() {
           </button>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">Confirm Add Room</h2>
+            <p className="modal-message">Are you sure you want to add this room?</p>
+            <div className="modal-buttons">
+              <button className="cancel-button-roomspage" onClick={cancelAddRoom}>
+                Cancel
+              </button>
+              <button className="add-main-button-roomspage" onClick={confirmAddRoom}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
