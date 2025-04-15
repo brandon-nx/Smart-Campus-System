@@ -6,6 +6,7 @@ import "./styles/AdminDashboard.css";
 export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [emailMessage, setEmailMessage] = useState("");
   const navigate = useNavigate();
 
   const handleback = () => {
@@ -14,15 +15,26 @@ export default function AdminDashboard() {
 
   const handleManageBookings = () => {
     navigate("/manage-bookings");
-  }
-  
+  };
+
   const handleManageRooms = () => {
     navigate("/manage-rooms");
   };
 
   const handleManageEvents = () => {
-    navigate("/manage-events")
-  }
+    navigate("/manage-events");
+  };
+
+  const handleSendEmail = () => {
+    if (!emailMessage.trim()) {
+      alert("Please enter a message before sending.");
+      return;
+    }
+    // Simulated email send
+    console.log("Sending email:", emailMessage);
+    alert("Email sent!");
+    setEmailMessage("");
+  };
 
   return (
     <div className="dashboard-container">
@@ -56,7 +68,7 @@ export default function AdminDashboard() {
           <Search className="search-icon" />
           <input
             type="text"
-            className="search-input"
+            className="search-input textbox"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -65,7 +77,7 @@ export default function AdminDashboard() {
         <div className="date-container">
           <input
             type="date"
-            className="date-input"
+            className="date-input textbox"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
@@ -146,11 +158,15 @@ export default function AdminDashboard() {
         <div className="chart-wrapper">
           <div className="y-axis">
             <div className="y-label">Number of attendees</div>
-            <div className="y-values">
+            <div className="y-values-events">
               <span>100</span>
+              <span></span>
               <span>80</span>
+              <span></span>
               <span>60</span>
+              <span></span>
               <span>40</span>
+              <span></span>
               <span>20</span>
               <span>0</span>
             </div>
@@ -158,38 +174,38 @@ export default function AdminDashboard() {
           <div className="chart-content">
             <div className="grid-lines">
               <div className="grid-line" style={{ bottom: "0%" }}></div>
-              <div className="grid-line" style={{ bottom: "20%" }}></div>
+              <div className="grid-line" style={{ bottom: "30%" }}></div>
               <div className="grid-line" style={{ bottom: "40%" }}></div>
               <div className="grid-line" style={{ bottom: "60%" }}></div>
               <div className="grid-line" style={{ bottom: "80%" }}></div>
               <div className="grid-line" style={{ bottom: "100%" }}></div>
             </div>
             <div className="bar-container">
-              <div className="bar purple-bar" style={{ height: "65%" }}>
+              <div className="bar purple-bar" style={{ height: "51%" }}>
                 <div className="bar-label-container">
                   <span className="bar-value">65</span>
                   <span className="bar-label">Jan</span>
                 </div>
               </div>
-              <div className="bar purple-bar" style={{ height: "40%" }}>
+              <div className="bar purple-bar" style={{ height: "32%" }}>
                 <div className="bar-label-container">
                   <span className="bar-value">40</span>
                   <span className="bar-label">Feb</span>
                 </div>
               </div>
-              <div className="bar purple-bar" style={{ height: "75%" }}>
+              <div className="bar purple-bar" style={{ height: "57%" }}>
                 <div className="bar-label-container">
                   <span className="bar-value">75</span>
                   <span className="bar-label">Mar</span>
                 </div>
               </div>
-              <div className="bar purple-bar" style={{ height: "60%" }}>
+              <div className="bar purple-bar" style={{ height: "50%" }}>
                 <div className="bar-label-container">
                   <span className="bar-value">60</span>
                   <span className="bar-label">Apr</span>
                 </div>
               </div>
-              <div className="bar purple-bar" style={{ height: "90%" }}>
+              <div className="bar purple-bar" style={{ height: "70%" }}>
                 <div className="bar-label-container">
                   <span className="bar-value">90</span>
                   <span className="bar-label">May</span>
@@ -202,15 +218,14 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-
       {/* Total Bookings Section */}
       <div className="chart-container">
         <h2 className="chart-title">Total Bookings</h2>
         <div className="chart-wrapper">
-          <div className="y-axis">
-            <div className="y-label">Number of bookings</div>
-            <div className="y-values">
-              <span>120</span>
+          <div className="y-axis-bookings">
+            <div className="y-label-bookings">Number Of Bookings</div>
+            <div className="y-values-bookings">
+
               <span>100</span>
               <span>80</span>
               <span>60</span>
@@ -221,30 +236,51 @@ export default function AdminDashboard() {
           </div>
           <div className="chart-content">
             <div className="grid-lines">
-              <div className="grid-line" style={{ bottom: "0%" }}></div>
-              <div className="grid-line" style={{ bottom: "16.7%" }}></div>
-              <div className="grid-line" style={{ bottom: "33.3%" }}></div>
-              <div className="grid-line" style={{ bottom: "50%" }}></div>
-              <div className="grid-line" style={{ bottom: "66.7%" }}></div>
-              <div className="grid-line" style={{ bottom: "83.3%" }}></div>
-              <div className="grid-line" style={{ bottom: "100%" }}></div>
+              {[...Array(7)].map((_, i) => (
+                <div
+                  key={i}
+                  className="grid-line"
+                  style={{ bottom: `${(i * 100) / 6}%` }}
+                ></div>
+              ))}
             </div>
-            <div className="line-chart">
-              <div className="line-point" style={{ left: "10%", bottom: "20%" }}></div>
-              <div className="line-point" style={{ left: "30%", bottom: "50%" }}></div>
-              <div className="line-point" style={{ left: "50%", bottom: "70%" }}></div>
-              <div className="line-point" style={{ left: "70%", bottom: "60%" }}></div>
-              <div className="line-point" style={{ left: "90%", bottom: "80%" }}></div>
-
-              <div className="line-segment" style={{ left: "10%", width: "20%", bottom: "20%", transform: "rotate(45deg)", transformOrigin: "left bottom" }}></div>
-              <div className="line-segment" style={{ left: "30%", width: "20%", bottom: "50%", transform: "rotate(20deg)", transformOrigin: "left bottom" }}></div>
-              <div className="line-segment" style={{ left: "50%", width: "20%", bottom: "70%", transform: "rotate(-10deg)", transformOrigin: "left bottom" }}></div>
-              <div className="line-segment" style={{ left: "70%", width: "20%", bottom: "60%", transform: "rotate(20deg)", transformOrigin: "left bottom" }}></div>
+            <div className="bar-container">
+              {[24, 60, 84, 72, 96].map((value, i) => (
+                <div
+                  key={i}
+                  className="bar teal-bar"
+                  style={{ height: `${value}%` }}
+                >
+                  <div className="bar-label-container">
+                    <span className="bar-value">{value}</span>
+                    <span className="bar-label">Week {i + 1}</span>
+                  </div>
+                </div>
+              ))}
             </div>
             <div className="x-axis">
               <div className="x-label">Week →</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      
+      {/* Send Email Section */}
+      <div className="chart-container">
+        <h2 className="chart-title">Send Email To Students</h2>
+        <div className="text-box-container">
+          <label className="text-box-label" htmlFor="email-message">Message</label>
+          <textarea
+            id="email-message"
+            className="text-box"
+            placeholder="Write your message here..."
+            value={emailMessage}
+            onChange={(e) => setEmailMessage(e.target.value)}
+          ></textarea>
+          <button className="send-button" onClick={handleSendEmail}>
+            Send
+          </button>
         </div>
       </div>
 
@@ -254,8 +290,11 @@ export default function AdminDashboard() {
           Manage Rooms
         </button>
         <button className="manage-button" onClick={handleManageEvents}>
-          Manage Events</button>
-        <button className="manage-button" onClick={handleManageBookings}>Manage Bookings</button>
+          Manage Events
+        </button>
+        <button className="manage-button" onClick={handleManageBookings}>
+          Manage Bookings
+        </button>
       </div>
     </div>
   );

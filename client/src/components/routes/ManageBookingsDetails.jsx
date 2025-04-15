@@ -14,29 +14,15 @@ export default function RoomBooking() {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
   const [roomData, setRoomData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [showDateError, setShowDateError] = useState(false)
 
   // Time slots for booking
   const timeSlots = [
-    "9:00 AM",
-    "9:30 AM",
-    "10:00 AM",
-    "10:30 AM",
-    "11:00 AM",
-    "11:30 AM",
-    "12:00 AM",
-    "12:30 AM",
-    "1:00 AM",
-    "1:30 AM",
-    "2:00 AM",
-    "2:30 AM",
-    "3:00 AM",
-    "3:30 AM",
-    "4:00 AM",
-    "4:30 AM",
-    "5:00 AM",
-    "5:30 AM",
-    "6:00 AM",
-    "6:30 AM",
+    "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM",
+    "11:00 AM", "11:30 AM", "12:00 AM", "12:30 AM",
+    "1:00 AM", "1:30 AM", "2:00 AM", "2:30 AM",
+    "3:00 AM", "3:30 AM", "4:00 AM", "4:30 AM",
+    "5:00 AM", "5:30 AM", "6:00 AM", "6:30 AM",
   ]
 
   // Load room data
@@ -66,8 +52,13 @@ export default function RoomBooking() {
   }
 
   const handleTimeSlotSelect = (timeSlot) => {
+    if (!selectedDate) {
+      setShowDateError(true)
+      return
+    }
     if (isTimeSlotAvailable(timeSlot)) {
       setSelectedTimeSlot(timeSlot)
+      setShowDateError(false) // clear error
     }
   }
 
@@ -121,10 +112,18 @@ export default function RoomBooking() {
             type="date"
             className="date-input"
             value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
+            onChange={(e) => {
+              setSelectedDate(e.target.value)
+              setShowDateError(false)
+            }}
           />
           <Calendar className="calendar-icon" />
         </div>
+        {showDateError && (
+          <p className="date-error-message">
+            Please select a date before picking a time slot.
+          </p>
+        )}
       </div>
 
       {/* Time Slot Selection */}
