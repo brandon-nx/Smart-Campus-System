@@ -1,12 +1,29 @@
 import { ArrowLeft, ChevronRight, Plus } from "lucide-react"
-import { useState } from "react"
+import { useState , useEffect} from "react"
 import { useNavigate } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query";
+import { fetchBookingRooms } from "../util/http"
+import CategoryBar from "../UI/CategoryBar";
 import "./styles/managerooms.css"
 
 export default function ManageRooms() {
-  const navigate = useNavigate()  // Use useNavigate from react-router-dom
-  const [activeTab, setActiveTab] = useState("Lecture Hall")
 
+  const { data: categoryData } = useQuery({
+    queryKey: ["bookings", "categories"],
+    queryFn: ({ signal }) => fetchBookingCategories({ signal }),
+  });
+
+  const [activeCategory, setActiveCategory] = useState();
+  const [searchTerm, setSearchTerm] = useState();
+
+  useEffect(() => {
+    if (categoryData && !activeCategory && categoryData.length > 0) {
+      setActiveCategory(categoryData[0].id);
+    }
+  }, [activeCategory, categoryData]);
+
+  //navigation
+  const navigate = useNavigate()  // Use useNavigate from react-router-dom
   const handleBack = () => {
     navigate(-1)  // Go back one page
   }
@@ -15,16 +32,38 @@ export default function ManageRooms() {
     navigate("add-rooms")  // Correct usage of useNavigate
   }
 
-  const tabs = ["Lecture Hall", "Lecture Room", "Laboratory", "Workshop"]
+  const {
+    data: roomsData,
+    isLoading: isRoomsLoading,
+    isError: isRoomsError,
+    error: roomsError,
+  } = useQuery({
+    queryKey: ["bookings", activeCategory, "rooms", searchTerm],
+    queryFn: ({ signal }) =>
+      fetchBookingRooms({
+        signal,
+        categoryId: activeCategory,
+        searchTerm: searchTerm,
+      }),
+    enabled: !!activeCategory,
+  });
 
-  const rooms = [
-    { id: "2R022", name: "Lecture Hall 2R022", location: "Right Wing 2nd Floor" },
-    { id: "2R023", name: "Lecture Hall 2R023", location: "Right Wing 2nd Floor" },
-    { id: "3R024", name: "Lecture Hall 3R024", location: "Right Wing 3rd Floor" },
-    { id: "3R025", name: "Lecture Hall 3R025", location: "Right Wing 3rd Floor" },
-    { id: "3R025-2", name: "Lecture Hall 3R025", location: "Right Wing 3rd Floor" },
-  ]
+  console.log(roomsData);
+  let category;
+  category = <CategoryBar
+  categoryData={categoryData}
+  activeCategory={activeCategory}
+  onSelect={setActiveCategory}
+/>
+console.log(roomsData);
 
+
+  const { data: tabs } = useQuery({
+    queryKey: ["bookings", "categories"],
+    queryFn: ({ signal }) => fetchBookingCategories({ signal }),
+  });
+
+  
   return (
     <div className="manage-rooms-container">
       {/* Header */}
@@ -41,29 +80,20 @@ export default function ManageRooms() {
       </button>
 
       {/* Room Type Tabs */}
-      <div className="room-tabs">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            className={`room-tab ${activeTab === tab ? "active" : ""}`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      {category}
 
       {/* Room List */}
       <div className="room-list">
-        {rooms.map((room) => (
+        {roomsData?.map((room) => (
           <div
             key={room.id}
             className="room-item"
-            onClick={() => navigate(`room-details/${room.id}`)}  // Navigate on click anywhere on the room item
+            onClick={() => navigate(`room-details/${room.roomID}`)}
+             // Navigate on click anywhere on the room item
           >
             <div className="room-info">
-              <h3 className="room-name">{room.name}</h3>
-              <p className="room-location">{room.location}</p>
+              <h3 className="room-name">{room.roomName}</h3>
+              <p className="room-location">room.</p>
             </div>
             <ChevronRight className="chevron--icon" />  {/* Optional, keeps chevron icon for visual appeal */}
           </div>
@@ -71,4 +101,11 @@ export default function ManageRooms() {
       </div>
     </div>
   )
+}
+
+export function loader() {
+  return queryClient.fetchQuery({
+    queryKey: ["bookings", "categories"],
+    queryFn: ({ signal }) => fetchBookingCategories({ signal }),
+  });
 }

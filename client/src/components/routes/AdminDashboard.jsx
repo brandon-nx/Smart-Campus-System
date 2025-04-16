@@ -1,14 +1,123 @@
 import { ArrowLeft, Calendar, Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import {fetchRoomsBookingCount,fetchEventsCount,fetchAttendanceCount} from '../util/http';
+import { Chart, CategoryScale, LinearScale, BarController, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import "./styles/AdminDashboard.css";
+
+Chart.register(CategoryScale, LinearScale, BarController, BarElement, Title, Tooltip, Legend);
 
 export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
   const navigate = useNavigate();
+// Database Queries
+const { data: pastEventData, isLoading: eventsIsLoading, error: eventsError } = useQuery({
+    queryKey: ["events", "categories"],
+    queryFn: ({ signal }) => fetchEventsCount({ signal }),
+  });
+const { data: pastAttendanceData, isLoading: bookingsIsLoading, error: attendanceError } = useQuery({
+    queryKey: ["attendance", "categories"],
+    queryFn: ({ signal }) => fetchAttendanceCount({ signal }),
+  });
+const { data: pastRoomData, isLoading: roomsIsLoading, error: roomsError } = useQuery({
+    queryKey: ["bookings", "categories"],
+    queryFn: ({ signal }) => fetchRoomsBookingCount({ signal }),
+  });
+console.log(pastEventData)
+console.log(pastAttendanceData)
+console.log(pastRoomData)
+// Chart.js init
+  const chartEventRef = useRef(null);
+  const chartEventInstanceRef = useRef(null);
+  const chartRoomRef = useRef(null);
+  const chartRoomInstanceRef = useRef(null);
+  const chartAttendanceRef = useRef(null);
+  const chartAttendanceInstanceRef = useRef(null);
+// chart.js sync to database
+// room booking graph
+const updateChart = (chartInstance, chartRef, labels, datasets) => {
+  if (chartInstance) {
+    // Update existing chart data and refresh
+    chartInstance.data.labels = labels;
+    chartInstance.data.datasets = datasets;
+    chartInstance.update();
+  } else {
+    // Create new chart instance
+    return new Chart(chartRef.current, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+};
 
+useEffect(() => {
+  if (chartRoomRef.current && !roomsIsLoading) {
+    const labels = pastRoomData?.map((roomData) => roomData.month);
+    const datasets = pastRoomData?.map((roomData) => ({
+      label: roomData.room,
+      data: roomData.entry_count, // Assuming entry_count is an array of counts for each month
+      borderWidth: 1
+    }));
+
+    chartRoomInstanceRef.current = updateChart(chartRoomInstanceRef.current, chartRoomRef, labels, datasets);
+  }
+
+  return () => {
+    if (chartRoomInstanceRef.current) {
+      chartRoomInstanceRef.current.destroy();
+    }
+};}, [pastRoomData, roomsIsLoading]);
+
+useEffect(() => {
+  if (chartEventRef.current && !eventsIsLoading) {
+    const labels = Array.from(new Set(pastEventData?.map((event) => event.month)));
+    const datasets = [{
+      label: 'Events held in the past 12 months',
+      data: pastEventData?.map((month) => month.entry_count),
+      borderWidth: 1
+    }];
+
+    chartEventInstanceRef.current = updateChart(chartEventInstanceRef.current, chartEventRef, labels, datasets);
+  }
+
+  return () => {
+    if (chartEventInstanceRef.current) {
+      chartEventInstanceRef.current.destroy();
+    }
+  };
+}, [pastEventData, eventsIsLoading]);
+
+useEffect(() => {
+  if (chartAttendanceRef.current && !bookingsIsLoading) {
+    const labels = Array.from(new Set(pastAttendanceData?.map((attendance) => attendance.month)));
+    const datasets = pastAttendanceData?.map((attendance) => ({
+      label: attendance.name,
+      data: attendance.count, // Assuming count is a single value for each attendance
+      borderWidth: 1
+    }));
+
+    chartAttendanceInstanceRef.current = updateChart(chartAttendanceInstanceRef.current, chartAttendanceRef, labels, datasets);
+  }
+
+  return () => {
+    if (chartAttendanceInstanceRef.current) {
+      chartAttendanceInstanceRef.current.destroy();
+    }
+  };
+}, [pastAttendanceData, bookingsIsLoading]);
   const handleback = () => {
     navigate(-1);
   };
@@ -87,185 +196,19 @@ export default function AdminDashboard() {
 
       {/* Total Rooms Chart */}
       <div className="chart-container">
-        <h2 className="chart-title">Total Rooms</h2>
-        <div className="chart-wrapper">
-          <div className="y-axis">
-            <div className="y-label">Number of students</div>
-            <div className="y-values">
-              <span>70</span>
-              <span>60</span>
-              <span>50</span>
-              <span>40</span>
-              <span>30</span>
-              <span>20</span>
-              <span>10</span>
-              <span>0</span>
-            </div>
-          </div>
-          <div className="chart-content">
-            <div className="grid-lines">
-              <div className="grid-line" style={{ bottom: "0%" }}></div>
-              <div className="grid-line" style={{ bottom: "14.3%" }}></div>
-              <div className="grid-line" style={{ bottom: "28.6%" }}></div>
-              <div className="grid-line" style={{ bottom: "42.9%" }}></div>
-              <div className="grid-line" style={{ bottom: "57.1%" }}></div>
-              <div className="grid-line" style={{ bottom: "71.4%" }}></div>
-              <div className="grid-line" style={{ bottom: "85.7%" }}></div>
-              <div className="grid-line" style={{ bottom: "100%" }}></div>
-            </div>
-            <div className="bar-container">
-              <div className="bar red-bar" style={{ height: "45%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">43</span>
-                  <span className="bar-label">Red</span>
-                </div>
-              </div>
-              <div className="bar green-bar" style={{ height: "20%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">18</span>
-                  <span className="bar-label">Green</span>
-                </div>
-              </div>
-              <div className="bar blue-bar" style={{ height: "55%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">53</span>
-                  <span className="bar-label">Blue</span>
-                </div>
-              </div>
-              <div className="bar yellow-bar" style={{ height: "50%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">48</span>
-                  <span className="bar-label">Yellow</span>
-                </div>
-              </div>
-              <div className="bar orange-bar" style={{ height: "35%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">35</span>
-                  <span className="bar-label">Orange</span>
-                </div>
-              </div>
-            </div>
-            <div className="x-axis">
-              <div className="x-label">Name of colour →</div>
-            </div>
-          </div>
-        </div>
+        <canvas ref={chartEventRef}></canvas>
       </div>
 
       {/* Total Events Section */}
       <div className="chart-container">
-        <h2 className="chart-title">Total Events</h2>
-        <div className="chart-wrapper">
-          <div className="y-axis">
-            <div className="y-label">Number of attendees</div>
-            <div className="y-values-events">
-              <span>100</span>
-              <span></span>
-              <span>80</span>
-              <span></span>
-              <span>60</span>
-              <span></span>
-              <span>40</span>
-              <span></span>
-              <span>20</span>
-              <span>0</span>
-            </div>
-          </div>
-          <div className="chart-content">
-            <div className="grid-lines">
-              <div className="grid-line" style={{ bottom: "0%" }}></div>
-              <div className="grid-line" style={{ bottom: "30%" }}></div>
-              <div className="grid-line" style={{ bottom: "40%" }}></div>
-              <div className="grid-line" style={{ bottom: "60%" }}></div>
-              <div className="grid-line" style={{ bottom: "80%" }}></div>
-              <div className="grid-line" style={{ bottom: "100%" }}></div>
-            </div>
-            <div className="bar-container">
-              <div className="bar purple-bar" style={{ height: "51%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">65</span>
-                  <span className="bar-label">Jan</span>
-                </div>
-              </div>
-              <div className="bar purple-bar" style={{ height: "32%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">40</span>
-                  <span className="bar-label">Feb</span>
-                </div>
-              </div>
-              <div className="bar purple-bar" style={{ height: "57%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">75</span>
-                  <span className="bar-label">Mar</span>
-                </div>
-              </div>
-              <div className="bar purple-bar" style={{ height: "50%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">60</span>
-                  <span className="bar-label">Apr</span>
-                </div>
-              </div>
-              <div className="bar purple-bar" style={{ height: "70%" }}>
-                <div className="bar-label-container">
-                  <span className="bar-value">90</span>
-                  <span className="bar-label">May</span>
-                </div>
-              </div>
-            </div>
-            <div className="x-axis">
-              <div className="x-label">Month →</div>
-            </div>
-          </div>
-        </div>
+      <canvas ref={chartRoomRef}></canvas>
       </div>
       {/* Total Bookings Section */}
       <div className="chart-container">
-        <h2 className="chart-title">Total Bookings</h2>
-        <div className="chart-wrapper">
-          <div className="y-axis-bookings">
-            <div className="y-label-bookings">Number Of Bookings</div>
-            <div className="y-values-bookings">
-
-              <span>100</span>
-              <span>80</span>
-              <span>60</span>
-              <span>40</span>
-              <span>20</span>
-              <span>0</span>
-            </div>
-          </div>
-          <div className="chart-content">
-            <div className="grid-lines">
-              {[...Array(7)].map((_, i) => (
-                <div
-                  key={i}
-                  className="grid-line"
-                  style={{ bottom: `${(i * 100) / 6}%` }}
-                ></div>
-              ))}
-            </div>
-            <div className="bar-container">
-              {[24, 60, 84, 72, 96].map((value, i) => (
-                <div
-                  key={i}
-                  className="bar teal-bar"
-                  style={{ height: `${value}%` }}
-                >
-                  <div className="bar-label-container">
-                    <span className="bar-value">{value}</span>
-                    <span className="bar-label">Week {i + 1}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="x-axis">
-              <div className="x-label">Week →</div>
-            </div>
-          </div>
-        </div>
+      <canvas ref={chartAttendanceRef}></canvas>
       </div>
 
-      
+
       {/* Send Email Section */}
       <div className="chart-container">
         <h2 className="chart-title">Send Email To Students</h2>

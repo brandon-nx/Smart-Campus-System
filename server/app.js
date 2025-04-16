@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const eventRoutes = require("./routes/events");
 const authRoutes = require("./routes/auth");
 const bookingRoutes = require("./routes/bookings");
+const adminRoutes = require("./routes/admin");
 const db = require("./db");
 
 const app = express();
@@ -40,7 +41,7 @@ app.use(bodyParser.json());
 app.use(authRoutes);
 app.use("/events", eventRoutes);
 app.use("/bookings", bookingRoutes);
-
+app.use("/admin", adminRoutes);
 // Error-handling middleware
 app.use((error, req, res, next) => {
   const status = error.status || 500;

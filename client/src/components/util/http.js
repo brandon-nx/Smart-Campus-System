@@ -1,5 +1,4 @@
 import { QueryClient } from "@tanstack/react-query";
-
 export const queryClient = new QueryClient();
 
 export async function fetchBookingCategories({ signal }) {
@@ -62,3 +61,48 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
   
     return data;
   }
+
+  // Admin Dashboard Functions
+  //
+  export async function fetchRoomsBookingCount({ signal }) {
+    let url = "http://localhost:8080/admin/roombookingsync";
+
+    const response = await fetch(url, { signal: signal });
+  
+    if (!response.ok) {
+      const error = new Error("An error occurred while fetching the rooms");
+      error.code = response.status;
+      error.info = await response.json();
+      throw error;
+    }
+    const data = await response.json();
+    return data;
+  }
+  export async function fetchEventsCount({ signal }) {
+    let url = "http://localhost:8080/admin/eventbookingsync";
+
+    const response = await fetch(url, { signal: signal });
+  
+    if (!response.ok) {
+      const error = new Error("An error occurred while fetching the rooms");
+      error.code = response.status;
+      error.info = await response.json();
+      throw error;
+    }
+    const data = await response.json();
+    return data;
+  } 
+  export async function fetchAttendanceCount({ signal }) {
+    let url = "http://localhost:8080/admin/attendancesync";
+
+    const response = await fetch(url, { signal: signal });
+  
+    if (!response.ok) {
+      const error = new Error("An error occurred while fetching the rooms");
+      error.code = response.status;
+      error.info = await response.json();
+      throw error;
+    }
+    const data = await response.json();
+    return data;
+  } 
