@@ -20,7 +20,7 @@ import BookingDetailsPage, { loader as bookingDetailsLoader } from "./components
 import ProfilePage from "./components/routes/ProfilePage";
 import AdminProfile from "./components/routes/AdminProfile";
 import AdminDashboard,{loader as adminDashboardLoader} from "./components/routes/AdminDashboard";
-import ManageRooms from "./components/routes/ManageRoomPage";
+import ManageRooms, {loader as manageRoomsLoader} from "./components/routes/ManageRoomPage";
 import AddRoom from "./components/routes/AddRoomsPage";
 import ManageEvents from "./components/routes/ManageEventsPage";
 import AddEvent from "./components/routes/AddEventsPage";
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
           { path: "profile", element: <ProfilePage /> },
           { path: "admin", element: <AdminProfile /> },
           { path: "admin/dashboard", element: <AdminDashboard />,loader: adminDashboardLoader, },
-          { path: "manage-rooms", element: <ManageRooms /> },
+          { path: "manage-rooms", element: <ManageRooms/>, loader: manageRoomsLoader },
           { path: "manage-events", element: <ManageEvents /> },
           { path: "manage-rooms/add-rooms", element: <AddRoom /> },
           { path: "manage-events/add-events", element: <AddEvent /> },

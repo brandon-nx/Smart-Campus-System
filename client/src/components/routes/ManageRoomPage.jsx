@@ -2,26 +2,13 @@ import { ArrowLeft, ChevronRight, Plus } from "lucide-react"
 import { useState , useEffect} from "react"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query";
-import { fetchBookingRooms } from "../util/http"
+import { fetchBookingRooms ,fetchBookingCategories,queryClient} from "../util/http"
 import CategoryBar from "../UI/CategoryBar";
 import "./styles/managerooms.css"
 
 export default function ManageRooms() {
-
-  const { data: categoryData } = useQuery({
-    queryKey: ["bookings", "categories"],
-    queryFn: ({ signal }) => fetchBookingCategories({ signal }),
-  });
-
   const [activeCategory, setActiveCategory] = useState();
   const [searchTerm, setSearchTerm] = useState();
-
-  useEffect(() => {
-    if (categoryData && !activeCategory && categoryData.length > 0) {
-      setActiveCategory(categoryData[0].id);
-    }
-  }, [activeCategory, categoryData]);
-
   //navigation
   const navigate = useNavigate()  // Use useNavigate from react-router-dom
   const handleBack = () => {
@@ -32,12 +19,20 @@ export default function ManageRooms() {
     navigate("add-rooms")  // Correct usage of useNavigate
   }
 
+  const { data: categoryData } = useQuery({
+    queryKey: ["bookings", "categories"],
+    queryFn: ({ signal }) => fetchBookingCategories({ signal }),
+  });
+
+
+
+  useEffect(() => {
+    if (categoryData && !activeCategory && categoryData.length > 0) {
+      setActiveCategory(categoryData[0].id);
+    }
+  }, [activeCategory, categoryData]);
   const {
-    data: roomsData,
-    isLoading: isRoomsLoading,
-    isError: isRoomsError,
-    error: roomsError,
-  } = useQuery({
+    data: roomsData,} = useQuery({
     queryKey: ["bookings", activeCategory, "rooms", searchTerm],
     queryFn: ({ signal }) =>
       fetchBookingRooms({
@@ -48,7 +43,7 @@ export default function ManageRooms() {
     enabled: !!activeCategory,
   });
 
-  console.log(roomsData);
+
   let category;
   category = <CategoryBar
   categoryData={categoryData}
@@ -58,11 +53,10 @@ export default function ManageRooms() {
 console.log(roomsData);
 
 
-  const { data: tabs } = useQuery({
-    queryKey: ["bookings", "categories"],
-    queryFn: ({ signal }) => fetchBookingCategories({ signal }),
-  });
-
+    const { data: pastEventData = [] } = useQuery({
+        queryKey: ["events", "categories"],
+        queryFn: ({ signal }) => fetchEventsCount({ signal }),
+    });
   
   return (
     <div className="manage-rooms-container">
@@ -93,7 +87,7 @@ console.log(roomsData);
           >
             <div className="room-info">
               <h3 className="room-name">{room.roomName}</h3>
-              <p className="room-location">room.</p>
+              <p className="room-location">{room.roomDescription}</p>
             </div>
             <ChevronRight className="chevron--icon" />  {/* Optional, keeps chevron icon for visual appeal */}
           </div>

@@ -63,7 +63,7 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
   }
 
   // Admin Dashboard Functions
-  //
+  //display functions
   export async function fetchRoomsBookingCount({ signal }) {
     let url = "http://localhost:8080/admin/roombookingsync";
 
@@ -106,6 +106,8 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
     const data = await response.json();
     return data;
   }
+  
+// Data modification functions
   export async function postNewEvent(data,{ signal: signal }){
     res = await fetch("http://localhost:8080/token", {
       method: "POST",
