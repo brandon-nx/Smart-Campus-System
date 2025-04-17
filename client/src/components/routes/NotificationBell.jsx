@@ -1,38 +1,38 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Bell, X } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
+import { Bell, X } from 'lucide-react'
 import "./styles/NotificationBell.css"
 
-export default function NotificationBell({ count = 3 }) {
+export default function NotificationDropdown({ count = 3 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  const dropdownRef = useRef(null)
 
-  // Sample notification data
   const notificationGroups = [
     {
       id: 1,
       date: "Today",
       items: [
         { id: 1, message: "Notification 1", description: "Description" },
-        { id: 2, message: "Notification 1", description: "Description" },
-        { id: 3, message: "Notification 1", description: "Description" },
+        { id: 2, message: "Notification 2", description: "Description" },
+        { id: 3, message: "Notification 3", description: "Description" },
       ],
     },
     {
       id: 2,
       date: "Yesterday",
       items: [
-        { id: 4, message: "Notification 1", description: "Description" },
-        { id: 5, message: "Notification 1", description: "Description" },
+        { id: 4, message: "Notification 4", description: "Description" },
+        { id: 5, message: "Notification 5", description: "Description" },
       ],
     },
     {
       id: 3,
       date: "11/3/2025",
       items: [
-        { id: 6, message: "Notification 1", description: "Description" },
-        { id: 7, message: "Notification 1", description: "Description" },
+        { id: 6, message: "Notification 6", description: "Description" },
+        { id: 7, message: "Notification 7", description: "Description" },
       ],
     },
   ]
@@ -47,7 +47,6 @@ export default function NotificationBell({ count = 3 }) {
     setIsOpen(false)
   }
 
-  // Close on escape key
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape") closeNotification()
@@ -57,7 +56,22 @@ export default function NotificationBell({ count = 3 }) {
     return () => window.removeEventListener("keydown", handleEscape)
   }, [])
 
-  // Prevent body scrolling when notification panel is open
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        closeNotification()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isOpen])
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden"
@@ -71,41 +85,44 @@ export default function NotificationBell({ count = 3 }) {
   }, [isOpen])
 
   return (
-    <div className="notification-bell-container">
+    <div className="notification-bell-container" ref={dropdownRef}>
       <button className={`notification-bell ${isAnimating ? "active" : ""}`} onClick={toggleNotification}>
         <Bell size={20} />
         {count > 0 && <span className="notification-badge">{count}</span>}
       </button>
 
       {isOpen && (
-        <>
-          <div className={`notification-overlay ${isOpen ? "open" : ""}`} onClick={closeNotification}></div>
-          <div className={`notification-panel ${isOpen ? "open" : ""}`}>
-            <div className="notification-header">
-              <h2 className="notification-title">Notification</h2>
-              <button className="notification-close" onClick={closeNotification}>
-                <X size={18} />
-              </button>
-            </div>
-
-            <div>
-              {notificationGroups.map((group) => (
-                <div key={group.id}>
-                  <div className="notification-date">{group.date}</div>
-                  {group.items.map((item) => (
-                    <div key={item.id} className="notification-item">
-                      <div className="notification-icon"></div>
-                      <div className="notification-content">
-                        <div className="notification-message">{item.message}</div>
-                        <div className="notification-description">{item.description}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+        <div className="map-top-dropdown active">
+          <div className="notification-dropdown-header">
+            <h3>Notifications</h3>
+            <button className="close-btn" onClick={closeNotification}>
+              <X size={18} />
+            </button>
           </div>
-        </>
+
+          <div className="notification-groups">
+            {notificationGroups.map((group) => (
+              <div key={group.id} className="notification-group">
+                <div className="date-header">{group.date}</div>
+                {group.items.map((item) => (
+                  <div key={item.id} className="notification-item">
+                    <div className="notification-dot"></div>
+                    <div className="notification-content">
+                      <h4>{item.message}</h4>
+                      <p>{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="notification-footer">
+            <button className="mark-all-read-btn">
+              Mark all as read
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )

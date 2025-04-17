@@ -7,7 +7,7 @@ import { fetchEvents ,fetchEventCategories,queryClient} from "../util/http";
 import EventModal from "./event-modal";
 import NotificationBell from "./NotificationBell";
 import Logo from "../../assets/images/logo.png";
-import "./styles/main.css";
+import "./styles/Event.css";
 
 
 export default function EventCalendarPage() {

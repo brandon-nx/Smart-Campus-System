@@ -1,170 +1,220 @@
 /* Notification Bell Styles */
 .notification-bell-container {
-    position: relative;
-  }
-  
-  .notification-bell {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    color: #666666;
-    position: relative;
-  }
-  
-  .notification-bell:hover {
-    color: #333333;
-  }
-  
-  .notification-bell.active {
-    animation: bell-ring 0.5s ease;
-  }
-  
-  .notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 16px;
-    height: 16px;
-    background-color: #e01a22;
-    color: white;
-    border-radius: 50%;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Notification Panel Styles */
-  .notification-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+  position: relative;
+}
+
+.notification-bell {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #666666;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.notification-bell:hover {
+  color: #333333;
+  transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+.notification-bell.active {
+  animation: bell-ring 0.5s ease;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 16px;
+  height: 16px;
+  background-color: #e01a22;
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", sans-serif;
+}
+
+/* Animation for dropdown */
+@keyframes fadeIn {
+  from {
     opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease;
+    transform: translateY(-10px);
   }
-  
-  .notification-overlay.open {
+  to {
     opacity: 1;
-    visibility: visible;
+    transform: translateY(0);
   }
-  
-  .notification-panel {
-    position: fixed;
-    top: 0;
-    right: -320px; /* Start off-screen */
-    width: 100%;
-    max-width: 320px;
-    height: 100vh;
-    background-color: #ffffff;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1001;
-    transition: right 0.3s ease;
-    overflow-y: auto;
-  }
-  
-  .notification-panel.open {
-    right: 0; /* Slide in */
-  }
-  
-  .notification-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #dddddd;
-  }
-  
-  .notification-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333333;
-  }
-  
-  .notification-close {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    color: #666666;
-  }
-  
-  .notification-date {
-    padding: 12px 16px;
-    font-size: 14px;
-    color: #666666;
-    background-color: #f2f2f2;
-  }
-  
-  .notification-item {
-    display: flex;
-    padding: 12px 16px;
-    border-bottom: 1px solid #f2f2f2;
-  }
-  
-  .notification-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #e01a22;
-    margin-right: 12px;
-    flex-shrink: 0;
-  }
-  
-  .notification-content {
-    flex: 1;
-  }
-  
-  .notification-message {
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #333333;
-  }
-  
-  .notification-description {
-    font-size: 14px;
-    color: #666666;
-  }
-  
-  /* Bell Ring Animation */
-  @keyframes bell-ring {
-    0% {
-      transform: rotate(0);
-    }
-    10% {
-      transform: rotate(10deg);
-    }
-    20% {
-      transform: rotate(-10deg);
-    }
-    30% {
-      transform: rotate(6deg);
-    }
-    40% {
-      transform: rotate(-6deg);
-    }
-    50% {
-      transform: rotate(3deg);
-    }
-    60% {
-      transform: rotate(-3deg);
-    }
-    70% {
-      transform: rotate(1deg);
-    }
-    80% {
-      transform: rotate(-1deg);
-    }
-    90% {
-      transform: rotate(0);
-    }
-    100% {
-      transform: rotate(0);
-    }
-  }
-  
+}
+
+/* Notification dropdown styling */
+.map-top-dropdown {
+  animation: fadeIn 0.2s ease-out;
+  background-color: #f7f7f7; /* Light gray background for dropdown */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 3000;
+  max-height: 500px;
+  width: 280px; /* Reduced width for a smaller dropdown */
+  overflow-y: auto;
+  overflow-x: hidden; /* Disable horizontal scrolling */
+  font-family: "Inter", sans-serif;
+  padding: 8px 0;
+  border: 1px solid #ddd; /* Border around dropdown */
+  position: absolute;
+  left: -16rem; /* Move the entire dropdown to the right side of the screen/container */
+  top: 40px; /* Position the dropdown below the bell */
+}
+
+
+/* Active notification dropdown */
+.map-top-dropdown.active {
+  display: block;
+}
+
+/* Header section of notification dropdown */
+.notification-dropdown-header {
+  background-color: #ffffff; /* White background for header */
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -1rem;
+  padding: 20px 12px; /* Increased padding for larger background */
+  margin-left: 0; /* Remove any left margin */
+  margin-right: -10px; /* Optional: Move the header slightly to the right */
+}
+
+
+
+
+.notification-dropdown-header h3 {
+  color: #333333;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  margin-bottom: -1rem; /* Adjust this value to move the text down */
+
+}
+
+.close-btn {
+  margin-bottom: -1.3rem;
+  color: #666666;
+  font-size: 18px; /* Increase size if needed */
+  cursor: pointer;
+  transition: color 0.3s ease;
+  background: none; /* Remove background */
+  border: none; /* Remove border */
+  padding: 0; /* Remove padding */
+  margin-right: 9px;
+}
+
+.close-btn:hover {
+  color: #ad000b; /* Red color on hover */
+}
+
+/* Notification group styling */
+.notification-groups {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.notification-group {
+  border-bottom: 1px solid #eee;
+}
+
+.notification-group:last-child {
+  border-bottom: none;
+}
+
+/* Date header for notification group (Today, Yesterday, Last Week) */
+.date-header {
+  background-color: #ffffff; /* White background for date section */
+  color: #666666;
+  font-size: 12px;
+  padding: 10px 16px;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  margin: 0;
+  text-transform: capitalize; /* Capitalize "today", "yesterday", "last week" */
+  cursor: default; /* Disable hover effect and pointer cursor */
+}
+
+/* Notification item (message) */
+.notification-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  background-color: #f7f7f7; /* Light gray background for the message */
+  border-bottom: 1px solid #f2f2f2;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.notification-item:hover {
+  background-color: #e0e0e0; /* Darker gray background on hover */
+}
+
+.notification-dot {
+  background-color: #ad000b;
+  width: 6px;
+  height: 6px;
+  margin-top:-22px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+  align-self: center; /* Keep dot vertically centered */
+}
+
+/* Message and description */
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.notification-content h4 {
+  font-weight: bold; /* Make the message bold */
+  color: #333333;
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  font-size: 14px;
+  width: 100%;
+}
+
+.notification-content p {
+  font-size: 12px;
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  margin: 4px 0 0;
+  width: 100%;
+}
+
+/* Mark all as read button */
+.notification-footer {
+  background-color: #ffffff; /* White footer */
+  text-align: center;
+  padding: 12px;
+}
+
+.notification-footer button {
+  color: #ad000b;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+  padding: 6px 12px;
+  border-radius: 20px; /* Rounded corners for the button */
+  transition: background-color 0.3s ease;
+}
+
+.notification-footer button:hover {
+  color: #9b0007;
+  background-color: #f2f2f2;
+}

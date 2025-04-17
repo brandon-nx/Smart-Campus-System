@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Calendar, Clock, MapPin } from "lucide-react"
-import "./styles/main.css";
+import "./styles/Event.css";
 import {bookEventID,queryClient} from "../util/http";
 export default function EventModal({ event, isOpen, onClose }) {
   const [mounted, setMounted] = useState(false)
