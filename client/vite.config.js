@@ -4,7 +4,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true, // allows access via local IP and ngrok
-    allowedHosts: ['2b66-103-211-105-202.ngrok-free.app'] // your ngrok URL here
+    host: true, 
+    port: 5173,
+    strictPort: true,
+    allowedHosts: ['632f-113-211-214-146.ngrok-free.app'],
   }
 });

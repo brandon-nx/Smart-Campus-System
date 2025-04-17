@@ -1,112 +1,203 @@
+/* General container styling */
 .map-container {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 90vh;
-    box-sizing: border-box;
-  }
-  
-  /* Top section */
-  .map-top {
-    padding: 10px 20px;
-    background-color: #f2f2f2;
-    border-bottom: 1px solid #ddd;
-    position: relative;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  /* Container for each search box */
-  .map-top-search-container {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Search box styling */
-  .map-top-search-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  
-  /* Icon styling for search box */
-  .search-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-  }
-  
-  /* Switch icon styling */
-  .switch-icon {
-    width: 30px;
-    height: 30px;
-  }
-  
-  /* Dropdown styling */
-  .map-top-dropdown {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    max-height: 200px; /* Adjust as needed */
-    overflow-y: auto;
-    margin-top: 5px;
-  }
-  
-  .map-top-full-dropdown {
-    max-height: 100vh; /* Spans full device height if needed */
-  }
-  
-  .map-top-dropdown-item {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-  }
-  
-  .map-top-dropdown-item:hover {
-    background-color: #f8f8f8;
-  }
-  
-  /* Middle section: Map placeholder */
-  .map {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #eaeaea;
-  }
-  
-  .map-placeholder {
-    width: 90%;
-    height: 90%;
-    background-color: #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 428px) {
-    .search-box {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  box-sizing: border-box;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Top Bar: Searc Input*/
+.map-top {
+  padding: 10px 20px;
+  background-color: #f2f2f2;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.map-top-search-container {
+  width: 100%;
+}
+
+.map-top-search-box {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  justify-content: flex-start;
+}
+
+.map-top-search-box span {
+  flex-grow: 1;
+  text-align: left;
+  margin-left: 10px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding-right: 30px; /* space for the clear icon */
+}
+
+.clear-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.clear-icon:hover {
+  opacity: 0.9;
+}
+
+/* Icon styling */
+.blue-dot, .red-pin, .switch-icon, .back-icon{
+  width: 20px;
+  height: 20px;
+}
+
+.switch-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  cursor: pointer;
+}
+
+
+/* Dropdown styling */
+.map-top-dropdown {
+  position: fixed;
+  top: 110px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 50px);
+  background-color: rgba(255, 255, 255, 0.98);
+  border-top: 1px solid #ccc;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.map-top-dropdown input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.map-top-dropdown-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.map-top-dropdown-item:hover {
+  background-color: #f8f8f8;
+}
+
+/* Map viewer area */
+.map {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #f1f1f1;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-inner {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-zoom-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  touch-action: none;
+}
+
+/* Map image with overlays */
+.campus-map {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  flex: 1;
+  user-select: none;
+  touch-action: none;
+}
+
+.map-overlay-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; 
+  z-index: 5;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+.floor-indicator {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 428px) {
+  .search-box {
       padding: 8px;
       font-size: 0.9rem;
-    }
-    .search-icon {
+  }
+  .search-icon {
       width: 18px;
       height: 18px;
-    }
-    .switch-icon {
+  }
+  .switch-icon {
       width: 25px;
       height: 25px;
-    }
-    .map-top-dropdown-item {
+  }
+  .map-top-dropdown-item {
       padding: 8px;
-    }
-  } 
+  }
+}
