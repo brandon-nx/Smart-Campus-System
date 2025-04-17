@@ -1,6 +1,10 @@
 /* Global CSS Styling */
 * {
   box-sizing: border-box;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
 }
@@ -97,29 +101,105 @@
 
 .form-actions {
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
   gap: 1rem;
 }
 
+.form-actions-horizontal {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+/*Base Button CSS */
 .button {
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  margin: 0.2rem 0;
+  flex: 1;
+  padding: 0.75rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
   border-radius: 8px;
   border: none;
-  background-color: #ad000b;
-  color: white;
   cursor: pointer;
-  flex: 1;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-family: system-ui, -apple-system, sans-serif;
   transition: background-color 0.2s ease-in-out;
 }
 
-.button:hover:enabled {
-  background-color: #b80a15;
+button:disabled {
+  background-color: #ccc; /* Gray background */
+  color: #666; /* Dark gray text */
+  cursor: not-allowed; /* Not-allowed cursor */
+  opacity: 0.6; /* Slightly faded */
 }
 
-.button:focus {
-  outline: 2px solid #b80a15;
+/* Custom Button Styles */
+.login-btn,
+.next-btn, .signup-btn, .book-btn {
+  color: white;
+  background-color: #b91c1c;
+}
+
+.login-btn:hover:enabled,
+.next-btn:hover:enabled, .signup-btn:hover:enabled, .book-btn:hover:enabled {
+  background-color: #991b1b;
+}
+
+.login-btn:focus,
+.next-btn:focus, .signup-btn:focus, .book-btn:focus {
+  outline: 2px solid #991b1b;
+  outline-offset: 2px;
+}
+
+.next-btn,
+.cancel-btn, .success-btn, .reject-btn, .book-btn {
+  border-radius: 20px;
+}
+
+.success-btn {
+  background-color: #33ca98;
+  color: #fff;
+}
+
+.success-btn:hover:enabled {
+  background-color: #47CFA2;
+}
+
+.success-btn:focus {
+  outline: 2px solid #47CFA2;
+  outline-offset: 2px;
+}
+
+.reject-btn {
+  background-color: #F44336;
+  color: #fff;
+}
+
+.reject-btn:hover:enabled {
+  background-color: #F5554A;
+}
+
+.reject-btn:focus {
+  outline: 2px solid #F5554A;
+  outline-offset: 2px;
+}
+
+.cancel-btn {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.cancel-btn:hover:enabled {
+  background-color: #d1d5db;
+}
+
+.cancel-btn:focus {
+  outline: 2px solid #d1d5db;
   outline-offset: 2px;
 }
 
@@ -132,13 +212,6 @@
 .button-flat:focus {
   background-color: transparent;
   color: #869999;
-}
-
-button:disabled {
-  background-color: #ccc; /* Gray background */
-  color: #666; /* Dark gray text */
-  cursor: not-allowed; /* Not-allowed cursor */
-  opacity: 0.6; /* Slightly faded */
 }
 
 .header-bar {
@@ -266,6 +339,7 @@ button:disabled {
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  width:30%;
   outline: none;
 }
 
@@ -279,17 +353,65 @@ button:disabled {
   border-color: #ff4d4f;
 }
 
+/* Icon CSS */
+.icon-success,
+.icon-reject {
+  width: 120px;
+  height: 120px;
+  display: block;
+  margin: 0 auto 24px;
+}
+
+/* Modal CSS */
 .modal {
-  background-color: #eaeaea;
+  background-color: white;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
   border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  padding: 5rem 2.5rem;
-  max-width: 40rem;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
   animation: fade-slide-up 0.3s ease-out forwards;
+}
+
+.modal-title,
+.modal-title-reject,
+.modal-title-success,
+.modal-title-red {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.modal-title-red {
+  color: #b40000;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+.modal-title-success {
+  color: #33ca98;
+}
+
+.modal-title-reject {
+  color: #F44336;
+}
+
+.modal-message {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .modal::backdrop {
@@ -309,12 +431,8 @@ button:disabled {
 }
 
 .loading-indicator-container {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -340,13 +458,13 @@ button:disabled {
   box-sizing: border-box;
   display: block;
   position: absolute;
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   margin: 8px;
-  border: 8px solid #e30d5b;
+  border: 6px solid #b91c1c;
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #e30d5b transparent transparent transparent;
+  border-color: #b91c1c transparent transparent transparent;
 }
 
 .lds-ring div:nth-child(1) {
@@ -367,6 +485,66 @@ button:disabled {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* Full-screen invisible layer to catch outside taps */
+.search-backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1200;                 /* above your header (1000) */
+}
+
+.search-backdrop.show {
+  pointer-events: auto;          /* enable clicks only when open */
+}
+
+/* Sliding bar container */
+.search-bar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  padding: 0 0.75rem;
+  transform: translateY(-100%);
+  transition: transform 0.25s ease;
+}
+
+.search-bar-container.show {
+  transform: translateY(0);
+}
+
+.search-bar-container input {
+  flex: 1;
+  height: 36px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: #f5f5f5;
+  border-radius: 6px;
+  padding: 0 0.75rem;
+}
+
+.search-close {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* Larger hit‑target on touch devices */
+@media (pointer: coarse) {
+  .search-close {
+    padding: 8px;
   }
 }
 

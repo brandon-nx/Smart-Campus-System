@@ -12,6 +12,7 @@ import EmptyState from "../UI/EmptyState";
 import LoadingIndicator from "../UI/LoadingIndicator";
 import { FaArrowRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import SearchBar from "../UI/SearchBar";
 
 export default function BookingPage() {
   const { data: categoryData } = useQuery({
@@ -20,7 +21,12 @@ export default function BookingPage() {
   });
 
   const [activeCategory, setActiveCategory] = useState();
+  const [openSearch, setOpenSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState();
+
+  function handleOnSearch() {
+    setOpenSearch((prevVal) => !prevVal);
+  }
 
   useEffect(() => {
     if (categoryData && !activeCategory && categoryData.length > 0) {
@@ -83,7 +89,10 @@ export default function BookingPage() {
                       {room.roomDescription}
                     </p>
                   </div>
-                  <Link to={room.roomID} className={classes["booking-arrow-button"]}>
+                  <Link
+                    to={room.roomID}
+                    className={classes["booking-arrow-button"]}
+                  >
                     <FaArrowRight size={20} color="#f9f9f9" />
                   </Link>
                 </div>
@@ -97,7 +106,13 @@ export default function BookingPage() {
 
   return (
     <>
-      <HeaderBar title="Booking System" onSearch={() => {}} />
+      <HeaderBar title="Booking System" onSearchClick={handleOnSearch} />
+      <SearchBar
+        open={openSearch}
+        value={searchTerm}
+        onChange={setSearchTerm}
+        onClose={() => setOpenSearch(false)}
+      />
       {content}
     </>
   );

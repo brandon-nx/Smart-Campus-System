@@ -15,9 +15,7 @@ export default function HeaderBar({ title, onSearchClick }) {
         </Icon>
         <Icon
           label="Search"
-          onClick={() => {
-            onSearchClick;
-          }}
+          onClick={onSearchClick}
         >
           <AiOutlineSearch size={24} />
         </Icon>

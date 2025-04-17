@@ -38,10 +38,9 @@ const router = createBrowserRouter([
             element: <AccountRecoveryContextLayout />,
             children: [
               { path: "login", element: <Login />, action: loginAction },
+              { path: "signup", element: <SignupPage />, action: signupAction }
             ],
-          },
-
-          { path: "signup", element: <SignupPage />, action: signupAction },
+          }
         ],
       },
       {

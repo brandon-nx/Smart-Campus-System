@@ -31,6 +31,8 @@ import TimeSlotPicker from "../UI/TimeSlotPicker";
 import LoadingIndicator from "../UI/LoadingIndicator";
 import { useSelector } from "react-redux";
 import Modal from "../UI/Modal";
+import SuccessIcon from "../../assets/icons/confirm-icon.svg";
+import RejectIcon from "../../assets/icons/red-x-icon.svg";
 
 const amenityIcons = {
   Seating: FaChair,
@@ -141,14 +143,40 @@ export default function BookingDetailsPage() {
   }, [selectedStartSlot]);
 
   function handleCloseWindow() {
-    return true;
+    if (actionData.success) {
+      navigate("..", { relative: "path" });
+    } else {
+      navigate(".", { replace: true });
+    }
   }
 
   return (
     <>
       {actionData && (
         <Modal open={actionData} onClose={handleCloseWindow}>
-          <h1>{actionData.message}</h1>
+          <div className="form">
+            <img
+              src={actionData.success ? SuccessIcon : RejectIcon}
+              className={actionData.success ? "icon-success" : "icon-reject"}
+              alt={actionData.success ? "Success Icon" : "Reject Icon"}
+            />
+            <h1
+              className={
+                actionData.success
+                  ? "modal-title-success"
+                  : "modal-title-reject"
+              }
+            >
+              {actionData.success ? "Success!" : "Sorry :("}
+            </h1>
+            <p className="modal-message">{actionData.message}</p>
+            <Button
+              className={actionData.success ? "success-btn" : "reject-btn"}
+              onClick={handleCloseWindow}
+            >
+              OK
+            </Button>
+          </div>
         </Modal>
       )}
       <div className={classes["booking-details-page"]}>
@@ -208,6 +236,7 @@ export default function BookingDetailsPage() {
             <input type="hidden" id="email" name="email" value={accountEmail} />
             <Input
               label="Booking Date"
+              disabled={isLoading}
               id="booking-date"
               type="date"
               name="booking-date"
@@ -245,11 +274,12 @@ export default function BookingDetailsPage() {
             </>
           )}
 
-          <p className="form-actions">
-            <Button disabled={isSubmitting}>
+          <p className="form-actions-horizontal">
+            <Button className="book-btn" disabled={isSubmitting}>
               {isSubmitting ? "Booking..." : "BOOK"}
             </Button>
             <Button
+              className="cancel-btn"
               onClick={(event) => handleBack(event)}
               disabled={isSubmitting}
             >

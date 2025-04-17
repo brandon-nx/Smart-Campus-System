@@ -140,6 +140,7 @@ router.post("/signup", async (req, res, next) => {
 
     return res.json({
       email: userData.email,
+      type: userData.type,
       token: accessToken,
       message: "User successfully created.",
       success: true,
@@ -189,7 +190,7 @@ router.post("/login", async (req, res) => {
   try {
     // Query the database with the corrected SQL statement
     const [results] = await db.query(
-      "SELECT email, password FROM users WHERE email = ?",
+      "SELECT email, password, type FROM users WHERE email = ?",
       [email]
     );
 
@@ -227,7 +228,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    return res.json({ email: user.email, token: accessToken, success: true });
+    return res.json({ email: user.email, token: accessToken, type: user.type, success: true });
   } catch (err) {
     console.error("[!SQL!] Error executing query:", err);
     return res.status(500).json({
