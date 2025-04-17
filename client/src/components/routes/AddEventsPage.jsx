@@ -47,16 +47,16 @@ export default function AddEvent() {
 
   const handleShowConfirmation = () => setShowConfirmation(true)
   const handleConfirmAdd = () => {
-    console.log({
-      eventName,
-      eventVenue,
-      eventDate,
-      startTime,
-      endTime,
-      description,
-      hasImage: !!imageFile,
-    })
+    let details = {
+      eventName: eventName,
+      eventVenue: eventVenue,
+      eventDate: eventDate,
+      startTime: startTime,
+      endTime: endTime,
+      description: description
+    };
     setShowConfirmation(false)
+    JSON.stringify(details);
     navigate(-1)
   }
 

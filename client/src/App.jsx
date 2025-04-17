@@ -19,7 +19,7 @@ import BookingPage, { loader as bookingLoader } from "./components/routes/Bookin
 import BookingDetailsPage, { loader as bookingDetailsLoader } from "./components/routes/BookingDetailsPage";
 import ProfilePage from "./components/routes/ProfilePage";
 import AdminProfile from "./components/routes/AdminProfile";
-import AdminDashboard from "./components/routes/AdminDashboard";
+import AdminDashboard,{loader as adminDashboardLoader} from "./components/routes/AdminDashboard";
 import ManageRooms from "./components/routes/ManageRoomPage";
 import AddRoom from "./components/routes/AddRoomsPage";
 import ManageEvents from "./components/routes/ManageEventsPage";
@@ -61,7 +61,7 @@ const router = createBrowserRouter([
           },
           { path: "profile", element: <ProfilePage /> },
           { path: "admin", element: <AdminProfile /> },
-          { path: "admin/dashboard", element: <AdminDashboard /> },
+          { path: "admin/dashboard", element: <AdminDashboard />,loader: adminDashboardLoader, },
           { path: "manage-rooms", element: <ManageRooms /> },
           { path: "manage-events", element: <ManageEvents /> },
           { path: "manage-rooms/add-rooms", element: <AddRoom /> },

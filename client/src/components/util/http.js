@@ -105,4 +105,12 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
     }
     const data = await response.json();
     return data;
-  } 
+  }
+  export async function postNewEvent(data,{ signal: signal }){
+    res = await fetch("http://localhost:8080/token", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: data
+    });
+  }
