@@ -31,6 +31,7 @@ export default function ManageRooms() {
       setActiveCategory(categoryData[0].id);
     }
   }, [activeCategory, categoryData]);
+
   const {
     data: roomsData,} = useQuery({
     queryKey: ["bookings", activeCategory, "rooms", searchTerm],
@@ -52,11 +53,6 @@ export default function ManageRooms() {
 />
 console.log(roomsData);
 
-
-    const { data: pastEventData = [] } = useQuery({
-        queryKey: ["events", "categories"],
-        queryFn: ({ signal }) => fetchEventsCount({ signal }),
-    });
   
   return (
     <div className="manage-rooms-container">

@@ -22,7 +22,7 @@ import AdminProfile from "./components/routes/AdminProfile";
 import AdminDashboard,{loader as adminDashboardLoader} from "./components/routes/AdminDashboard";
 import ManageRooms, {loader as manageRoomsLoader} from "./components/routes/ManageRoomPage";
 import AddRoom from "./components/routes/AddRoomsPage";
-import ManageEvents from "./components/routes/ManageEventsPage";
+import ManageEvents,{loader as manageEventsLoader} from "./components/routes/ManageEventsPage";
 import AddEvent from "./components/routes/AddEventsPage";
 import RoomDetails from "./components/routes/RoomDetails";
 import EventDetails from "./components/routes/EventDetails";
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
           { path: "admin", element: <AdminProfile /> },
           { path: "admin/dashboard", element: <AdminDashboard />,loader: adminDashboardLoader, },
           { path: "manage-rooms", element: <ManageRooms/>, loader: manageRoomsLoader },
-          { path: "manage-events", element: <ManageEvents /> },
+          { path: "manage-events", element: <ManageEvents />, loader: manageEventsLoader },
           { path: "manage-rooms/add-rooms", element: <AddRoom /> },
           { path: "manage-events/add-events", element: <AddEvent /> },
           { path: "manage-rooms/room-details/:id", element: <RoomDetails /> },

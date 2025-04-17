@@ -65,8 +65,41 @@ ORDER BY
     return res.status(500).json({ message: "Failed to fetch rooms" });
     }
   })
-router.post("", async (req, res) => {
-  req.body
-  try {}
-catch (error) {}})
+
+  router.post("/postAnnouncement", async (req, res) => {
+    console.log(req.body.message)
+    try {
+      const result = await db.query(`INSERT INTO announcements (message) VALUES (?)`, [req.body.message]);
+      if (result) {
+        return res.status(201).json({ message: "Announcement posted successfully." });
+      }
+    } catch (err) {
+      console.error("[!SQL!] Error inserting data: " + err);
+      return res.status(500).json({ error: "An error occurred while posting the announcement." });
+    }
+  });
+  router.post("/addNewEvent", async (req, res) => {
+    console.log(req.body.message)
+    try {
+      const result = await db.query(`INSERT INTO announcements (message) VALUES (?)`, [req.body.message]);
+      if (result) {
+        return res.status(201).json({ message: "Announcement posted successfully." });
+      }
+    } catch (err) {
+      console.error("[!SQL!] Error inserting data: " + err);
+      return res.status(500).json({ error: "An error occurred while posting the announcement." });
+    }
+  });
+  router.post("/addNewRoom", async (req, res) => {
+    console.log(req.body.message)
+    try {
+      const result = await db.query(`INSERT INTO announcements (message) VALUES (?)`, [req.body.message]);
+      if (result) {
+        return res.status(201).json({ message: "Announcement posted successfully." });
+      }
+    } catch (err) {
+      console.error("[!SQL!] Error inserting data: " + err);
+      return res.status(500).json({ error: "An error occurred while posting the announcement." });
+    }
+  });
 module.exports = router;

@@ -1,6 +1,8 @@
 import { ArrowLeft, ChevronRight, Plus } from 'lucide-react'
-import { useState } from "react"
+import { useState , useEffect} from "react"
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom"
+import { fetchEvents ,fetchEventCategories,queryClient} from "../util/http"
 import "./styles/managerooms.css"
 
 export default function ManageEvents() {
@@ -15,15 +17,27 @@ export default function ManageEvents() {
     navigate("add-events")
   }
 
-  const tabs = ["Conference", "Workshop", "Seminar", "Meeting", "Competition"]
+  const { data: categoryData } = useQuery({
+    queryKey: ["events", "categories"],
+    queryFn: ({ signal }) => fetchEventCategories({ signal }),
+  });
+  console.log(categoryData)
 
-  const events = [
-    { id: "E001", name: "Annual Tech Conference", location: "Main Auditorium" },
-    { id: "E002", name: "Leadership Workshop", location: "Room 2R023" },
-    { id: "E003", name: "Data Science Seminar", location: "Laboratory 3R024" },
-    { id: "E004", name: "Faculty Meeting", location: "Conference Room 3R025" },
-    { id: "E005", name: "Student Orientation", location: "Main Hall" },
-  ]
+  const { data: eventData } = useQuery({
+    queryKey: ["events", "data", activeTab],
+    queryFn: ({ signal }) => fetchEvents({ signal, categoryId: activeTab}),
+  });
+
+  console.log(eventData)
+  const [activeCategory, setActiveCategory] = useState();
+
+  useEffect(() => {
+    if (categoryData && !activeCategory && categoryData.length > 0) {
+      setActiveCategory(categoryData[0].eventtype);
+      console.log(activeTab)
+    }
+    
+  }, [activeCategory, categoryData]);
 
   return (
     <div className="manage-rooms-container">
@@ -42,28 +56,28 @@ export default function ManageEvents() {
 
       {/* Event Type Tabs */}
       <div className="room-tabs">
-        {tabs.map((tab) => (
+        {categoryData.map((tab) => (
           <button
-            key={tab}
-            className={`room-tab ${activeTab === tab ? "active" : ""}`}
-            onClick={() => setActiveTab(tab)}
+            key={tab.eventtype}
+            className={`room-tab ${activeTab === tab.eventtype ? "active" : ""}`} // Updated comparison
+            onClick={() => setActiveTab(tab.eventtype)} // Updated to set active tab correctly
           >
-            {tab}
+            {tab.eventtype}
           </button>
         ))}
       </div>
 
       {/* Event List */}
       <div className="room-list">
-        {events.map((event) => (
+        {eventData?.map((event) => (
           <div
             key={event.id}
             className="room-item"
-            onClick={() => navigate(`event-details/${event.id}`)} // Navigate on full item click
+            onClick={() => navigate(`event-details/${event.idevent}`)} // Navigate on full item click
           >
             <div className="room-info">
-              <h3 className="room-name">{event.name}</h3>
-              <p className="room-location">{event.location}</p>
+              <h3 className="room-name">{event.eventname}</h3>
+              <p className="room-location">{event.roomid}</p>
             </div>
             <ChevronRight className="chevron--icon" />
           </div>
@@ -71,4 +85,10 @@ export default function ManageEvents() {
       </div>
     </div>
   )
+}
+export function loader(){
+  return queryClient.fetchQuery({
+    queryKey: ["events", "categories"],
+    queryFn: ({ signal }) => fetchEventCategories({ signal }),
+  });
 }

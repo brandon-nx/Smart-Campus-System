@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "../util/http";
 import { compressQuery } from "../util/converter";
 import { eventsConfig, attendanceConfig, roomConfig } from "./adminChartConfig";
-import { fetchRoomsBookingCount, fetchEventsCount, fetchAttendanceCount } from '../util/http';
+import { fetchRoomsBookingCount, fetchEventsCount, fetchAttendanceCount,postAnnouncement } from '../util/http';
 import { Chart, CategoryScale, LinearScale, BarController, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import "./styles/AdminDashboard.css";
 
@@ -127,8 +127,14 @@ export default function AdminDashboard() {
             alert("Please enter a message before sending.");
             return;
         }
+        let data = {message:emailMessage}
+        queryClient.fetchQuery({
+            queryKey: ["events", "categories"],
+            queryFn: ({ signal }) => postAnnouncement({signal,data}),
+        });
         // Simulated email send
         console.log("Sending email:", emailMessage);
+        
         alert("Email sent!");
         setEmailMessage("");
     };
