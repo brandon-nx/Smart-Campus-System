@@ -67,7 +67,7 @@ export default function AdminDashboard() {
                     },
                     {
                       label: 'Event Capacity',
-                      data: attendanceData.map(att => att.eventcapacity), // Assuming attendanceData has a value property
+                      data: pastAttendanceData.map(att => att.eventcapacity), // Assuming attendanceData has a value property
                       backgroundColor: 'rgba(153, 102, 255, 0.6)',
                       borderColor: 'rgba(153, 102, 255, 1)',
                       borderWidth: 1
