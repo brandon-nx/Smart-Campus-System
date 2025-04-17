@@ -1,3 +1,80 @@
+function ordinal(n) {
+  const mod10 = n % 10,
+    mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return n + "st";
+  if (mod10 === 2 && mod100 !== 12) return n + "nd";
+  if (mod10 === 3 && mod100 !== 13) return n + "rd";
+  return n + "th";
+}
+
+export function convertEventTimeToDateOnly(
+  isoString,
+  locale = "en-GB",
+  tz = "Asia/Kuala_Lumpur"
+) {
+  const d = new Date(isoString);
+  return d.toLocaleDateString(locale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: tz,
+  });
+}
+
+export function convertEventTimeToTimeOnly(
+  startIso,
+  endIso,
+  locale = "en-GB",
+  tz = "Asia/Kuala_Lumpur"
+) {
+  const opts = {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: tz,
+  };
+
+  const tidy = (t) => t.replace(/\s/g, ""); // remove space before AM/PM
+
+  const start = tidy(new Date(startIso).toLocaleTimeString(locale, opts));
+  const end = tidy(new Date(endIso).toLocaleTimeString(locale, opts));
+
+  return `${start} - ${end}`;
+}
+
+export function convertEventTime(
+  startIso,
+  endIso,
+  locale = "en-GB",
+  tz = "Asia/Kuala_Lumpur"
+) {
+  const start = new Date(startIso);
+  const end = new Date(endIso);
+
+  // Date part: "5th May 2025"
+  const datePart =
+    `${ordinal(start.getDate())} ` +
+    start.toLocaleDateString(locale, {
+      month: "long",
+      year: "numeric",
+      timeZone: tz,
+    });
+
+  // Time part: "6:00 PM - 7:00 PM"
+  const opts = {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: tz,
+  };
+  const timePart = `${start.toLocaleTimeString(
+    locale,
+    opts
+  )} - ${end.toLocaleTimeString(locale, opts)}`;
+
+  return `${datePart} | ${timePart}`;
+}
+
 export function convert24To12(timeStr) {
   const [hours, minutes] = timeStr.split(":");
 

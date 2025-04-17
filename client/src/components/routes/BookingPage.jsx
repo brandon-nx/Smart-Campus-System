@@ -112,6 +112,7 @@ export default function BookingPage() {
         value={searchTerm}
         onChange={setSearchTerm}
         onClose={() => setOpenSearch(false)}
+        placeholderMsg="Search Events..."
       />
       {content}
     </>
