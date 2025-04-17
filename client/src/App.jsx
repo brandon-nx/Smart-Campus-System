@@ -2,9 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login, { action as loginAction } from "./components/routes/LoginPage";
 import RootLayout from "./components/routes/RootLayout";
 import NavigationPage from "./components/routes/NavigationPage";
-import SignupPage, {
-  action as signupAction,
-} from "./components/routes/SignupPage";
+import SignupPage, { action as signupAction } from "./components/routes/SignupPage";
 import AccountRecoveryContextLayout from "./components/routes/AccountRecoveryContextLayout";
 import { action as forgotPasswordAction } from "./components/routes/ForgotPasswordPage";
 import PublicRoute from "./components/routes/PublicRoute";
@@ -13,21 +11,19 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { verifyToken } from "./components/store/auth-actions";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
-import BookingPage, {
-  loader as bookingLoader,
-} from "./components/routes/BookingPage";
+import BookingPage, { loader as bookingLoader } from "./components/routes/BookingPage";
 import { queryClient } from "./components/util/http";
 import { QueryClientProvider } from "@tanstack/react-query";
 import BookingDetailsPage, {
   loader as bookingDetailsLoader,
   action as bookingDetailsAction
 } from "./components/routes/BookingDetailsPage";
+import EventCalendarPage, { loader as eventCalendarloader } from "./components/routes/eventcalenderpage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
-    // errorElement: <ErrorPage />,
     id: "root",
     children: [
       { index: true, element: <NavigationPage /> },
@@ -60,6 +56,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+      { path: "events", element: <EventCalendarPage />,loader: eventCalendarloader }, // Added Events Route
     ],
   },
   { path: "forgotpassword", action: forgotPasswordAction },

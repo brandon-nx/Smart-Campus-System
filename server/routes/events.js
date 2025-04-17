@@ -1,4 +1,7 @@
-const express = require('express');
+const express = require("express");
+const db = require("../db");
+const router = express.Router();
+
 
 const { getAll, get, add, replace, remove } = require('../data/event');
 const {
@@ -7,28 +10,61 @@ const {
   isValidImageUrl,
 } = require('../util/validation');
 
-const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-  console.log(req.token);
+
+
+
+router.get('/categories', async (req, res, next) => {
   try {
-    const events = await getAll();
-    res.json({ events: events });
+    const [event] = await db.query("SELECT eventtype FROM event GROUP BY eventtype");
+    return res.json( event );
   } catch (error) {
     next(error);
   }
 });
+router.get("/all", async (req, res) => {
+  const { id } = req.query;
 
-router.get('/:id', async (req, res, next) => {
   try {
-    const event = await get(req.params.id);
-    res.json({ event: event });
+    let sql = `
+      SELECT *
+      FROM event
+      WHERE eventtype = ?
+    `;
+    const params = [id];
+
+    // Execute the query with parameters.
+    const [rows] = await db.query(sql, params);
+    return res.json(rows);
   } catch (error) {
-    next(error);
+    console.error("Error fetching rooms:", err);
+    return res.status(500).json({ message: "Failed to fetch rooms" });
   }
 });
-
+router.get("/eventcategories", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT id, type_name FROM room_type");
+    return res.json(rows);
+  } catch (err) {
+    console.error("Error fetching booking categories:", err);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch booking categories!" });
+  }
+});
 // router.use(checkAuth);
+router.post("/rsvp", async (req, res) => {
+  console.log(req.body)
+  try {
+    const result = await db.query(`INSERT INTO eventreservations (email,eventid) VALUES (?,?)`, [req.body.email,req.body.eventid]);
+    if (result) {
+      return res.status(201).json({ message: "Successfully booked "+req.body.email+" to event id "+req.body.eventid });
+    }
+  } catch (err) {
+    console.error("[!SQL!] Error inserting data: " + err);
+    return res.status(500).json({ error: "An error occurred while posting the announcement." });
+  }
+});
 
 router.post('/', async (req, res, next) => {
   console.log(req.token);
@@ -111,5 +147,7 @@ router.delete('/:id', async (req, res, next) => {
     next(error);
   }
 });
+
+router.post('/rsvp')
 
 module.exports = router;
