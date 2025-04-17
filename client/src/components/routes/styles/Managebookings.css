@@ -16,6 +16,7 @@
   margin-bottom: 1rem;
 }
 
+
 .back-button {
   background: none;
   border: none;
@@ -122,4 +123,39 @@
   height: 1.25rem;
   color: black;
 }
-  
+/* Action Buttons */
+.accept-button {
+  background-color: #16a34a; /* Tailwind green-500 */
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-left: -5rem;
+  margin-right: 7px;
+  transition: background-color 0.2s ease;
+}
+
+
+.accept-button:hover {
+  background-color: #16a34a; /* Tailwind green-600 */
+}
+
+
+.reject-button {
+  background-color: #dc2626; /* Tailwind red-500 */
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-right: 2rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reject-button:hover {
+  background-color: #dc2626; /* Tailwind red-600 */
+}

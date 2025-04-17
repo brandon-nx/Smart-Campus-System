@@ -28,6 +28,8 @@ import RoomDetails from "./components/routes/RoomDetails";
 import EventDetails from "./components/routes/EventDetails";
 import ManageBookings from "./components/routes/ManageBookings";
 import ManageBookingsDetails from"./components/routes/ManageBookingsDetails";
+import AdminBookings from "./components/routes/AdminBookings";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -68,7 +70,7 @@ const router = createBrowserRouter([
           { path: "manage-events/add-events", element: <AddEvent /> },
           { path: "manage-rooms/room-details/:id", element: <RoomDetails /> },
           { path: "manage-events/event-details/:id", element: <EventDetails /> },
-          { path: "manage-bookings", element: <ManageBookings /> },
+          { path: "manage-bookings", element: <AdminBookings /> },
           { path: "manage-bookings/:id", element: <ManageBookingsDetails /> },
 
         ],
