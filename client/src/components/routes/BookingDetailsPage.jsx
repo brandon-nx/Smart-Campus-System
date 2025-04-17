@@ -226,7 +226,7 @@ export default function BookingDetailsPage() {
               return (
                 <div key={amenity.id} className={classes["amenity-item"]}>
                   <Icon className={classes["amenity-icon"]} />
-                  <span className={classes["amenity-text"]}>52" LED</span>
+                  <span className={classes["amenity-text"]}>{amenity.name}</span>
                 </div>
               );
             })}
