@@ -64,11 +64,15 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
   }
 
   //event items below
-  export async function bookEventID({ id, signal }) {
-    const response = await fetch(`http://localhost:8080/events/rooms/${id}`, {
-      signal,
-    });
-  
+export async function bookEventID({ eventData, signal }) {
+    const response = await fetch(`http://localhost:8080/events/rsvp`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eventData), // Ensure data is stringified
+      signal: signal
+  }
+);
     if (!response.ok) {
       const error = new Error("An error occurred while fetching the room");
       error.code = response.status;
@@ -81,9 +85,9 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
     return data;
   }
 
-  export async function fetchEvents({ signal }) {
-    const response = await fetch(`http://localhost:8080/events/event-timetable-sync`,  {signal});
-    console.log (response)
+  export async function fetchEventCategories({ id, signal }) {
+    const response = await fetch(`http://localhost:8080/events/categories`, {signal:signal});
+  
     if (!response.ok) {
       const error = new Error("An error occurred while fetching the room");
       error.code = response.status;
@@ -95,3 +99,24 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
   
     return data;
   }
+  
+  export async function fetchEvents({ signal, categoryId }) {
+    let url = "http://localhost:8080/events/all";
+    console.log(categoryId)
+    if (categoryId) {
+        url += "?id=" + categoryId; // Append categoryId if it exists
+    }
+    console.log(url)
+    const response = await fetch(url, { signal: signal }); // Fetch the data
+
+    if (!response.ok) { // Check if the response is okay
+        const error = new Error("An error occurred while fetching the events");
+        error.code = response.status;
+        error.info = await response.json();
+        throw error;
+    }
+
+    const data = await response.json(); // Parse the response data
+    return data; // Return the data
+  }
+

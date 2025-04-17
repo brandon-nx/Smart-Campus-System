@@ -15,7 +15,7 @@ import BookingPage, { loader as bookingLoader } from "./components/routes/Bookin
 import { queryClient } from "./components/util/http";
 import { QueryClientProvider } from "@tanstack/react-query";
 import BookingDetailsPage, { loader as bookingDetailsLoader } from "./components/routes/BookingDetailsPage";
-import EventCalendarPage from "./components/routes/eventcalenderpage"; 
+import EventCalendarPage, { loader as eventCalendarloader } from "./components/routes/eventcalenderpage"; 
 
 const router = createBrowserRouter([
   {
@@ -45,7 +45,7 @@ const router = createBrowserRouter([
           },
         ],
       },
-      { path: "events", element: <EventCalendarPage /> }, // Added Events Route
+      { path: "events", element: <EventCalendarPage />,loader: eventCalendarloader }, // Added Events Route
     ],
   },
   { path: "forgotpassword", action: forgotPasswordAction },

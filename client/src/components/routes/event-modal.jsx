@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Calendar, Clock, MapPin } from "lucide-react"
 import "./styles/main.css";
-
+import {bookEventID,queryClient} from "../util/http";
 export default function EventModal({ event, isOpen, onClose }) {
   const [mounted, setMounted] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-
+  const email = useSelector((state) => state.auth.email)
   useEffect(() => {
     setMounted(true)
 
@@ -38,8 +39,13 @@ export default function EventModal({ event, isOpen, onClose }) {
 
   const handleRSVP = () => setShowConfirm(true)
   const confirmRSVP = () => {
+    let data = {email:email,eventid:event.idevent}
+    queryClient.fetchQuery({
+        queryKey: ["events", "rsvp"],
+        queryFn: ({ signal }) => bookEventID({ eventData:data,signal }),
+      });
     setShowConfirm(false)
-    console.log("RSVP confirmed!")
+    
     onClose() // This closes the entire modal after confirmation
   }
 

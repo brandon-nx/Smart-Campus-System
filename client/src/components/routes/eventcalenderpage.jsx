@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Search, Phone } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEvents } from "../util/http";
+import { fetchEvents ,fetchEventCategories,queryClient} from "../util/http";
 import EventModal from "./event-modal";
 import NotificationBell from "./NotificationBell";
 import Logo from "../../assets/images/logo.png";
@@ -12,22 +12,20 @@ import "./styles/main.css";
 
 export default function EventCalendarPage() {
   // Using React Query to fetch events
-  const [activeCategory, setActiveCategory] = useState("Seminar");
+  const [activeCategory, setActiveCategory] = useState("Conference");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
- const {
-    data: eventsData,
-    isLoading,
-    isError: isEventsError,
-    error: eventsError,
-  } = useQuery({
-    queryKey: ["bookings", activeCategory, "rooms"],
-    queryFn: ({ signal }) =>
-      fetchEvents({
-        signal,
-        categoryId: activeCategory,
-      }),
-    enabled: !!activeCategory,
+
+  const { data: categoryData } = useQuery({
+    queryKey: ["events", "categories"],
+    queryFn: ({ signal }) => fetchEventCategories({ signal }),
+  });
+  console.log(categoryData)
+
+
+  const { data: eventsData, isLoading } = useQuery({
+    queryKey: ["events", "data", activeCategory],
+    queryFn: ({ signal }) => fetchEvents({ signal, categoryId: activeCategory}),
   });
 
   console.log(eventsData);
@@ -51,13 +49,13 @@ export default function EventCalendarPage() {
 
       {/* Category Filter */}
       <div className="category-slider">
-        {["Seminar", "Workshop", "Gathering", "Competition"].map((category) => (
+        {categoryData?.map((category) => (
           <button
-            key={category}
-            className={`category-button ${activeCategory === category ? "active" : ""}`}
-            onClick={() => setActiveCategory(category)}
+            key={category.eventtype}
+            className={`category-button ${activeCategory === category.eventtype ? "active" : ""}`}
+            onClick={() => setActiveCategory(category.eventtype)}
           >
-            {category}
+    {category.eventtype}
           </button>
         ))}
       </div>
@@ -112,9 +110,9 @@ export default function EventCalendarPage() {
     </div>
   );
 }
-export function loader() {
+export function loader(){
   return queryClient.fetchQuery({
-    queryKey: ["bookings", "categories"],
-    queryFn: ({ signal }) => fetchBookingCategories({ signal }),
+    queryKey: ["events", "categories"],
+    queryFn: ({ signal }) => fetchEventCategories({ signal }),
   });
 }
