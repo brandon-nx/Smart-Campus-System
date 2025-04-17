@@ -12,7 +12,6 @@ const sampleEvents = {
     startTime: "9:00AM",
     endTime: "6:00PM",
     capacity: 100,
-    amenities: ["Projector", "WiFi"],
   },
   E002: {
     name: "Leadership Workshop",
@@ -21,7 +20,6 @@ const sampleEvents = {
     startTime: "10:00AM",
     endTime: "4:00PM",
     capacity: 50,
-    amenities: ["Whiteboard", "Handouts"],
   },
 };
 
@@ -59,8 +57,7 @@ export default function EventDetails() {
   const handleBack = () => navigate(-1);
   const handleDelete = () => setShowDeleteConfirm(true);
   const confirmDelete = () => {
-    alert("Event deleted!");
-    navigate("/manage-events");
+    
   };
 
   const cancelDelete = () => setShowDeleteConfirm(false);
@@ -198,28 +195,6 @@ export default function EventDetails() {
               }
             />
             <span className="capacity-label">Attendees</span>
-          </div>
-
-          {/* Amenities */}
-          <div className="form-field">
-            <div className="form-field-with-icon">
-              <input
-                type="text"
-                className="field-input"
-                value={eventData.amenities[0]}
-                onChange={(e) => {
-                  const updated = [...eventData.amenities];
-                  updated[0] = e.target.value;
-                  setEventData({ ...eventData, amenities: updated });
-                }}
-              />
-              <div className="amenities-actions">
-                <ChevronDown />
-                <button className="add-button">
-                  <Plus className="plus-icon-small" />
-                </button>
-              </div>
-            </div>
           </div>
 
           {/* Buttons */}
