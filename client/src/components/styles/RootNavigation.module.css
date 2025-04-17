@@ -1,40 +1,79 @@
+/* Container for the bottom navigation bar */
 .nav-container {
+  margin-top: auto;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 10px 0;
+
+  padding: 8px 0;
+  margin: 0;
+
   background-color: #fff;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #ccc;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+  z-index: 1000; /* ensures nav is above other elements */
 }
 
+/* Each navigation item (NavLink) */
 .nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;
+  justify-content: center;
+
+  text-decoration: none;
+  color: #333;
+
+  padding: 6px;
+  margin: 0 4px;
+  transition: color 0.2s ease;
 }
 
+/* Icon inside each nav item */
 .nav-icon {
-  width: 40px;
-  height: 40px;
+  font-size: 24px;
   margin-bottom: 4px;
 }
 
+/* Hover/Focus effect */
+.nav-item:hover,
+.nav-item:focus {
+  color: #e01a22;
+}
+
+/* Active NavLink styling (depending on React Router version, 
+   might need to pass an isActive prop or activeClassName) */
+.active {
+  color: #e01a22;
+}
+
+/* SOS button: large, circular, bright color to stand out */
 .sos-btn {
+  background-color: #e01a22;
   border: none;
-  padding: 0;
   border-radius: 50%;
-  width: 50px; /* Adjust as needed */
-  height: 50px; /* Adjust as needed */
+  width: 56px;
+  height: 56px;
+
+  margin-bottom: 24px; /* lift the button above the nav bar */
   display: flex;
   align-items: center;
   justify-content: center;
+
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.sos-btn img.sos-icon {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+/* SOS button hover/focus */
+.sos-btn:hover,
+.sos-btn:focus {
+  background-color: #c8191e;
+}
+
+/* SOS icon inside the button */
+.sos-icon {
+  font-size: 28px;
+  color: #fff;
 }

@@ -3,9 +3,11 @@ import RootNavigation from "../RootNavigation";
 
 export default function RootLayout() {
   return (
-    <>
-      <Outlet />
+    <div className="root-container">
+      <div className="root-content">
+        <Outlet />
+      </div>
       <RootNavigation />
-    </>
+    </div>
   );
 }

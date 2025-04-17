@@ -130,7 +130,7 @@ export default function SignupForm() {
       />
 
       <p className="form-actions">
-        <Button disabled={isSubmitting}>
+        <Button className="signup-btn" disabled={isSubmitting}>
           {isSubmitting ? "Signing Up..." : "Sign Up"}
         </Button>
       </p>

@@ -50,13 +50,45 @@ export function isRealisticDate(value) {
 }
 
 export function isAtLeast18(value) {
-  if(!value) return false;
-  const birthDate = new Date(value)
+  if (!value) return false;
+  const birthDate = new Date(value);
   const today = new Date();
-  const ageDifference = today - birthDate
-  const ageDate = new Date(ageDifference)
-  const age = Math.abs(ageDate.getUTCFullYear() - 1970)
-  return age >= 18
+  const ageDifference = today - birthDate;
+  const ageDate = new Date(ageDifference);
+  const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+  return age >= 18;
 }
 
-// "INSERT INTO users (name, email,gender,dateOfBirth,password) VALUES (?, ?, ?, ?, ?)" <- what is this?
+export function isBookingDateTomorrow(bookingDate) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const bookingDateObj = new Date(bookingDate);
+  bookingDateObj.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if(bookingDateObj < tomorrow) {
+    return false;
+  }
+
+  return true;
+}
+
+export function isValidBookingDate(bookingDate) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const bookingDateObj = new Date(bookingDate);
+  bookingDateObj.setHours(0, 0, 0, 0);
+
+  const oneMonthAhead = new Date(today);
+  oneMonthAhead.setMonth(oneMonthAhead.getMonth() + 1);
+
+  if(bookingDateObj > oneMonthAhead) {
+    return false;
+  }
+
+  return true;
+}

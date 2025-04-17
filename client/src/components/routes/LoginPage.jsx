@@ -1,6 +1,6 @@
 import React, { use, useEffect } from "react";
 import { Link, useActionData, useNavigate } from "react-router-dom";
-import classes from "./styles/Login.module.css";
+import classes from "./styles/LoginPage.module.css";
 import logo from "../../assets/images/logo.png";
 import LoginForm from "../LoginForm";
 import AccountRecoveryContext from "../store/AccountRecoveryContext";

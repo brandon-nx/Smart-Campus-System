@@ -60,7 +60,7 @@ export default function LoginForm() {
       />
 
       <p className="form-actions">
-        <Button disabled={isSubmitting}>
+        <Button className="login-btn" disabled={isSubmitting}>
           {isSubmitting ? "Logging in..." : "Login"}
         </Button>
       </p>

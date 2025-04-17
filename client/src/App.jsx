@@ -12,6 +12,16 @@ import LogoutPage from "./components/routes/LogoutPage";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { verifyToken } from "./components/store/auth-actions";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
+import BookingPage, {
+  loader as bookingLoader,
+} from "./components/routes/BookingPage";
+import { queryClient } from "./components/util/http";
+import { QueryClientProvider } from "@tanstack/react-query";
+import BookingDetailsPage, {
+  loader as bookingDetailsLoader,
+  action as bookingDetailsAction
+} from "./components/routes/BookingDetailsPage";
 
 const router = createBrowserRouter([
   {
@@ -28,10 +38,26 @@ const router = createBrowserRouter([
             element: <AccountRecoveryContextLayout />,
             children: [
               { path: "login", element: <Login />, action: loginAction },
+              { path: "signup", element: <SignupPage />, action: signupAction }
+            ],
+          }
+        ],
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { path: "bookings", element: <BookingPage />, loader: bookingLoader },
+          {
+            path: "bookings/:id",
+            element: <BookingDetailsPage />,
+            loader: bookingDetailsLoader,
+            action: bookingDetailsAction,
+            children: [
+              {
+                path: "bookings/:id/edit",
+              },
             ],
           },
-
-          { path: "signup", element: <SignupPage />, action: signupAction },
         ],
       },
     ],
@@ -46,7 +72,11 @@ function App() {
     dispatch(verifyToken());
   }, [dispatch]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
 }
 
 export default App;

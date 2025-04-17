@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Input from "./UI/Input";
 import Button from "./UI/Button";
 import { accountRecoveryActions } from "./store/account-recovery-slice";
+import SuccessIcon from "../assets/icons/confirm-icon.svg";
+import RejectIcon from "../assets/icons/red-x-icon.svg";
 
 export default function AccountRecoveryForm() {
   const dispatch = useDispatch();
@@ -27,7 +29,8 @@ export default function AccountRecoveryForm() {
     [searchParam, setSearchParams]
   );
 
-  function handleCloseWindow() {
+  function handleCloseWindow(event) {
+    event.preventDefault();
     if (step === "verify-otp" || step === "reset-password") {
       updateStep("failed");
     }
@@ -91,14 +94,15 @@ export default function AccountRecoveryForm() {
 
   if (step === "success" || step === "failed") {
     return (
-      <div>
-        <h1>{step === "success" ? "Sucess!" : "Sorry :("}</h1>
-        <p>
+      <div className="form">
+        <img src={step === "success" ? SuccessIcon : RejectIcon} className={step === "success" ? "icon-success" : "icon-reject"} alt={ step === "success" ? "Success Icon" : "Reject Icon"} />
+        <h1 className={step === "success" ? "modal-title-success" : "modal-title-reject"}>{step === "success" ? "Success!" : "Sorry :("}</h1>
+        <p className="modal-message">
           {step === "success"
             ? "Successfully changed password!"
             : "Recovery Process is cancelled!"}
         </p>
-        <Button onClick={handleCloseWindow}>
+        <Button className={step === "success" ? "success-btn" : "reject-btn"} onClick={handleCloseWindow}>
           {step === "success" || step === "failed" ? "OK" : "CANCEL"}
         </Button>
       </div>
@@ -107,15 +111,15 @@ export default function AccountRecoveryForm() {
 
   return (
     <>
-      <h1>Forgot Password</h1>
+      <h1 className="modal-title-red">Forgot Password</h1>
       {(step === "request-otp" ||
         step === "verify-otp" ||
         step === "reset-password") && (
-        <h2>
+        <h2 className="modal-title">
           {step === "reset-password" ? "Reset Password" : "OTP Verification"}
         </h2>
       )}
-      <p>
+      <p className="modal-message">
         {step === "request-otp"
           ? "Enter your email address to receive OTP."
           : step === "verify-otp"
@@ -217,15 +221,20 @@ export default function AccountRecoveryForm() {
             </>
           )}
           <p className="form-actions">
-            <Button disabled={state === "submitting"}>
+            <Button className="next-btn" disabled={state === "submitting"}>
               {state === "submitting" ? "LOADING..." : buttonLabel}
+            </Button>
+
+            <Button
+              className="cancel-btn"
+              disabled={state === "submitting"}
+              onClick={(event)=> handleCloseWindow(event)}
+            >
+              {step === "success" || step === "failed" ? "OK" : "CANCEL"}
             </Button>
           </p>
         </fetcher.Form>
       )}
-      <Button disabled={state === "submitting"} onClick={handleCloseWindow}>
-        {step === "success" || step === "failed" ? "OK" : "CANCEL"}
-      </Button>
     </>
   );
 }
