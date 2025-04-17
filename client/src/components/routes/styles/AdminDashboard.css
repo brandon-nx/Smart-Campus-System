@@ -3,11 +3,16 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 1rem;
+  padding-bottom: 0rem; /* Make room for bottom nav */
   font-family: system-ui, -apple-system, sans-serif;
-  /* Make sure the container is scrollable */
   height: 100%;
-  overflow-y: auto;
+  min-height: 100vh;
+  overflow-y: hidden;
+  position: relative;
 }
+
+
+
 
 /* Header */
 .dashboard-header {
@@ -417,6 +422,7 @@
 }
 
 /* Send Button */
+
 .send-button {
   font-family: system-ui, -apple-system, sans-serif;
   background-color: #b91c1c; /* Blue */
@@ -434,10 +440,37 @@
 }
 
 .send-button:hover {
-  background-color: #991b1b; /* Darker blue on hover */
+  background-color: #991b1b; 
 }
 
 .send-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue focus ring */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); 
+}
+.chart-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.chart-tab {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 9999px;
+  cursor: pointer;
+  color: #374151;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.chart-tab:hover {
+  background-color: #e5e7eb;
+}
+
+.chart-tab.active {
+  background-color: #b91c1c;
+  color: #ffffff;
+  border-color: #991b1b;
 }
