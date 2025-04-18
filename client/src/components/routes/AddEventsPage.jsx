@@ -97,7 +97,7 @@ export default function AddEvent() {
         {/* Event Type */}
         <div className="form-field">
           <div className="form-field-with-icon">
-            <label className="field-label">Event Type</label>
+            <label className="field-label">{eventType}</label>
             <ChevronDown className="chevron-icon" />
           </div>
 <select className="field-select" value={eventType} onChange={(e)=>setEventType(e.target.value)}>
@@ -119,7 +119,7 @@ export default function AddEvent() {
         {/* Event Venue */}
         <div className="form-field">
           <div className="form-field-with-icon">
-            <label className="field-label">Event Location</label>
+            <label className="field-label">{eventVenue}</label>
             <ChevronDown className="chevron-icon" />
           </div>
           <select className="field-select" value={eventVenue} onChange={(e) => setEventVenue(e.target.value)}>
