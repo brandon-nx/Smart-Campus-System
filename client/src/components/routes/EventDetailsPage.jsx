@@ -119,22 +119,22 @@ export default function EventDetailsPage() {
             <FaChair /> {remaining_capacity} / {eventcapacity} available
           </div>
           <p className={classes["event-description"]}>{eventdescription}</p>
-        </div>
 
-        <div className="form-actions-horizontal">
-          <Button
-            className="rsvp-btn"
-            onClick={() => setIsConfirmationBoxOpen(true)}
-          >
-            RSVP
-          </Button>
-          <Button
-            className="cancel-btn"
-            onClick={handleBack}
-            disabled={isSubmitting}
-          >
-            CANCEL
-          </Button>
+            <div className="form-actions-horizontal">
+            <Button
+              className="rsvp-btn"
+              onClick={() => setIsConfirmationBoxOpen(true)}
+            >
+              RSVP
+            </Button>
+            <Button
+              className="cancel-btn"
+              onClick={handleBack}
+              disabled={isSubmitting}
+            >
+              CANCEL
+            </Button>
+          </div>
         </div>
       </div>
 

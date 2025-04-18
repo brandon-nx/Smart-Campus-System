@@ -4,6 +4,7 @@
   flex-direction: column;
   gap: 1rem; /* spacing between items */
   padding: 1rem;
+  padding-bottom: 80px; /* 👈 Enough space above nav bar */
 }
 
 /* Each item “card” */
