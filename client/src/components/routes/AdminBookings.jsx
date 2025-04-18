@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { fetchBookings,updateBookingStatus,queryClient} from "../util/http";
+import { useQuery } from "@tanstack/react-query";
 import "./styles/Managebookings.css"; // Reuse the same styling for consistency
 
 const AdminBookings = () => {
@@ -9,35 +11,18 @@ const AdminBookings = () => {
 
   const filters = ["Pending", "Approved", "Rejected"];
 
-  const bookings = [
-    {
-      id: 1,
-      room: "Lecture Hall 2R022",
-      email: "student1@example.com",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      room: "Lecture Room 3L105",
-      email: "student2@example.com",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      room: "Workshop 1W001",
-      email: "student3@example.com",
-      status: "Rejected",
-    },
-    {
-      id: 4,
-      room: "Laboratory 2L205",
-      email: "student4@example.com",
-      status: "Pending",
-    },
-  ];
+  const { data: bookings, isLoading, error } = useQuery({
+      queryKey: ["event", "data",filter],
+      queryFn: ({ signal }) => fetchBookings({ signal,categoryId:filter}),
+    });
 
   const handleStatusChange = (id, newStatus) => {
+    const data = {id:id,booking_status:newStatus}
     // Handle status update logic here (API call or local state update)
+    queryClient.fetchQuery({
+            queryKey: ["bookings", "update"],
+            queryFn: ({ signal }) => updateBookingStatus({ signal , data}),
+    });
     console.log(`Booking ${id} marked as ${newStatus}`);
   };
 
@@ -63,13 +48,11 @@ const AdminBookings = () => {
       </div>
 
       <div className="room-list">
-        {bookings
-          .filter((b) => b.status === filter)
-          .map((booking) => (
+        {bookings?.map((booking) => (
             <div key={booking.id} className="room-item">
               <div className="room-info">
-                <h3 className="room-name">{booking.room}</h3>
-                <p className="room-location">{booking.email}</p>
+                <h3 className="room-name">{booking.roomID}</h3>
+                <p className="room-location">{booking.user_email}</p>
               </div>
               {filter === "Pending" && (
                 <div className="room-action">

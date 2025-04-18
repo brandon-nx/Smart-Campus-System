@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2, ChevronDown, Plus } from "lucide-react";
 import "./styles/RoomDetails.css";
-import { fetchRoom,queryClient} from "../util/http"
+import { fetchRoom,queryClient} from "../util/http";
+import { useQuery } from "@tanstack/react-query";
 // Import image if it's inside the src folder
 import seminarImage from "../../assets/images/seminar.jpg"; // Update path based on your folder structure
 
@@ -14,12 +15,19 @@ function RoomDetails() {
   const navigate = useNavigate(); // Use navigate for history handling
   const fileInputRef = useRef(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [roomData, setRoomData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: currentRoomQuery, isLoading, error } = useQuery({
+    queryKey: ["event", "data", id],
+    queryFn: ({ signal }) => fetchRoom({ signal, id }),
+  });
 
-  
+  const [roomData, setRoomData] = useState(null);
+
+  useEffect(() => {
+    if (currentRoomQuery && currentRoomQuery.length > 0) {
+      setRoomData(currentRoomQuery[0]);
+    }
+  }, [currentRoomQuery]);
+
   const handleBack = () => {
     navigate(-1); // Go back to the previous page
   };
@@ -97,7 +105,7 @@ function RoomDetails() {
 
       <div className="room-image-container" onClick={handleImageClick}>
         <img
-          src={selectedImage || seminarImage} // Use the imported image or fallback to a default image
+          src={ seminarImage} // Use the imported image or fallback to a default image
           alt={roomData.name}
           className="room-image"
         />
@@ -115,17 +123,7 @@ function RoomDetails() {
           {/* Room Type */}
           <div className="form-field">
             <div className="form-field-with-icon">
-              <select
-                className="field-select-visible"
-                value={roomData.type}
-                onChange={(e) => setRoomData({ ...roomData, type: e.target.value })}
-              >
-                <option value="Lecture Hall">Lecture Hall</option>
-                <option value="Lecture Room">Lecture Room</option>
-                <option value="Laboratory">Laboratory</option>
-                <option value="Workshop">Workshop</option>
-              </select>
-              <ChevronDown className="chevron-icon" />
+              <label className="field-select-visible">Room Type: {roomData.room_type_id}</label>
             </div>
           </div>
 

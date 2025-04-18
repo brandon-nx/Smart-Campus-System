@@ -85,7 +85,20 @@ router.get ('/attendance/:id', async (req, res, next) => {
       return res.status(500).json({ error: "An error occurred while posting the announcement." });
     }
   });
+router.post("/updateBooking", async (req, res) => {
+    const { booking_status, id } = req.body;
 
+    console.log(req.body)
+    try {
+      const result = await db.query(`UPDATE bookings SET booking_status = ? WHERE (id = ?);`, [booking_status, id]);
+      if (result) {
+        return res.status(201).json({ message: "Updated successfully." });
+      }
+    } catch (err) {
+      console.error("[!SQL!] Error updating booking: " + err);
+      return res.status(500).json({ error: "An error occurred while updating booking." });
+    }
+  });
   router.post("/addNewEvent", async (req, res) => {
     try {
       const { eventname, eventdescription, eventstart, eventend, eventcapacity, eventimage, roomid, event_type_id } = req.body;
@@ -145,4 +158,6 @@ router.delete('/deleteEvent/:id', async (req, res) => {
     return res.status(500).json({ error: 'An error occurred while deleting the event.' });
   }
 });
+
+
 module.exports = router;
