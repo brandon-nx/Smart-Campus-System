@@ -18,8 +18,7 @@ import ProtectedRoute from "./components/routes/ProtectedRoute";
 import BookingPage, {
   loader as bookingLoader,
 } from "./components/routes/BookingPage";
-import { queryClient } from "./components/util/http";
-import { QueryClientProvider } from "@tanstack/react-query";
+
 import BookingDetailsPage, {
   loader as bookingDetailsLoader,
   action as bookingDetailsAction,
