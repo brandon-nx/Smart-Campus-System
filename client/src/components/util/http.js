@@ -486,14 +486,20 @@ export async function markNotifRead(id) {
 //Add missing functions
 
 
+export async function fetchRooms({ signal, categoryId, searchTerm }) {
+  let url = "http://localhost:8080/bookings/rooms";  
 
-export async function fetchRoom({ id, signal }) {
-  const response = await fetch(`http://localhost:8080/rooms/${id}`, {
-    signal,
-  });
+  if (categoryId && searchTerm) {
+    url += "?id=" + categoryId + "&search=" + searchTerm;
+  }
+  else if (categoryId) {
+    url += "?id=" + categoryId;
+  }
+
+  const response = await fetch(url, { signal });
 
   if (!response.ok) {
-    const error = new Error("An error occurred while fetching the room");
+    const error = new Error("An error occurred while fetching the rooms");
     error.code = response.status;
     error.info = await response.json();
     throw error;
@@ -502,10 +508,6 @@ export async function fetchRoom({ id, signal }) {
   const data = await response.json();
   return data;
 }
-
-
-
-
 export async function fetchRoomIDs({ signal }) {
   const response = await fetch("http://localhost:8080/rooms/ids", { signal });
 
@@ -519,4 +521,3 @@ export async function fetchRoomIDs({ signal }) {
   const data = await response.json();
   return data;
 }
-
