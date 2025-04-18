@@ -1,8 +1,19 @@
 import { ChevronRight, Bell, User, Languages, Shield } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { authActions } from "../store/auth-slice"; 
 import "./styles/profilepage.css";
-import profilePic from "../../assets/images/profilePic.png"; // adjust path if needed
+import profilePic from "../../assets/images/profilePic.png";
 
 export default function UserProfile() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(authActions.logout());
+    navigate("/login");
+  };
+
   return (
     <div className="profile-container">
       {/* Profile Card */}
@@ -79,7 +90,9 @@ export default function UserProfile() {
       </div>
 
       {/* Logout Button */}
-      <button className="logout-button">Logout</button>
+      <button className="logout-button" onClick={handleLogout}>
+        Logout
+      </button>
     </div>
   );
 }
