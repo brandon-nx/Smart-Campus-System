@@ -168,7 +168,9 @@ button:disabled {
 .login-btn,
 .next-btn,
 .signup-btn,
-.book-btn, .rsvp-btn, .view-event-btn {
+.book-btn,
+.rsvp-btn,
+.view-event-btn {
   color: white;
   background-color: #b91c1c;
 }
@@ -176,14 +178,18 @@ button:disabled {
 .login-btn:hover:enabled,
 .next-btn:hover:enabled,
 .signup-btn:hover:enabled,
-.book-btn:hover:enabled, .rsvp-btn:hover:enabled, .view-event-btn:enabled {
+.book-btn:hover:enabled,
+.rsvp-btn:hover:enabled,
+.view-event-btn:hover:enabled {
   background-color: #991b1b;
 }
 
 .login-btn:focus,
 .next-btn:focus,
 .signup-btn:focus,
-.book-btn:focus, .rsvp-btn:focus, .view-event-btn:focus {
+.book-btn:focus,
+.rsvp-btn:focus,
+.view-event-btn:focus {
   outline: 2px solid #991b1b;
   outline-offset: 2px;
 }
@@ -192,7 +198,9 @@ button:disabled {
 .cancel-btn,
 .success-btn,
 .reject-btn,
-.book-btn, .rsvp-btn, .view-event-btn {
+.book-btn,
+.rsvp-btn,
+.view-event-btn {
   border-radius: 20px;
 }
 
@@ -317,6 +325,159 @@ button:disabled {
 .icon {
   display: inline-block;
   line-height: 1;
+}
+
+/* ─── bell + dropdown ─────────────────────────── */
+.notif-wrapper {
+  position: relative;
+}
+
+.bell-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* the red circle badge */
+.notif-badge {
+  position: absolute;
+  top: -4px;                /* tweak to sit nicely over the icon */
+  right: -4px;              /* tweak as needed */
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background-color: #c8102e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 8px;
+  pointer-events: none;     /* clicks go through to the bell */
+  box-shadow: 0 0 0 2px #fff; /* white outline to separate from bell */
+}
+
+.notif-badge-small {
+  position: absolute;
+  top: 0px;                /* tweak to sit nicely over the icon */
+  right: 0px;              /* tweak as needed */
+  min-width: 8px;
+  height: 8px;
+  padding: 0 4px;
+  background-color: #c8102e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 8px;
+  pointer-events: none;     /* clicks go through to the bell */
+  box-shadow: 0 0 0 2px #fff; /* white outline to separate from bell */
+}
+
+/* optional: if counts can exceed 9 */
+.notif-badge::after {
+  content: attr(data-badge);
+}
+
+/* dropdown box */
+.notif-dropdown {
+  position: absolute;
+  top: 115%;
+  right: 0;
+  width: 280px;
+  min-height: 25vh;
+  max-height: 65vh;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 1200;
+}
+
+.notif-dropdown > header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.notif-dropdown .close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.notif-dropdown ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.notif-dropdown li {
+  display: flex;
+  gap: 0.7rem;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.87rem;
+}
+
+.notif-dropdown li:hover {
+  border-bottom: 1px solid #cecece;
+  cursor: pointer;
+}
+
+.notif-dropdown li:last-child {
+  border-bottom: none;
+}
+.notif-dropdown li.empty {
+  justify-content: center;
+  color: #777;
+}
+
+.notif-date-label {
+  display: block;
+  margin: 0.2rem 0; /* space above & below */
+  padding: 0.5rem 1rem; /* breathing room */
+  background-color: #ffffff; /* white background */
+  font-size: 0.85rem; /* slightly smaller text */
+  font-weight: 600; /* semibold */
+  color: #555555; /* medium‑dark gray */
+  border-radius: 4px; /* slightly rounded corners */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* subtle drop shadow */
+}
+
+.notif-dot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c8102e;
+  margin-top: 0.45rem;
+}
+
+.notif-title {
+  margin: 0 0 0.6rem 0;
+  font-weight: 600;
+}
+.notif-desc {
+  margin: 0;
+  color: #777;
+  font-size: 0.8rem;
+}
+
+/* slim scrollbar (WebKit) */
+.notif-dropdown ul::-webkit-scrollbar {
+  width: 6px;
+}
+.notif-dropdown ul::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
 }
 
 /* Category Slider */

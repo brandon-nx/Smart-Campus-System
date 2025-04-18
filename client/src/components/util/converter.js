@@ -7,6 +7,22 @@ function ordinal(n) {
   return n + "th";
 }
 
+export function convertEventTimeToDateLabel(isoString) {
+  const d       = new Date(isoString);
+  const today   = new Date();
+  const diffMs  = today.setHours(0,0,0,0) - d.setHours(0,0,0,0);
+  const diffDays= Math.round(diffMs / 86400000);
+
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${dd}/${mm}/${yy}`;
+}
+
+
 export function convertEventTimeToDateOnly(
   isoString,
   locale = "en-GB",

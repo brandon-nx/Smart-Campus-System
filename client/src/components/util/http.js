@@ -176,3 +176,30 @@ export async function fetchEvents({ signal, categoryId, searchTerm }) {
 
   return data;
 }
+
+export async function fetchNotifications({ signal, accountEmail }) {
+  let url = `http://localhost:8080/notifications?email=${accountEmail}`;
+
+  const response = await fetch(url, { signal: signal });
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while fetching notifications");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data;
+}
+
+export async function markNotifRead(id) {
+  const res = await fetch(`http://localhost:8080/notifications/${id}/read`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "read" }),
+  });
+  if (!res.ok) throw new Error("Failed to mark notification as read");
+  return res.json();
+}
