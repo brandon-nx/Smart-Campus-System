@@ -2,34 +2,33 @@ import React, { useState, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Plus, ChevronDown, Calendar } from "lucide-react"
 import "./styles/AddeventPage.css"
-
+import { useQuery } from "@tanstack/react-query";
+import { addNewEvent,fetchEventCategories,fetchRoomIDs,queryClient} from "../util/http"
 export default function AddEvent() {
   const navigate = useNavigate()
+  const [eventType, setEventType] = useState("Conference")
   const [eventName, setEventName] = useState("")
   const [eventVenue, setEventVenue] = useState("")
   const [eventDate, setEventDate] = useState("")
   const [startTime, setStartTime] = useState("9:00AM")
   const [endTime, setEndTime] = useState("6:00PM")
   const [description, setDescription] = useState("")
-  const [imageFile, setImageFile] = useState(null)
+  const [eventCapacity, setEventCapacity] = useState(null)
+  const [imageUrl, setImageUrl] = useState("")
   const [showConfirmation, setShowConfirmation] = useState(false)
 
-  const fileInputRef = useRef(null)
   const dateInputRef = useRef(null)
 
   const handleBack = () => navigate(-1)
   const handleCancel = () => navigate(-1)
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click()
-  }
-
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setImageFile(URL.createObjectURL(file))
-    }
-  }
+  const { data: categoryData } = useQuery({
+    queryKey: ["events", "categories"],
+    queryFn: ({ signal }) => fetchEventCategories({ signal }),
+  });
+  const { data: roomData } = useQuery({
+    queryKey: ["rooms", "ids"],
+    queryFn: ({ signal }) => fetchRoomIDs({ signal }),
+  });
 
   const handleDateFieldClick = () => {
     if (dateInputRef.current) {
@@ -47,16 +46,20 @@ export default function AddEvent() {
 
   const handleShowConfirmation = () => setShowConfirmation(true)
   const handleConfirmAdd = () => {
-    let details = {
-      eventName: eventName,
-      eventVenue: eventVenue,
-      eventDate: eventDate,
-      startTime: startTime,
-      endTime: endTime,
-      description: description
-    };
+    let data = { eventname: eventName,
+      eventdescription: description,
+      eventstart: (eventDate + " " + startTime),
+      eventend: (eventDate + " " + endTime),
+      eventcapacity:eventCapacity,
+      eventimage:imageUrl,
+      roomid: eventVenue, 
+      event_type_id: eventType}
+    
     setShowConfirmation(false)
-    JSON.stringify(details);
+    queryClient.fetchQuery({
+      queryKey: ["events", "adding"],
+      queryFn: ({ signal }) => addNewEvent({ signal,data }),
+    });
     navigate(-1)
   }
 
@@ -73,22 +76,23 @@ export default function AddEvent() {
       </header>
 
       <div className="form-container">
-        {/* Image Upload */}
-        <div className="image-upload-area" onClick={handleImageClick}>
-          {imageFile ? (
-            <img src={imageFile || "/placeholder.svg"} alt="Event preview" className="image-preview" />
-          ) : (
-            <Plus className="plus-icon" />
-          )}
+        {/* Image URL Input */}
+        <div className="form-field">
+          <label className="field-label">Image URL</label>
+          <input
+            type="text"
+            placeholder="Enter image URL"
+            className="field-input"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+          />
         </div>
 
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="image-upload-input"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
+        {imageUrl && (
+          <div className="image-preview-container">
+            <img src={imageUrl} alt="Event preview" className="image-preview" />
+          </div>
+        )}
 
         {/* Event Type */}
         <div className="form-field">
@@ -96,13 +100,9 @@ export default function AddEvent() {
             <label className="field-label">Event Type</label>
             <ChevronDown className="chevron-icon" />
           </div>
-          <select className="field-select">
-            <option value="">Select Event Type</option>
-            <option value="conference">Conference</option>
-            <option value="workshop">Workshop</option>
-            <option value="seminar">Seminar</option>
-            <option value="meeting">Meeting</option>
-          </select>
+<select className="field-select" value={eventType} onChange={(e)=>setEventType(e.target.value)}>
+  {categoryData?.map((tab) => (<option key={tab.id} value={tab.id}>{tab.type_name}</option>))}
+</select>
         </div>
 
         {/* Event Name */}
@@ -118,13 +118,13 @@ export default function AddEvent() {
 
         {/* Event Venue */}
         <div className="form-field">
-          <input
-            type="text"
-            placeholder="Event Venue"
-            className="field-input"
-            value={eventVenue}
-            onChange={(e) => setEventVenue(e.target.value)}
-          />
+          <div className="form-field-with-icon">
+            <label className="field-label">Event Location</label>
+            <ChevronDown className="chevron-icon" />
+          </div>
+          <select className="field-select" value={eventVenue} onChange={(e) => setEventVenue(e.target.value)}>
+            {roomData?.map((tab) => (<option key={tab.roomID} value={tab.roomID}>{tab.roomName}</option>))}
+          </select>
         </div>
 
         {/* Event Date */}
@@ -168,7 +168,14 @@ export default function AddEvent() {
             </div>
           </div>
         </div>
-
+        <div className="form-field">
+          <textarea
+            placeholder="Number Of Attendees 0 - 99999"
+            className="description-input"
+            value={eventCapacity}
+            onChange={(e) => setEventCapacity(e.target.value)}
+          ></textarea>
+        </div>
         {/* Description */}
         <div className="form-field">
           <textarea

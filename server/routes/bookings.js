@@ -40,6 +40,10 @@ router.get("/rooms", async (req, res) => {
   }
 });
 
+router.get("/ids", async (req, res) => {
+  const [rows] = await db.query("SELECT roomID,roomName from venue")
+  return res.json(rows);
+})
 router.get("/rooms/:id", async (req, res) => {
   const { id } = req.params;
 

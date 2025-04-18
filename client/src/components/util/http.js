@@ -108,7 +108,7 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
     return data;
   }
   
-  export async function fetchEventCategories({ id, signal }) {
+  export async function fetchEventCategories({ signal }) {
     const response = await fetch(`http://localhost:8080/events/categories`, {signal:signal});
   
     if (!response.ok) {
@@ -122,7 +122,20 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
   
     return data;
   }
+  export async function fetchRoomIDs({ signal }) {
+    const response = await fetch(`http://localhost:8080/bookings/ids`, {signal:signal});
   
+    if (!response.ok) {
+      const error = new Error("An error occurred while fetching the room");
+      error.code = response.status;
+      error.info = await response.json();
+      throw error;
+    }
+  
+    const data = await response.json();
+  
+    return data;
+  }
   export async function fetchEvents({ signal, categoryId }) {
     let url = "http://localhost:8080/events/all";
     console.log(categoryId)
@@ -180,7 +193,7 @@ export async function postAnnouncement({ signal, data }) {
 }
 export async function addNewRoom({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/addNewEvent", {
+      const res = await fetch("http://localhost:8080/admin/addNewRoom", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -214,7 +227,7 @@ export async function addNewRoom({ signal, data }) {
 }
 export async function addNewEvent({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/addNewRoom", {
+      const res = await fetch("http://localhost:8080/admin/addNewEvent", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },

@@ -8,7 +8,7 @@ router.get("/eventbookingsync", async (req, res) => {
     DATE_FORMAT(eventstart, '%M') AS month,
     COUNT(*) AS value
 FROM 
-    event
+    events
 WHERE 
     eventstart <= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
 GROUP BY 
@@ -53,7 +53,7 @@ ORDER BY
     e.eventcapacity,
     COUNT(er.idreservations) AS value
 FROM 
-    event e
+    events e
 LEFT JOIN 
     eventreservations er ON e.idevent = er.idreservations
 GROUP BY 
@@ -79,27 +79,34 @@ ORDER BY
     }
   });
   router.post("/addNewEvent", async (req, res) => {
-    console.log(req.body.message)
     try {
-      const result = await db.query(`INSERT INTO announcements (message) VALUES (?)`, [req.body.message]);
+      const { eventname, eventdescription, eventstart, eventend, eventcapacity, eventimage, roomid, event_type_id } = req.body;
+      console.log ()
+      const result = await db.query(
+        `INSERT INTO events (eventname, eventdescription, eventstart, eventend, eventcapacity, eventimage, roomid, event_type_id) VALUES (?, ?, STR_TO_DATE(?, '%Y-%m-%d %l:%i%p'), STR_TO_DATE(?, '%Y-%m-%d %l:%i%p'), ?, ?, ?, ?)`,
+        [eventname, eventdescription, eventstart, eventend, eventcapacity, eventimage, roomid, event_type_id]
+      );
       if (result) {
-        return res.status(201).json({ message: "Announcement posted successfully." });
+        return res.status(201).json({ message: "Event added successfully." });
       }
     } catch (err) {
       console.error("[!SQL!] Error inserting data: " + err);
-      return res.status(500).json({ error: "An error occurred while posting the announcement." });
+      return res.status(500).json({ error: "An error occurred while inserting data." });
     }
   });
   router.post("/addNewRoom", async (req, res) => {
-    console.log(req.body.message)
     try {
-      const result = await db.query(`INSERT INTO announcements (message) VALUES (?)`, [req.body.message]);
+      const { roomID, roomName, roomDescription, roomCapacity, room_type_id } = req.body;
+      const result = await db.query(
+        `INSERT INTO venue (roomID, roomName, roomDescription, roomCapacity, room_type_id) VALUES (?, ?, ?, ?, ?)`,
+        [roomID, roomName, roomDescription, roomCapacity, room_type_id]
+      );
       if (result) {
-        return res.status(201).json({ message: "Announcement posted successfully." });
+        return res.status(201).json({ message: "Room added successfully." });
       }
     } catch (err) {
       console.error("[!SQL!] Error inserting data: " + err);
-      return res.status(500).json({ error: "An error occurred while posting the announcement." });
+      return res.status(500).json({ error: "An error occurred while adding the room." });
     }
   });
 module.exports = router;

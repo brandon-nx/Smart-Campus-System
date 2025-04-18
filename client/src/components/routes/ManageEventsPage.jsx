@@ -58,11 +58,11 @@ export default function ManageEvents() {
       <div className="room-tabs">
         {categoryData.map((tab) => (
           <button
-            key={tab.eventtype}
-            className={`room-tab ${activeTab === tab.eventtype ? "active" : ""}`} // Updated comparison
-            onClick={() => setActiveTab(tab.eventtype)} // Updated to set active tab correctly
+            key={tab.type_name}
+            className={`room-tab ${activeTab === tab.type_name ? "active" : ""}`} // Updated comparison
+            onClick={() => setActiveTab(tab.type_name)} // Updated to set active tab correctly
           >
-            {tab.eventtype}
+            {tab.type_name}
           </button>
         ))}
       </div>

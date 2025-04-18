@@ -4,24 +4,7 @@ import { ArrowLeft, Trash2, ChevronDown, Plus } from "lucide-react";
 import "./styles/RoomDetails.css";
 import defaultImage from "../../assets/images/seminar.jpg";
 
-const sampleEvents = {
-  E001: {
-    name: "Annual Tech Conference",
-    type: "Conference",
-    location: "Main Auditorium",
-    startTime: "9:00AM",
-    endTime: "6:00PM",
-    capacity: 100,
-  },
-  E002: {
-    name: "Leadership Workshop",
-    type: "Workshop",
-    location: "Room 2R023",
-    startTime: "10:00AM",
-    endTime: "4:00PM",
-    capacity: 50,
-  },
-};
+//id search event
 
 export default function EventDetails() {
   const { id } = useParams();

@@ -16,10 +16,10 @@ const {
 
 router.get('/categories', async (req, res, next) => {
   try {
-    const [event] = await db.query("SELECT eventtype FROM event GROUP BY eventtype");
+    const [event] = await db.query("SELECT * FROM event_type");
     return res.json( event );
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
 router.get("/all", async (req, res) => {
@@ -28,8 +28,9 @@ router.get("/all", async (req, res) => {
   try {
     let sql = `
       SELECT *
-      FROM event
-      WHERE eventtype = ?
+      FROM events
+      left join event_type on events.event_type_id = event_type.id
+      WHERE type_name = ?
     `;
     const params = [id];
 
