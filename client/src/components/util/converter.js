@@ -116,3 +116,16 @@ export function formatDateTo24HourString(date) {
   const seconds = pad(date.getSeconds());
   return `${hours}:${minutes}:${seconds}`;
 }
+
+export function compressQuery(dataArray){
+  return dataArray.reduce((acc, current) => {
+      const existing = acc.find(item => item.name === current.name);
+      if (existing) {
+          existing.values.push(current.value);
+      } else {
+          acc.push({ name: current.name, values: [current.value] });
+      }
+
+      return acc;
+  }, []);
+}

@@ -8,6 +8,7 @@ const eventRoutes = require("./routes/events");
 const authRoutes = require("./routes/auth");
 const bookingRoutes = require("./routes/bookings");
 const notificationRoutes = require("./routes/notifications");
+const adminRoutes = require("./routes/admin");
 const db = require("./db");
 
 const app = express();
@@ -42,6 +43,7 @@ app.use(authRoutes);
 app.use("/events", eventRoutes);
 app.use("/bookings", bookingRoutes);
 app.use("/notifications", notificationRoutes);
+app.use("/admin", adminRoutes);
 
 // Error-handling middleware
 app.use((error, req, res, next) => {

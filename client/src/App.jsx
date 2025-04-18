@@ -1,17 +1,19 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { verifyToken } from "./components/store/auth-actions";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./components/util/http";
+
+// Importing routes
 import Login, { action as loginAction } from "./components/routes/LoginPage";
 import RootLayout from "./components/routes/RootLayout";
 import NavigationPage from "./components/routes/NavigationPage";
-import SignupPage, {
-  action as signupAction,
-} from "./components/routes/SignupPage";
+import SignupPage, { action as signupAction } from "./components/routes/SignupPage";
 import AccountRecoveryContextLayout from "./components/routes/AccountRecoveryContextLayout";
 import { action as forgotPasswordAction } from "./components/routes/ForgotPasswordPage";
 import PublicRoute from "./components/routes/PublicRoute";
 import LogoutPage from "./components/routes/LogoutPage";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { verifyToken } from "./components/store/auth-actions";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import BookingPage, {
   loader as bookingLoader,
@@ -29,6 +31,18 @@ import EventDetailsPage, {
   loader as eventDetailsLoader,
   action as eventDetailsAction,
 } from "./components/routes/EventDetailsPage";
+import ProfilePage from "./components/routes/ProfilePage";
+import AdminProfile from "./components/routes/AdminProfile";
+import AdminDashboard,{loader as adminDashboardLoader} from "./components/routes/AdminDashboard";
+import ManageRooms, {loader as manageRoomsLoader} from "./components/routes/ManageRoomPage";
+import AddRoom from "./components/routes/AddRoomsPage";
+import ManageEvents,{loader as manageEventsLoader} from "./components/routes/ManageEventsPage";
+import AddEvent from "./components/routes/AddEventsPage";
+import RoomDetails from "./components/routes/RoomDetails";
+import EventDetails from "./components/routes/EventDetails";
+import ManageBookings from "./components/routes/ManageBookings";
+import ManageBookingsDetails from"./components/routes/ManageBookingsDetails";
+import AdminBookings from "./components/routes/AdminBookings";
 
 const router = createBrowserRouter([
   {
@@ -59,9 +73,7 @@ const router = createBrowserRouter([
             loader: bookingDetailsLoader,
             action: bookingDetailsAction,
             children: [
-              {
-                path: "bookings/:id/edit",
-              },
+              { path: "edit", element: <BookingDetailsPage /> },
             ],
           },
           { path: "events", element: <EventPage />, loader: eventsLoader },
@@ -76,6 +88,17 @@ const router = createBrowserRouter([
               },
             ],
           },
+          { path: "profile", element: <ProfilePage /> },
+          { path: "admin", element: <AdminProfile /> },
+          { path: "admin/dashboard", element: <AdminDashboard />,loader: adminDashboardLoader, },
+          { path: "manage-rooms", element: <ManageRooms/>, loader: manageRoomsLoader },
+          { path: "manage-events", element: <ManageEvents />, loader: manageEventsLoader },
+          { path: "manage-rooms/add-rooms", element: <AddRoom /> },
+          { path: "manage-events/add-events", element: <AddEvent /> },
+          { path: "manage-rooms/room-details/:id", element: <RoomDetails /> },
+          { path: "manage-events/event-details/:id", element: <EventDetails /> },
+          { path: "manage-bookings", element: <AdminBookings /> },
+          { path: "manage-bookings/:id", element: <ManageBookingsDetails /> },
         ],
       },
     ],

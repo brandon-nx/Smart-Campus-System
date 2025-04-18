@@ -216,7 +216,6 @@ router.post("/", async (req, res, next) => {
 router.patch("/:id", async (req, res, next) => {
   const data = req.body;
 
-  let errors = {};
 
   if (!isValidText(data.title)) {
     errors.title = "Invalid title.";

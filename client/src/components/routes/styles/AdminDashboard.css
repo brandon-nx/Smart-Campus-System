@@ -1,0 +1,477 @@
+/* Admin Dashboard Styles */
+.dashboard-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  padding-bottom: 0rem; /* Make room for bottom nav */
+  font-family: system-ui, -apple-system, sans-serif;
+  height: 100%;
+  min-height: 100vh;
+  overflow-y: hidden;
+  position: relative;
+}
+
+
+
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  position:static;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.back-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+/* Stats Cards */
+.stats-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stat-card {
+  flex: 1;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.rooms-card {
+  background-color: #fff176; /* Yellow */
+}
+
+.events-card {
+  background-color: #aed581; /* Green */
+}
+
+.bookings-card {
+  background-color: #80deea; /* Blue */
+}
+
+.stat-title {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.stat-value {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+/* Search and Date Filter */
+.filters-container {
+  margin-bottom: 1rem;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.search-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #6b7280;
+  margin-right: 0.5rem;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-size: 0.875rem;
+}
+
+.date-container {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  justify-content: space-between;
+}
+
+.date-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-size: 0.875rem;
+}
+
+.calendar-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #6b7280;
+}
+
+.chart-container {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 95%;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.chart-wrapper {
+  display: flex;
+  height: 300px;
+}
+
+
+
+
+.y-axis {
+  width: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  margin-right:0px;
+}
+
+
+.y-axis-bookings {
+  width: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 200;
+  margin-right:0px;
+  margin-bottom: 0rem;
+}
+
+.y-label-bookings {
+  font-size: 11px;
+  color: #777;
+  transform: rotate(-90deg) translate(-50%, 0);
+  white-space: nowrap;
+  margin-right:45px;
+  margin-top:-50px;
+}
+
+
+
+.y-label {
+  font-size: 12px;
+  color: #777;
+  transform: rotate(-90deg);
+  white-space: nowrap;
+  margin-right:45px;
+  margin-top:42px;
+}
+
+
+.y-values-bookings {
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #777;
+  height: 100%;
+
+}
+
+
+.y-values-events {
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90%;
+  color: #777;
+
+}
+
+.y-values {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90%;
+}
+
+.y-values span {
+  height: 14.3%;
+  line-height: 1;
+  font-size: 10px;
+  margin-bottom:1.4rem;
+  color: #777;
+}
+
+.chart-content {
+  flex-grow: 1;
+  position: relative;
+}
+
+.grid-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.grid-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  border-bottom: 1px dashed #ddd;
+}
+
+.bar-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 100%;
+  padding: 0 10px;
+}
+
+.bar {
+  width: 40px;
+  background-color: #3498db;
+  border-radius: 5px 5px 0 0;
+  position: relative;
+}
+
+.red-bar {
+  background-color: #e74c3c;
+}
+
+.green-bar {
+  background-color: #2ecc71;
+}
+
+.blue-bar {
+  background-color: #3498db;
+}
+
+.yellow-bar {
+  background-color: #f1c40f;
+}
+
+.orange-bar {
+  background-color: #e67e22;
+}
+
+.purple-bar {
+  background-color: #9b59b6;
+}
+
+.bar-label-container {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.bar-value {
+  margin-top: -6px;
+  font-size: 12px;
+  color: #555;
+  display: block;
+}
+
+.bar-label {
+  margin-top:-5px;
+  font-size: 10px;
+  color: #777;
+  display: block;
+}
+
+.x-axis {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin-bottom: -1.1rem;
+  text-align: center;
+}
+
+.x-label {
+  font-size: 12px;
+  color: #777;
+}
+
+.line-chart {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.line-point {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #3498db;
+  border-radius: 50%;
+  transform: translate(-50%, 50%);
+  z-index: 2;
+}
+
+.line-segment {
+  position: absolute;
+  background-color: rgba(52, 152, 219, 0.5);
+  height: 2px;
+  transform-origin: left bottom;
+  z-index: 1;
+}
+
+/* Management Buttons */
+.management-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.manage-button {
+  font-family: system-ui, -apple-system, sans-serif;
+  flex: 1;
+  min-width: 100px;
+  background-color: #b91c1c;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  
+}
+
+.manage-button:hover {
+  background-color: #991b1b;
+}
+
+/* Styled Text Box for Dashboard */
+.text-box-container {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-box-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.text-box {
+  background-color: #f3f4f6;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  font-family: system-ui, -apple-system, sans-serif;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.text-box:focus {
+  box-shadow: 0 0 0 2px #991b1b;
+  background-color: #fff;
+}
+
+/* Send Button */
+
+.send-button {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #b91c1c; /* Blue */
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  margin-top: 1rem;
+  margin-bottom: -1rem;
+}
+
+.send-button:hover {
+  background-color: #991b1b; 
+}
+
+.send-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); 
+}
+.chart-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.chart-tab {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 9999px;
+  cursor: pointer;
+  color: #374151;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.chart-tab:hover {
+  background-color: #e5e7eb;
+}
+
+.chart-tab.active {
+  background-color: #b91c1c;
+  color: #ffffff;
+  border-color: #991b1b;
+}
