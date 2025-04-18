@@ -152,5 +152,16 @@ router.get("/all/:id", async (req, res) => {
     return res.status(500).json({ message: "Failed to fetch bookings" });
   }
 });
-
+router.get("/room/:id",async (req, res) => {
+  const { id } = req.params;
+  try {
+    let sql = `SELECT * FROM venue WHERE roomID = ?`;
+    console.log(sql, id);
+    const [rows] = await db.query(sql, [id]);
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error fetching bookings:", error); // Use the correct variable name
+    return res.status(500).json({ message: "Failed to fetch bookings" });
+  }
+});
 module.exports = router;

@@ -97,7 +97,7 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm}) {
     return data;
   }
   export async function fetchRoom({ signal, id }) {
-    let url = "http://localhost:8080/bookings/rooms/" + id;
+    let url = "http://localhost:8080/bookings/room/" + id;
     const response = await fetch(url, { signal: signal }); // Fetch the data
  
     if (!response.ok) { // Check if the response is okay
