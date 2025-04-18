@@ -14,9 +14,13 @@ export function eventsConfig(eventData) {
                 },
             },
             scales: {
-                y: {
-                    beginAtZero: true,
+                x: {
+                    stacked: true
                 },
+                y: {
+                    stacked: true,
+                    beginAtZero: true
+                }
             },
         },
     };
@@ -36,7 +40,20 @@ export function attendanceConfig(attendanceData){ return {
 
 }
 
-export function roomConfig(roomData){ return {
+export function roomsConfig(roomData){ return {
+    type: 'bar',
+    data: roomData,
+    options: {scales: {
+        x: {
+            stacked: true
+        },
+        y: {
+            stacked: true
+        }
+    }}
+  }
+}
+export function bookingConfig(roomData){ return {
     type: 'bar',
     data: roomData,
     options: {scales: {

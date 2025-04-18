@@ -3,44 +3,39 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2, ChevronDown, Plus } from "lucide-react";
 import "./styles/RoomDetails.css";
 import defaultImage from "../../assets/images/seminar.jpg";
-
+import { useQuery } from "@tanstack/react-query";
+import { fetchEvent, fetchAttendance,deleteEvent, queryClient } from "../util/http"
 //id search event
+
 
 export default function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [eventData, setEventData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [activeTab, setActiveTab] = useState("Events");
+  const { data: eventDataArray ,isLoading} = useQuery({
+    queryKey: ["event", "data", id],
+    queryFn: ({ signal }) => fetchEvent({ signal, categoryId: id}),
+  });
 
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      const foundEvent = sampleEvents[id];
-      if (foundEvent) {
-        setEventData({ id, ...foundEvent });
-      }
-      setIsLoading(false);
-    }, 500);
-  }, [id]);
+  const eventData = Array.isArray(eventDataArray) && eventDataArray.length > 0 ? eventDataArray[0] : null;
+  const tabs = ["Events", "Attendance", "Bookings"];
 
-  const handleImageClick = () => fileInputRef.current?.click();
+    const { data: pastAttendanceData } = useQuery({
+        queryKey: ["attendance", "categories"],
+        queryFn: ({ signal }) => fetchAttendance({ signal ,id}),
+    });
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setSelectedImage(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleBack = () => navigate(-1);
   const handleDelete = () => setShowDeleteConfirm(true);
   const confirmDelete = () => {
-    
+    queryClient.fetchQuery({
+      queryKey: ["events", "delete",id],
+      queryFn: ({ signal }) => deleteEvent({ signal,id}),
+    });
+    navigate(-1)
   };
 
   const cancelDelete = () => setShowDeleteConfirm(false);
@@ -79,118 +74,45 @@ export default function EventDetails() {
         <button className="back-button" onClick={handleBack}>
           <ArrowLeft />
         </button>
-        <h1 className="header-title">{eventData.name}</h1>
+        <h1 className="header-title">{eventData.eventname}</h1>
         <button className="delete-button" onClick={handleDelete}>
           <Trash2 />
         </button>
       </header>
 
-      <div className="room-image-container" onClick={handleImageClick}>
+      <div className="room-image-container">
         <img
-          src={selectedImage || defaultImage}
-          alt={eventData.name}
+          src={eventData.eventimage || defaultImage}
+          alt={eventData.eventname}
           className="room-image"
-        />
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="image-upload-input"
-          accept="image/*"
-          onChange={handleImageChange}
         />
       </div>
 
       <div className="room-details-content">
         <div className="form-container">
-          {/* Event Type */}
-          <div className="form-field">
-            <div className="form-field-with-icon">
-              <select
-                className="field-select-visible"
-                value={eventData.type}
-                onChange={(e) =>
-                  setEventData({ ...eventData, type: e.target.value })
-                }
-              >
-                <option value="Conference">Conference</option>
-                <option value="Workshop">Workshop</option>
-                <option value="Seminar">Seminar</option>
-                <option value="Meeting">Meeting</option>
-                <option value="Competition">Competition</option>
-              </select>
-              <ChevronDown className="chevron-icon" />
-            </div>
-          </div>
-
           {/* Name */}
           <div className="form-field">
-            <input
-              type="text"
-              value={eventData.name}
-              className="field-input"
-              onChange={(e) =>
-                setEventData({ ...eventData, name: e.target.value })
-              }
-            />
+            <label className="field-label">{eventData.eventname}</label>
           </div>
-
-          {/* Time */}
+          {/* Description */}
           <div className="form-field">
-            <label className="field-label">Time:</label>
-            <div className="operation-hours">
-              <select
-                className="time-select"
-                value={eventData.startTime}
-                onChange={(e) =>
-                  setEventData({ ...eventData, startTime: e.target.value })
-                }
-              >
-                <option value="8:00AM">8:00AM</option>
-                <option value="9:00AM">9:00AM</option>
-                <option value="10:00AM">10:00AM</option>
-              </select>
-              <span>—</span>
-              <select
-                className="time-select"
-                value={eventData.endTime}
-                onChange={(e) =>
-                  setEventData({ ...eventData, endTime: e.target.value })
-                }
-              >
-                <option value="4:00PM">4:00PM</option>
-                <option value="5:00PM">5:00PM</option>
-                <option value="6:00PM">6:00PM</option>
-              </select>
-            </div>
+            <label className="field-label">
+              Description: {eventData.eventdescription}
+            </label>
           </div>
-
           {/* Capacity */}
           <div className="form-field">
-            <input
-              type="number"
-              className="capacity-input"
-              value={eventData.capacity}
-              onChange={(e) =>
-                setEventData({
-                  ...eventData,
-                  capacity: parseInt(e.target.value) || 0,
-                })
-              }
-            />
-            <span className="capacity-label">Attendees</span>
+            <label className="field-label">Total capacity: {eventData.eventcapacity}</label>
+          </div>
+          {/* Attending */}
+          <div className="form-field">
+            <label className="field-label">
+              Attendance Count: {pastAttendanceData && pastAttendanceData.length > 0 ? pastAttendanceData[0].value : "No attendance data"}
+            </label>
           </div>
 
-          {/* Buttons */}
-          <div className="action-buttons">
-            <button className="cancel-button" onClick={handleBack}>
-              CANCEL
-            </button>
-            <button className="edit-button" onClick={handleBack}>
-              SAVE
-            </button>
-          </div>
-        </div>
-      </div>
+          </div></div>
+          
 
       {/* Delete confirmation */}
       {showDeleteConfirm && (

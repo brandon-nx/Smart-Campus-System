@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "../util/http";
 import { compressQuery } from "../util/converter";
-import { eventsConfig, attendanceConfig, roomConfig } from "./adminChartConfig";
+import { eventsConfig} from "./adminChartConfig";
 import { fetchRoomsBookingCount, fetchEventsCount, fetchAttendanceCount,postAnnouncement } from '../util/http';
 import { Chart, CategoryScale, LinearScale, BarController, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import "./styles/AdminDashboard.css";
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
         let attendanceData = compressQuery(pastAttendanceData)
         let roomData = compressQuery(pastRoomData)
         console.log(pastRoomData)
-        console.log(attendanceData)
+        console.log(pastAttendanceData)
         switch (activeTab) {
             case "Events":
                 chartData = {

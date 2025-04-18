@@ -11,17 +11,6 @@ const {
 } = require('../util/validation');
 
 
-
-
-
-router.get('/categories', async (req, res, next) => {
-  try {
-    const [event] = await db.query("SELECT * FROM event_type");
-    return res.json( event );
-  } catch (error) {
-    console.log(error);
-  }
-});
 router.get("/all", async (req, res) => {
   const { id } = req.query;
 
@@ -33,6 +22,60 @@ router.get("/all", async (req, res) => {
       WHERE type_name = ?
     `;
     const params = [id];
+
+    // Execute the query with parameters.
+    const [rows] = await db.query(sql, params);
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error fetching rooms:", err);
+    return res.status(500).json({ message: "Failed to fetch rooms" });
+  }
+});
+router.get("/event", async (req, res) => {
+  const { id } = req.query;
+
+  try {
+    let sql = `
+      SELECT *
+      FROM events
+      
+      WHERE idevent = ?
+    `;
+    const params = [id];
+
+    // Execute the query with parameters.
+    const [rows] = await db.query(sql, params);
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error fetching rooms:", err);
+    return res.status(500).json({ message: "Failed to fetch rooms" });
+  }
+});
+
+router.get('/categories', async (req, res, next) => {
+  try {
+    const [event] = await db.query("SELECT * FROM event_type");
+    return res.json( event );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.get("/rooms", async (req, res) => {
+  const { id, search } = req.query;
+
+  try {
+    let sql = `
+      SELECT roomID, roomName, roomDescription, roomCapacity, room_type_id
+      FROM events
+      WHERE room_type_id = ?
+    `;
+    const params = [id];
+
+    if (search && search.trim() !== "") {
+      sql += " AND roomName LIKE ?";
+      params.push(`%${search}%`);
+    }
 
     // Execute the query with parameters.
     const [rows] = await db.query(sql, params);
@@ -92,43 +135,9 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.patch('/:id', async (req, res, next) => {
-  const data = req.body;
 
-  let errors = {};
 
-  if (!isValidText(data.title)) {
-    errors.title = 'Invalid title.';
-  }
-
-  if (!isValidText(data.description)) {
-    errors.description = 'Invalid description.';
-  }
-
-  if (!isValidDate(data.date)) {
-    errors.date = 'Invalid date.';
-  }
-
-  if (!isValidImageUrl(data.image)) {
-    errors.image = 'Invalid image.';
-  }
-
-  if (Object.keys(errors).length > 0) {
-    return res.status(422).json({
-      message: 'Updating the event failed due to validation errors.',
-      errors,
-    });
-  }
-
-  try {
-    await replace(req.params.id, data);
-    res.json({ message: 'Event updated.', event: data });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.delete('/:id', async (req, res, next) => {
+router.post('/:id', async (req, res, next) => {
   try {
     await remove(req.params.id);
     res.json({ message: 'Event deleted.' });

@@ -2,40 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2, ChevronDown, Plus } from "lucide-react";
 import "./styles/RoomDetails.css";
-
+import { fetchRoom,queryClient} from "../util/http"
 // Import image if it's inside the src folder
 import seminarImage from "../../assets/images/seminar.jpg"; // Update path based on your folder structure
 
 // Add more rooms to the sampleRooms object
-const sampleRooms = {
-  "2R022": {
-    name: "Lecture Hall 2R022",
-    type: "Lecture Hall",
-    location: "Right Wing 2nd Floor",
-    startTime: "9:00AM",
-    endTime: "6:00PM",
-    capacity: 20,
-    amenities: ['20" TV Projector'],
-  },
-  "3R101": {
-    name: "Seminar Room 3R101",
-    type: "Seminar Room",
-    location: "Left Wing 3rd Floor",
-    startTime: "10:00AM",
-    endTime: "5:00PM",
-    capacity: 25,
-    amenities: ['Whiteboard', 'Projector'],
-  },
-  "4R202": {
-    name: "Laboratory 4R202",
-    type: "Laboratory",
-    location: "West Wing 4th Floor",
-    startTime: "8:00AM",
-    endTime: "6:00PM",
-    capacity: 15,
-    amenities: ['Computer', 'Experiment Setup'],
-  },
-};
+
 
 function RoomDetails() {
   const { id } = useParams(); // Get room ID from URL
@@ -47,25 +19,7 @@ function RoomDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-
-    setTimeout(() => {
-      if (sampleRooms[id]) {
-        setRoomData({
-          id: id,
-          ...sampleRooms[id],
-        });
-        setIsLoading(false);
-      } else {
-        setRoomData(null);
-        setIsLoading(false);
-        setError("Room not found");
-      }
-    }, 500);
-  }, [id]);
-
+  
   const handleBack = () => {
     navigate(-1); // Go back to the previous page
   };
@@ -83,22 +37,9 @@ function RoomDetails() {
     setShowDeleteConfirm(false); // Hide the delete confirmation dialog
   };
 
-  const handleImageClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click(); // Trigger file input click
-    }
-  };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedImage(reader.result);
-      };
-      reader.readAsDataURL(file); // Read the file as base64
-    }
-  };
+
+
 
   if (isLoading) {
     return (

@@ -51,11 +51,11 @@ ORDER BY
     DATE_FORMAT(e.eventstart, '%M') AS month, 
     e.eventname AS name,
     e.eventcapacity,
-    COUNT(er.idreservations) AS value
+    COUNT(er.idevent) AS value
 FROM 
     events e
 LEFT JOIN 
-    eventreservations er ON e.idevent = er.idreservations
+    event_attendance er ON e.idevent = er.idevent
 GROUP BY 
     month, e.idevent, e.eventcapacity
 ORDER BY 
@@ -65,6 +65,13 @@ ORDER BY
     return res.status(500).json({ message: "Failed to fetch rooms" });
     }
   })
+router.get ('/attendance/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {const [event] = await db.query(`SELECT COUNT(*) as value FROM event_attendance WHERE idevent = '1';`, [id])}
+  catch (err) {
+    console.error("[!SQL!] Error getting data: " + err);
+    return res.status(500).json({ error: "An error occurred while posting the announcement." });
+  };})
 
   router.post("/postAnnouncement", async (req, res) => {
     console.log(req.body.message)
@@ -78,6 +85,7 @@ ORDER BY
       return res.status(500).json({ error: "An error occurred while posting the announcement." });
     }
   });
+
   router.post("/addNewEvent", async (req, res) => {
     try {
       const { eventname, eventdescription, eventstart, eventend, eventcapacity, eventimage, roomid, event_type_id } = req.body;
@@ -94,6 +102,7 @@ ORDER BY
       return res.status(500).json({ error: "An error occurred while inserting data." });
     }
   });
+
   router.post("/addNewRoom", async (req, res) => {
     try {
       const { roomID, roomName, roomDescription, roomCapacity, room_type_id } = req.body;
@@ -109,4 +118,31 @@ ORDER BY
       return res.status(500).json({ error: "An error occurred while adding the room." });
     }
   });
+// Delete event by id
+router.delete('/deleteEvent/:id', async (req, res) => {
+  const eventId = req.params.id;
+  try {
+    const result = await db.query('DELETE FROM events WHERE idevent = ?', [eventId]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    return res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error('[!SQL!] Error deleting event:', error);
+    return res.status(500).json({ error: 'An error occurred while deleting the event.' });
+  }
+});
+router.delete('/deleteEvent/:id', async (req, res) => {
+  const eventId = req.params.id;
+  try {
+    const result = await db.query('DELETE FROM events WHERE idevent = ?', [eventId]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    return res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error('[!SQL!] Error deleting event:', error);
+    return res.status(500).json({ error: 'An error occurred while deleting the event.' });
+  }
+});
 module.exports = router;

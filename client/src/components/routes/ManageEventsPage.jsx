@@ -71,7 +71,7 @@ export default function ManageEvents() {
       <div className="room-list">
         {eventData?.map((event) => (
           <div
-            key={event.id}
+            key={event.idevent}
             className="room-item"
             onClick={() => navigate(`event-details/${event.idevent}`)} // Navigate on full item click
           >
