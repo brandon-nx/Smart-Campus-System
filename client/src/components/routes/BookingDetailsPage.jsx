@@ -180,113 +180,113 @@ export default function BookingDetailsPage() {
         </Modal>
       )}
       <div className={classes["booking-details-page"]}>
-        <div className={classes["booking-header"]}>
-          <img
-            className={classes["booking-image"]}
-            src="/path/to/your-image.jpg"
-            alt={roomName}
-          />
-        </div>
+        <img
+          className={classes["booking-image"]}
+          src="https://projects.iq.harvard.edu/sites/projects.iq.harvard.edu/files/styles/os_files_xxlarge/public/scictr-renovations/files/lh_-_new_complete.jpg?m=1708004681&itok=HrLrrtr6"
+          alt={roomName}
+        />
+
         <div className={classes["booking-info"]}>
           <h1 className={classes["booking-title"]}>{roomName}</h1>
-          <div className={classes["booking-operation"]}>
-            <h3 className={classes["booking-subheading"]}>Operation Hours</h3>
-            {operationalHours.length === 0 && (
-              <div className={classes["no-hours"]}>
-                <p>Not Operational</p>
-              </div>
-            )}
-            {operationalHours.length !== 0 && (
-              <div className={classes["operational-hours-scroll"]}>
-                {operationalHours.map(({ day, open, close }) => (
-                  <div key={day} className={classes["day-card"]}>
-                    <div className={classes["day"]}>{day}</div>
-                    <div className={classes["time"]}>
-                      {convert24To12(open)} – {convert24To12(close)}
-                    </div>
+          <h3 className={classes["booking-subheading"]}>Operation Hours</h3>
+          {operationalHours.length === 0 && (
+            <div className={classes["no-hours"]}>
+              <p>Not Operational</p>
+            </div>
+          )}
+          {operationalHours.length !== 0 && (
+            <div className={classes["operational-hours-scroll"]}>
+              {operationalHours.map(({ day, open, close }) => (
+                <div key={day} className={classes["day-card"]}>
+                  <div className={classes["day"]}>{day}</div>
+                  <div className={classes["time"]}>
+                    {convert24To12(open)} – {convert24To12(close)}
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <p className={classes["booking-description"]}>{roomDescription}</p>
-        </div>
-        <h3 className={classes["booking-subheading"]}>Amenities</h3>
-        <div className={classes["booking-amenities"]}>
-          <div className={classes["amenity-item"]}>
-            <FaChair className={classes["amenity-icon"]} />
-            <span className={classes["amenity-text"]}>
-              {roomCapacity} Seats
-            </span>
-          </div>
-
-          {amenities.length !== 0 &&
-            amenities.map((amenity) => {
-              const Icon = amenityIcons[amenity.name] || FaQuestionCircle;
-              return (
-                <div key={amenity.id} className={classes["amenity-item"]}>
-                  <Icon className={classes["amenity-icon"]} />
-                  <span className={classes["amenity-text"]}>{amenity.name}</span>
                 </div>
-              );
-            })}
-        </div>
-        <Form method="post" className="form">
-          <div className={classes["booking-date"]}>
-            <input type="hidden" id="email" name="email" value={accountEmail} />
-            <Input
-              label="Booking Date"
-              disabled={isLoading}
-              id="booking-date"
-              type="date"
-              name="booking-date"
-              ref={bookingDateRef}
-              min={today}
-              max={maxDate}
-              onChange={handleDateChange}
-              error={
-                startSlotsData?.errors?.find(
-                  (err) => err.field === "bookingDate"
-                )?.message || null
-              }
-            />
-          </div>
-          {isLoading && <LoadingIndicator />}
-          {isError && <>{startSlotsError.info?.message}</>}
-          {selectedDate && startSlotsData && startSlotsData.success && (
-            <>
-              <h2>Select Booking Start Time</h2>
-              <TimeSlotPicker
-                name="start-time"
-                onChange={setSelectedStartSlot}
-                timeSlots={startSlotsData.startSlots}
-              />
-            </>
+              ))}
+            </div>
           )}
-          {selectedStartSlot && endSlotsData && endSlotsData.success && (
-            <>
-              <h2>Select Booking End Time</h2>
-              <TimeSlotPicker
-                name="end-time"
-                onChange={setSelectedEndSlot}
-                timeSlots={endSlotsData.endSlots}
-              />
-            </>
-          )}
+          <p className={classes["booking-description"]}>{roomDescription}</p>
 
-          <p className="form-actions-horizontal">
-            <Button className="book-btn" disabled={isSubmitting}>
-              {isSubmitting ? "Booking..." : "BOOK"}
-            </Button>
-            <Button
-              className="cancel-btn"
-              onClick={(event) => handleBack(event)}
-              disabled={isSubmitting}
-            >
-              CANCEL
-            </Button>
-          </p>
-        </Form>
+          <h3 className={classes["booking-subheading"]}>Amenities</h3>
+          <div className={classes["booking-amenities"]}>
+            <div className={classes["amenity-item"]}>
+              <FaChair className={classes["amenity-icon"]} />
+              <span className={classes["amenity-text"]}>
+                {roomCapacity} Seats
+              </span>
+            </div>
+
+            {amenities.length !== 0 &&
+              amenities.map((amenity) => {
+                const Icon = amenityIcons[amenity.name] || FaQuestionCircle;
+                return (
+                  <div key={amenity.id} className={classes["amenity-item"]}>
+                    <Icon className={classes["amenity-icon"]} />
+                    <span className={classes["amenity-text"]}>{amenity.name}</span>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+
+        <Form method="post" className="form">
+            <div className={classes["booking-subheading"]}>
+              <input type="hidden" id="email" name="email" value={accountEmail} />
+              <Input
+                label="Booking Date"
+                disabled={isLoading}
+                id="booking-date"
+                type="date"
+                name="booking-date"
+                ref={bookingDateRef}
+                min={today}
+                max={maxDate}
+                onChange={handleDateChange}
+                error={
+                  startSlotsData?.errors?.find(
+                    (err) => err.field === "bookingDate"
+                  )?.message || null
+                }
+              />
+            </div>
+            {isLoading && <LoadingIndicator />}
+            {isError && <>{startSlotsError.info?.message}</>}
+            {selectedDate && startSlotsData && startSlotsData.success && (
+              <>
+                <h2 className={classes["booking-subheading"]}>Select Booking Start Time</h2>
+                <TimeSlotPicker
+                  name="start-time"
+                  onChange={setSelectedStartSlot}
+                  timeSlots={startSlotsData.startSlots}
+                />
+              </>
+            )}
+            {selectedStartSlot && endSlotsData && endSlotsData.success && (
+              <>
+                <h2 className={classes["booking-subheading"]}>Select Booking End Time</h2>
+                <TimeSlotPicker
+                  name="end-time"
+                  onChange={setSelectedEndSlot}
+                  timeSlots={endSlotsData.endSlots}
+                />
+              </>
+            )}
+
+            <p className="form-actions-horizontal">
+              <Button className="book-btn" disabled={isSubmitting}>
+                {isSubmitting ? "Booking..." : "BOOK"}
+              </Button>
+              <Button
+                className="cancel-btn"
+                onClick={(event) => handleBack(event)}
+                disabled={isSubmitting}
+              >
+                CANCEL
+              </Button>
+            </p>
+          </Form>
+
       </div>
     </>
   );
