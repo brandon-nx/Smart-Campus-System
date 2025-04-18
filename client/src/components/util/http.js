@@ -482,3 +482,41 @@ export async function markNotifRead(id) {
   if (!res.ok) throw new Error("Failed to mark notification as read");
   return res.json();
 }
+
+//Add missing functions
+
+
+
+export async function fetchRoom({ id, signal }) {
+  const response = await fetch(`http://localhost:8080/rooms/${id}`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while fetching the room");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+
+
+
+export async function fetchRoomIDs({ signal }) {
+  const response = await fetch("http://localhost:8080/rooms/ids", { signal });
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while fetching room IDs");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+  return data;
+}
+
