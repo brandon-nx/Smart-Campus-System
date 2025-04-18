@@ -1,0 +1,62 @@
+/* Each item “card” */
+.event-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+/* Text section on the left */
+.event-info {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.1rem;
+  gap: 20px;
+}
+
+.event-image {
+  display: block;
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Title text */
+.event-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.25rem 0;
+}
+
+.event-subheading {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+}
+
+.event-subheading:last-of-type {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1rem;
+}
+
+.event-description {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #333;
+  margin: 0;
+  flex: 1 1 auto;
+
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+
+  white-space: normal;
+
+  padding-right: 0.5rem;
+}

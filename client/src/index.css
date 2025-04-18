@@ -166,25 +166,39 @@ button:disabled {
 
 /* Custom Button Styles */
 .login-btn,
-.next-btn, .signup-btn, .book-btn {
+.next-btn,
+.signup-btn,
+.book-btn, .rsvp-btn, .view-event-btn {
   color: white;
   background-color: #b91c1c;
 }
 
 .login-btn:hover:enabled,
-.next-btn:hover:enabled, .signup-btn:hover:enabled, .book-btn:hover:enabled {
+.next-btn:hover:enabled,
+.signup-btn:hover:enabled,
+.book-btn:hover:enabled, .rsvp-btn:hover:enabled, .view-event-btn:enabled {
   background-color: #991b1b;
 }
 
 .login-btn:focus,
-.next-btn:focus, .signup-btn:focus, .book-btn:focus {
+.next-btn:focus,
+.signup-btn:focus,
+.book-btn:focus, .rsvp-btn:focus, .view-event-btn:focus {
   outline: 2px solid #991b1b;
   outline-offset: 2px;
 }
 
 .next-btn,
-.cancel-btn, .success-btn, .reject-btn, .book-btn {
+.cancel-btn,
+.success-btn,
+.reject-btn,
+.book-btn, .rsvp-btn, .view-event-btn {
   border-radius: 20px;
+}
+
+.view-event-btn {
+  flex: 0 0 auto;
+  width: 20%;
 }
 
 .success-btn {
@@ -193,25 +207,25 @@ button:disabled {
 }
 
 .success-btn:hover:enabled {
-  background-color: #47CFA2;
+  background-color: #47cfa2;
 }
 
 .success-btn:focus {
-  outline: 2px solid #47CFA2;
+  outline: 2px solid #47cfa2;
   outline-offset: 2px;
 }
 
 .reject-btn {
-  background-color: #F44336;
+  background-color: #f44336;
   color: #fff;
 }
 
 .reject-btn:hover:enabled {
-  background-color: #F5554A;
+  background-color: #f5554a;
 }
 
 .reject-btn:focus {
-  outline: 2px solid #F5554A;
+  outline: 2px solid #f5554a;
   outline-offset: 2px;
 }
 
@@ -313,11 +327,11 @@ button:disabled {
   border-bottom: 1px solid var(--gray-300);
   padding: 0.5rem;
   gap: 0.5rem;
-  scrollbar-width: none; 
+  scrollbar-width: none;
 }
 
 .category-slider::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 
 .category-button {
@@ -386,7 +400,7 @@ button:disabled {
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  width:30%;
+  width: 30%;
   outline: none;
 }
 
@@ -447,7 +461,7 @@ button:disabled {
 }
 
 .modal-title-reject {
-  color: #F44336;
+  color: #f44336;
 }
 
 .modal-message {
@@ -622,13 +636,6 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.8
-  ); /* optional: add a translucent background */
 }
 
 .lds-ring {
@@ -769,11 +776,11 @@ button:disabled {
   inset: 0;
   background: transparent;
   pointer-events: none;
-  z-index: 1200;                 /* above your header (1000) */
+  z-index: 1200; /* above your header (1000) */
 }
 
 .search-backdrop.show {
-  pointer-events: auto;          /* enable clicks only when open */
+  pointer-events: auto; /* enable clicks only when open */
 }
 
 /* Sliding bar container */
@@ -881,7 +888,7 @@ button:disabled {
 /* Category Slider */
 .category-slider {
   display: flex;
-  overflow-x: auto; 
+  overflow-x: auto;
   background-color: var(--white);
   border-bottom: 1px solid var(--gray-300);
   padding: 0.5rem;
@@ -890,7 +897,7 @@ button:disabled {
 }
 
 .category-slider::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 
 .category-button {
@@ -1008,4 +1015,3 @@ button:disabled {
   border: none;
   cursor: pointer;
 }
-

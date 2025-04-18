@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 
-export default function SearchBar({ open, value, onChange, onClose }) {
+export default function SearchBar({ open, value, onChange, onClose, placeholderMsg }) {
   const inputRef = useRef(null);
 
   // Focus the input when the bar is opened
@@ -25,8 +25,9 @@ export default function SearchBar({ open, value, onChange, onClose }) {
       <div className={`search-bar-container ${open ? "show" : ""}`}>
         <input
           ref={inputRef}
+          maxLength="20"
           type="text"
-          placeholder="Search rooms…"
+          placeholder={placeholderMsg}
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
         />

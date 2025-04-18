@@ -400,7 +400,7 @@ router.post("/rooms/:id/book", async (req, res, next) => {
     console.error("[!SIGNIN!] Error booking:", error);
 
     return res.status(500).json({
-      message: "User signup failed due to a server error.",
+      message: "Booking failed due to a server error.",
       status: 500,
     });
   }
