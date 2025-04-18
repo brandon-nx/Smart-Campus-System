@@ -145,10 +145,10 @@ router.delete('/deleteEvent/:id', async (req, res) => {
     return res.status(500).json({ error: 'An error occurred while deleting the event.' });
   }
 });
-router.delete('/deleteEvent/:id', async (req, res) => {
-  const eventId = req.params.id;
+router.delete('/deleteRoom/:id', async (req, res) => {
+  const roomID = req.params.id;
   try {
-    const result = await db.query('DELETE FROM events WHERE idevent = ?', [eventId]);
+    const result = await db.query('DELETE FROM venue WHERE roomName = ?', [roomID]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Event not found' });
     }

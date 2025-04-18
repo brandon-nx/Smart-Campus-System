@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2, ChevronDown, Plus } from "lucide-react";
 import "./styles/RoomDetails.css";
-import { fetchRoom,queryClient} from "../util/http";
+import { fetchRoom,queryClient,deleteRoom} from "../util/http";
 import { useQuery } from "@tanstack/react-query";
 // Import image if it's inside the src folder
 import seminarImage from "../../assets/images/seminar.jpg"; // Update path based on your folder structure
@@ -22,12 +22,6 @@ function RoomDetails() {
 
   const [roomData, setRoomData] = useState(null);
 
-  useEffect(() => {
-    if (currentRoomQuery && currentRoomQuery.length > 0) {
-      setRoomData(currentRoomQuery[0]);
-    }
-  }, [currentRoomQuery]);
-
   const handleBack = () => {
     navigate(-1); // Go back to the previous page
   };
@@ -37,6 +31,11 @@ function RoomDetails() {
   };
 
   const confirmDelete = () => {
+    queryClient.fetchQuery({
+          queryKey: ["events", "delete",id],
+          queryFn: ({ signal }) => deleteEvent({ signal,id}),
+        });
+        navigate(-1)
     alert("Room deleted!");
     navigate("/manage-rooms"); // Navigate back after deletion
   };
@@ -47,7 +46,7 @@ function RoomDetails() {
 
 
 
-
+  deleteRoom({signal,id})
 
   if (isLoading) {
     return (

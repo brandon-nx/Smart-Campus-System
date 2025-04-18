@@ -22,10 +22,10 @@ export default function EventDetails() {
   const eventData = Array.isArray(eventDataArray) && eventDataArray.length > 0 ? eventDataArray[0] : null;
   const tabs = ["Events", "Attendance", "Bookings"];
 
-    const { data: pastAttendanceData } = useQuery({
-        queryKey: ["attendance", "categories"],
-        queryFn: ({ signal }) => fetchAttendance({ signal ,id}),
-    });
+  const { data: pastAttendanceData } = useQuery({
+      queryKey: ["attendance", "categories"],
+      queryFn: ({ signal }) => fetchAttendance({ signal ,id}),
+  });
 
 
   const handleBack = () => navigate(-1);

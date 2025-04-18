@@ -363,11 +363,9 @@ export async function deleteEvent({ signal, id }) {
 
 export async function deleteRoom({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/deleteRoom", {
-          method: "POST",
+      const res = await fetch("http://localhost:8080/admin/deleteRoom"+id, {
+          method: "DELETE",
           credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data), // Ensure data is stringified
           signal: signal
       });
 
