@@ -8,6 +8,26 @@ const {
   isValidDate,
   isValidImageUrl,
 } = require("../util/validation");
+router.get("/all", async (req, res) => {
+  const { id } = req.query;
+
+  try {
+    let sql = `
+      SELECT *
+      FROM events
+      left join event_type on events.event_type_id = event_type.id
+      WHERE type_name = ?
+    `;
+    const params = [id];
+
+    // Execute the query with parameters.
+    const [rows] = await db.query(sql, params);
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error fetching rooms:", err);
+    return res.status(500).json({ message: "Failed to fetch rooms" });
+  }
+});
 
 router.get("/categories", async (req, res) => {
   try {

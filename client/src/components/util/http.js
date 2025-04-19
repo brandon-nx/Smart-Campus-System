@@ -455,7 +455,25 @@ export async function fetchEvents({ signal, categoryId, searchTerm }) {
 
   return data;
 }
+export async function adminFetchEvents({ signal, categoryId}) {
 
+  console.log(categoryId);
+  let url = "http://localhost:8080/events/all/?id=" + categoryId;
+
+
+  const response = await fetch(url, { signal: signal });
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while fetching the rooms");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data;
+}
 export async function fetchNotifications({ signal, accountEmail }) {
   let url = `http://localhost:8080/notifications?email=${accountEmail}`;
 
@@ -482,42 +500,31 @@ export async function markNotifRead(id) {
   if (!res.ok) throw new Error("Failed to mark notification as read");
   return res.json();
 }
-
-//Add missing functions
-
-
-export async function fetchRooms({ signal, categoryId, searchTerm }) {
-  let url = "http://localhost:8080/bookings/rooms";  
-
-  if (categoryId && searchTerm) {
-    url += "?id=" + categoryId + "&search=" + searchTerm;
-  }
-  else if (categoryId) {
-    url += "?id=" + categoryId;
-  }
-
-  const response = await fetch(url, { signal });
+export async function fetchRoomIDs({ signal }) {
+  const response = await fetch(`http://localhost:8080/bookings/ids`, {signal:signal});
 
   if (!response.ok) {
-    const error = new Error("An error occurred while fetching the rooms");
+    const error = new Error("An error occurred while fetching the room");
     error.code = response.status;
     error.info = await response.json();
     throw error;
   }
 
   const data = await response.json();
+
   return data;
 }
-export async function fetchRoomIDs({ signal }) {
-  const response = await fetch("http://localhost:8080/rooms/ids", { signal });
+export async function fetchRoom({ signal, id }) {
+  let url = "http://localhost:8080/bookings/room/" + id;
+  const response = await fetch(url, { signal: signal }); // Fetch the data
 
-  if (!response.ok) {
-    const error = new Error("An error occurred while fetching room IDs");
-    error.code = response.status;
-    error.info = await response.json();
-    throw error;
+  if (!response.ok) { // Check if the response is okay
+      const error = new Error("An error occurred while fetching the events");
+      error.code = response.status;
+      error.info = await response.json();
+      throw error;
   }
 
-  const data = await response.json();
-  return data;
+  const data = await response.json(); // Parse the response data
+  return data; // Return the data
 }
