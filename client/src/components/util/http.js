@@ -364,7 +364,7 @@ export async function deleteEvent({ signal, id }) {
   }
 }
 
-export async function deleteRoom({ signal, data }) {
+export async function deleteRoom({ signal, id }) {
   try {
       const res = await fetch("http://localhost:8080/admin/deleteRoom"+id, {
           method: "DELETE",

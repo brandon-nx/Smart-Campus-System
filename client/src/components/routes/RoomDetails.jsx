@@ -19,8 +19,9 @@ function RoomDetails() {
     queryKey: ["event", "data", id],
     queryFn: ({ signal }) => fetchRoom({ signal, id }),
   });
+  console.log (currentRoomQuery)
 
-  const [roomData, setRoomData] = useState(null);
+  const roomData = currentRoomQuery
 
   const handleBack = () => {
     navigate(-1); // Go back to the previous page
@@ -33,7 +34,7 @@ function RoomDetails() {
   const confirmDelete = () => {
     queryClient.fetchQuery({
           queryKey: ["events", "delete",id],
-          queryFn: ({ signal }) => deleteEvent({ signal,id}),
+          queryFn: ({ signal }) => deleteRoom({signal,id}),
         });
         navigate(-1)
     alert("Room deleted!");
@@ -46,7 +47,7 @@ function RoomDetails() {
 
 
 
-  deleteRoom({signal,id})
+
 
   if (isLoading) {
     return (
@@ -102,7 +103,7 @@ function RoomDetails() {
         </button>
       </header>
 
-      <div className="room-image-container" onClick={handleImageClick}>
+      <div className="room-image-container">
         <img
           src={ seminarImage} // Use the imported image or fallback to a default image
           alt={roomData.name}
@@ -113,7 +114,6 @@ function RoomDetails() {
           ref={fileInputRef}
           className="image-upload-input"
           accept="image/*"
-          onChange={handleImageChange}
         />
       </div>
 
