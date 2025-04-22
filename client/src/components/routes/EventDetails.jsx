@@ -14,12 +14,11 @@ export default function EventDetails() {
   const fileInputRef = useRef(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState("Events");
-  const { data: eventDataArray ,isLoading} = useQuery({
+  console.log(id)
+  const { data: eventData ,isLoading} = useQuery({
     queryKey: ["event", "data", id],
-    queryFn: ({ signal }) => fetchEvent({ signal, categoryId: id}),
+    queryFn: ({ signal }) => fetchEvent({id, signal}),
   });
-
-  const eventData = Array.isArray(eventDataArray) && eventDataArray.length > 0 ? eventDataArray[0] : null;
   const tabs = ["Events", "Attendance", "Bookings"];
 
   const { data: pastAttendanceData } = useQuery({

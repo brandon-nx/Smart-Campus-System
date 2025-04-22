@@ -33,11 +33,11 @@ export default function EventDetailsPage() {
   const accountEmail = useSelector((state) => state.auth.email);
 
   const [isConfirmationBoxOpen, setIsConfirmationBoxOpen] = useState(false);
-
+  
   const params = useParams();
   const { data: eventData } = useQuery({
     queryKey: ["events", "event", params.id],
-    queryFn: ({ signal }) => fetchEvent({ signal, id: params.id }),
+    queryFn: ({ signal }) => fetchEvent({ id: params.id, signal }),
   });
 
   console.log(eventData);

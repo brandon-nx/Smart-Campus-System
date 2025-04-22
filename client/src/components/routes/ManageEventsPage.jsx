@@ -60,7 +60,8 @@ export default function ManageEvents() {
           <button
             key={tab.type_name}
             className={`room-tab ${activeTab === tab.type_name ? "active" : ""}`} // Updated comparison
-            onClick={() => setActiveTab(tab.type_name)} // Updated to set active tab correctly
+            value={tab.id}
+            onClick={() => setActiveTab(tab.id)} // Updated to set active tab correctly
           >
             {tab.type_name}
           </button>

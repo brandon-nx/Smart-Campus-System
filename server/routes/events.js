@@ -41,6 +41,44 @@ router.get("/categories", async (req, res) => {
   }
 });
 
+router.get("/allevents", async (req, res) => {
+  const { id, search } = req.query;
+
+  try {
+    let sql = `
+      SELECT  e.idevent,
+                    e.eventname,
+                    e.eventdescription,
+                    e.eventstart,
+                    e.eventend,
+                    e.eventcapacity,
+                    e.eventimage,
+                    e.roomid,
+                    v.roomName,
+                    e.event_type_id,
+                    e.status
+            FROM events      AS e
+            JOIN venue       AS v ON e.roomid = v.roomID
+            WHERE e.event_type_id = ?
+              AND e.status = 'Open'
+    `;
+    const params = [id];
+
+    if (search && search.trim() !== "") {
+      sql += " AND e.eventname LIKE ?";
+      params.push(`%${search}%`);
+    }
+
+    // Execute the query with parameters.
+    const [rows] = await db.query(sql, params);
+    console.log(rows)
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error fetching events:", err);
+    return res.status(500).json({ message: "Failed to fetch events" });
+  }
+});
+
 router.get("/events", async (req, res) => {
   const { id, search } = req.query;
 
@@ -71,6 +109,7 @@ router.get("/events", async (req, res) => {
 
     // Execute the query with parameters.
     const [rows] = await db.query(sql, params);
+    console.log(rows)
     return res.json(rows);
   } catch (error) {
     console.error("Error fetching events:", err);
