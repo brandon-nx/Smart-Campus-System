@@ -27,11 +27,13 @@ export default function NavigationPage() {
   const [imgDimensions, setImgDimensions] = useState({ width: 1, height: 1 });
   const [activeFloor, setActiveFloor] = useState("second");
   const [path, setPath] = useState([]);
+  
 
   // Refs for DOM and images
   const canvasRef = useRef(null);
   const transformRef = useRef(null);
   const startMarkerRef = useRef(null);
+  const skipRecenteringRef = useRef(false);
 
   // Merge room and waypoint data
   const locations = { ...locationRooms, ...locationWaypoints };
@@ -182,6 +184,11 @@ export default function NavigationPage() {
   // Automatically center and zoom to start location
   useEffect(() => {
     if (!mapLoaded || !startLocation || !transformRef.current) return;
+
+    if (skipRecenteringRef.current) {
+      skipRecenteringRef.current = false;  // Reset for next time
+      return;
+    }
   
     const start = locations[startLocation];
     const img = document.querySelector(`.${classes["campus-map"]}`);
@@ -201,7 +208,7 @@ export default function NavigationPage() {
     if (!isNaN(positionX) && !isNaN(positionY)) {
       transformRef.current.setTransform(positionX, positionY, desiredZoom, 400, "easeOut");
     }
-  }, [mapLoaded, startLocation, activeFloor]);
+  }, [mapLoaded, startLocation]);
   
 
   // On map image load, set dimensions
@@ -253,7 +260,7 @@ export default function NavigationPage() {
                 <img src={type === "start" ? blueDot : redPin} alt="Icon" className={classes[type === "start" ? "blue-dot" : "red-pin"]} />
                 <span>{type === "start" ? formatDisplayName(startLocation) : destination ? formatDisplayName(destination) : "Search Destination"}</span>
                 {type === "destination" && (
-                  <div className={classes["switch-icon-wrapper"]} onClick={(e) => { e.stopPropagation(); handleSwitchLocations(); }}>
+                  <div className={classes["switch-icon-wrapper"]} onClick={(e) => { skipRecenteringRef.current = true; e.stopPropagation(); handleSwitchLocations(); }}>
                     <img src={switchLocation} alt="Switch Icon" className={classes["switch-icon"]} />
                   </div>
                 )}
@@ -292,6 +299,7 @@ export default function NavigationPage() {
                   return (
                     <button
                       onClick={() => {
+                        skipRecenteringRef.current = true; 
                         setActiveFloor(prev => (prev === "second" ? "third" : "second"));
                         console.log("Switching floor to:", activeFloor === "second" ? "third" : "second");
                         setPath([]);
@@ -322,6 +330,23 @@ export default function NavigationPage() {
               </div>
             </TransformComponent>
           </TransformWrapper>
+        </div>
+
+        <div className={classes["floor-switcher"]}>
+          <button
+            className={classes["floor-button"]}
+            style={{ backgroundColor: activeFloor === "second" ? "#b91c1c" : "#e5e7eb", color: activeFloor === "second" ? "white" : "black" }}
+            onClick={() => setActiveFloor("second")}
+          >
+            Level 2
+          </button>
+          <button
+            className={classes["floor-button"]}
+            style={{ backgroundColor: activeFloor === "third" ? "#b91c1c" : "#e5e7eb", color: activeFloor === "third" ? "white" : "black" }}
+            onClick={() => setActiveFloor("third")}
+          >
+            Level 3
+          </button>
         </div>
       </div>
     </div>
