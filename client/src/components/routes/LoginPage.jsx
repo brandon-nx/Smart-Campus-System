@@ -33,9 +33,6 @@ export default function Login() {
       {accountRecoveryCtx.isOpen && <PasswordRecoveryWindow />}
       <div className={classes["login-container"]}>
         <div className={classes["top-bar"]}>
-          <Link to="/" className={classes["back-btn"]}>
-            ←
-          </Link>
           <span className={classes["top-bar-text"]}>Member of UOSM</span>
         </div>
 

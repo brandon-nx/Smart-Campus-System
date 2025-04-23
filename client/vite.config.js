@@ -12,6 +12,6 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:8080', // proxy all /api/* to backend
     },
-    allowedHosts: ['c3d0-113-211-214-146.ngrok-free.app'],
+    allowedHosts: ['8737-113-211-214-146.ngrok-free.app'],
   }
 });

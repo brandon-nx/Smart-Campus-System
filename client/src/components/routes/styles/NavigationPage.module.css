@@ -7,19 +7,25 @@
   box-sizing: border-box;
   overflow-y: auto;
   position: relative;
+  padding-top: 135px;
 }
 
 /* Top Bar: Searc Input*/
 .map-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   padding: 10px 20px;
   background-color: #f2f2f2;
   border-bottom: 1px solid #ddd;
-  position: relative;
   z-index: 4000;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-sizing: border-box;
 }
+
 
 /* Floor Switch Button*/
 .floor-switcher {
