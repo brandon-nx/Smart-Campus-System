@@ -14,51 +14,41 @@ export default function AddRoom() {
   });
   const [roomID, setRoomID] = useState("")
   const [roomName, setRoomName] = useState("")
-  const [roomType, setRoomType] = useState("")
+  const [roomType, setRoomType] = useState("Select Room Type")
   const [roomDescription, setRoomDescription] = useState("")
   const [roomCapacity, setRoomCapacity] = useState("")
   const [imageUrl, setImageUrl] = useState("")
 
   const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [showErrorModal, setShowErorModal] = useState(false)
 
   const handleBack = () => navigate(-1)
   const handleCancel = () => navigate(-1)
 
   const handleAddRoom = () => {
-        let data = { 
-          roomID: roomID,
-          roomName: roomName,
-          roomDescription: roomDescription,
-          roomCapacity:roomCapacity,
-          room_type_id: roomType}
-        
-        setShowConfirmation(false)
-        queryClient.fetchQuery({
-          queryKey: ["events", "adding"],
-          queryFn: ({ signal }) => addNewRoom({ signal,data }),
-        });
-        navigate(-1)
     setShowConfirmModal(true)
   }
-
+  console.log(roomType)
   const confirmAddRoom = () => {
+    let data = { 
+      roomID: roomID,
+      roomName: roomName,
+      roomDescription: roomDescription,
+      roomCapacity:roomCapacity,
+      room_type_id: roomType
+      }
+    
+    queryClient.fetchQuery({
+      queryKey: ["events", "adding"],
+      queryFn: ({ signal }) => addNewRoom({ signal,data }),
+    });
     setShowConfirmModal(false)
-    navigate(-1) // Add submission logic here
+    navigate(-1)
+
   }
 
   const cancelAddRoom = () => {
     setShowConfirmModal(false)
-  }
-
-  const addAmenity = () => {
-    if (newAmenity.trim()) {
-      setAmenities([...amenities, newAmenity.trim()])
-      setNewAmenity("")
-    }
-  }
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click()
   }
 
   const handleImageChange = (e) => {
@@ -118,7 +108,7 @@ export default function AddRoom() {
         </div>
         <div className="form-field">
           <div className="form-field-with-icon">
-            <label className="field-label">{roomType}</label>
+          <label className="field-label">{roomType ? categoryData?.find(cat => cat.id === Number(roomType))?.type_name : "Select Room Type"}</label>
             <ChevronDown className="chevron-icon" />
           </div>
           <select className="field-select" onChange={(e) => setRoomType(e.target.value)}>
@@ -160,6 +150,22 @@ export default function AddRoom() {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2 className="modal-title">Confirm Add Room</h2>
+            <p className="modal-message">Are you sure you want to add this room?</p>
+            <div className="modal-buttons">
+              <button className="cancel-button-roomspage" onClick={cancelAddRoom}>
+                Cancel
+              </button>
+              <button className="add-main-button-roomspage" onClick={confirmAddRoom}>
+                CONFIRM
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showErrorModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">Error!</h2>
             <p className="modal-message">Are you sure you want to add this room?</p>
             <div className="modal-buttons">
               <button className="cancel-button-roomspage" onClick={cancelAddRoom}>

@@ -94,6 +94,7 @@ function RoomDetails() {
   return (
     <div className="room-details-container">
       <header className="room-details-header">
+
         <button className="back-button" onClick={handleBack}>
           <ArrowLeft className="back-icon" />
         </button>
@@ -128,12 +129,10 @@ function RoomDetails() {
 
           {/* Room Name */}
           <div className="form-field">
-            <input
+            <label
               type="text"
               value={roomData.name}
-              className="field-input"
-              onChange={(e) => setRoomData({ ...roomData, name: e.target.value })}
-            />
+              className="field-input"/>
           </div>
         </div>
       </div>
