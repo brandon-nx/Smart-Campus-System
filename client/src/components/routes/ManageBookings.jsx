@@ -20,7 +20,7 @@ const ManageBookings = () => {
   return (
     <div className="bookings-container">
       <header className="bookings-header">
-        <button onClick={() => navigate("/admin/dashboard")} className="back-button">
+        <button onClick={() => navigate("/admin")} className="back-button">
           <ArrowLeft className="back-icon" />
         </button>
         <h1 className="header-title">Manage Bookings</h1>

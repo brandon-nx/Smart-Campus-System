@@ -6,7 +6,7 @@ import {
   Shield,
   LayoutDashboard,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import classes from "./styles/ProfilePage.module.css";
 import { useSelector } from "react-redux";
 import LoadingIndicator from "../UI/LoadingIndicator";
@@ -17,6 +17,8 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const accountEmail = useSelector((state) => state.auth.email);
   const accountType = useSelector((state) => state.auth.type);
+
+  console.log(accountType);
 
   const { data: accountData, isLoading: isAccountLoading } = useQuery({
     queryKey: ["account", accountEmail],
@@ -56,6 +58,7 @@ export default function ProfilePage() {
                   icon: <User className={classes["icon"]} />,
                   title: "My Account",
                   desc: "Make changes to your account",
+                  link: "/profile/edit",
                 },
                 {
                   icon: <User className={classes["icon"]} />,
@@ -72,9 +75,9 @@ export default function ProfilePage() {
                   title: "Class Schedule",
                   desc: "View your class schedule",
                 },
-              ].map(({ icon, title, desc }, idx) => (
+              ].map(({ icon, title, desc, link }, idx) => (
                 <li key={idx}>
-                  <a href="#" className={classes["menu-item"]}>
+                  <Link to={link ? link : "#"} className={classes["menu-item"]}>
                     <div className={classes["menu-content"]}>
                       <div className={classes["icon-container"]}>{icon}</div>
                       <div>
@@ -83,24 +86,24 @@ export default function ProfilePage() {
                       </div>
                     </div>
                     <ChevronRight className={classes["chevron"]} />
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li>
-                {accountType === "user" && (
-                  <Link to="/admin/dashboard" className="menu-item">
-                    <div className="menu-content">
-                      <div className="icon-container">
-                        <LayoutDashboard className="icon" />
+                {accountType === "admin" && (
+                  <Link to="/admin" className={classes["menu-item"]}>
+                    <div className={classes["menu-content"]}>
+                      <div className={classes["icon-container"]}>
+                        <LayoutDashboard className={classes["icon"]} />
                       </div>
                       <div>
-                        <p className="menu-title">Admin Dashboard</p>
-                        <p className="menu-description">
+                        <p className={classes["menu-title"]}>Admin Dashboard</p>
+                        <p className={classes["menu-description"]}>
                           Events and rooms overview with analytics
                         </p>
                       </div>
                     </div>
-                    <ChevronRight className="chevron" />
+                    <ChevronRight className={classes["chevron"]} />
                   </Link>
                 )}
               </li>

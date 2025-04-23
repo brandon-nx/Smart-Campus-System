@@ -228,7 +228,12 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    return res.json({ email: user.email, token: accessToken, type: user.type, success: true });
+    return res.json({
+      email: user.email,
+      token: accessToken,
+      type: user.type,
+      success: true,
+    });
   } catch (err) {
     console.error("[!SQL!] Error executing query:", err);
     return res.status(500).json({
@@ -251,8 +256,8 @@ router.post("/token", async (req, res) => {
   }
 
   try {
-    const email = await validateRefreshToken(refreshToken);
-    if (!email) {
+    const data = await validateRefreshToken(refreshToken);
+    if (!data) {
       return res.status(402).json({
         message: "No email found for that refresh token.",
         status: 402,
@@ -261,9 +266,11 @@ router.post("/token", async (req, res) => {
       });
     }
 
+    const { email, type } = data;
+
     const newAccessToken = generateAccessToken(email);
 
-    return res.json({ email, token: newAccessToken, success: true });
+    return res.json({ email, token: newAccessToken, type, success: true });
   } catch (err) {
     console.error("[!SQL!] Error executing query:", err);
     return res.status(500).json({
@@ -561,10 +568,18 @@ router.get("/verify-token", async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+
+    const [rows] = await db.query("SELECT type FROM users WHERE email = ?", [
+      email,
+    ]);
+
+    const userType = rows[0].type;
+
     return res.json({
       message: "Token is valid!",
       success: true,
-      user: decoded,
+      user: { ...decoded, type: userType },
     });
   } catch (err) {
     console.log("[!SQL!]Error verifying token " + err);
@@ -575,7 +590,5 @@ router.get("/verify-token", async (req, res) => {
     });
   }
 });
-
-
 
 module.exports = router;

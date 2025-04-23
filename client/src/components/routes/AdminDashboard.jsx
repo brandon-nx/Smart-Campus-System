@@ -111,15 +111,15 @@ export default function AdminDashboard() {
     };
 
     const handleManageBookings = () => {
-        navigate("/manage-bookings");
+        navigate("manage-bookings");
     };
 
     const handleManageRooms = () => {
-        navigate("/manage-rooms");
+        navigate("manage-rooms");
     };
 
     const handleManageEvents = () => {
-        navigate("/manage-events");
+        navigate("manage-events");
     };
 
     const handleSendEmail = () => {

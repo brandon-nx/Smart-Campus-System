@@ -38,11 +38,19 @@ async function generateAndStoreRefreshToken(email) {
 async function validateRefreshToken(refreshToken) {
   try {
     const [results] = await db.query(
-      "SELECT email FROM auth_token WHERE token = ?",
+      "SELECT at.email, u.type FROM auth_token AS at JOIN users AS u ON u.email = at.email WHERE at.token = ?",
       [refreshToken]
     );
 
-    return results.length ? results[0].email : null;
+    if(!results.length) {
+      return null;
+    }
+
+    const {email, type} = results[0]
+
+    console.log(results[0])
+
+    return {email, type}
   } catch (err) {
     console.log("[!SQL!] Error validating data: ", err);
     return res.status(500).json({

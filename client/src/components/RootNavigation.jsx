@@ -16,7 +16,6 @@ import Modal from "../../../client/src/components/routes/Modal"; // Adjust path 
 function RootNavigation() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const userType = useSelector((state) => state.auth.type);
   const sosHandler = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -68,7 +67,7 @@ function RootNavigation() {
           </NavLink>
 
           <NavLink
-            to={userType === "admin" ? "/admin" : "/profile"}
+            to="/profile"
             className={({ isActive }) =>
               `${classes["nav-item"]} ${isActive ? classes.active : ""}`
             }

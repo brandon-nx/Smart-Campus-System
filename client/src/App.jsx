@@ -9,7 +9,9 @@ import { queryClient } from "./components/util/http";
 import Login, { action as loginAction } from "./components/routes/LoginPage";
 import RootLayout from "./components/routes/RootLayout";
 import NavigationPage from "./components/routes/NavigationPage";
-import SignupPage, { action as signupAction } from "./components/routes/SignupPage";
+import SignupPage, {
+  action as signupAction,
+} from "./components/routes/SignupPage";
 import AccountRecoveryContextLayout from "./components/routes/AccountRecoveryContextLayout";
 import { action as forgotPasswordAction } from "./components/routes/ForgotPasswordPage";
 import PublicRoute from "./components/routes/PublicRoute";
@@ -32,17 +34,24 @@ import EventDetailsPage, {
 } from "./components/routes/EventDetailsPage";
 import ProfilePage from "./components/routes/ProfilePage";
 import AdminProfile from "./components/routes/AdminProfile";
-import AdminDashboard,{loader as adminDashboardLoader} from "./components/routes/AdminDashboard";
-import ManageRooms, {loader as manageRoomsLoader} from "./components/routes/ManageRoomPage";
+import AdminDashboard, {
+  loader as adminDashboardLoader,
+} from "./components/routes/AdminDashboard";
+import ManageRooms, {
+  loader as manageRoomsLoader,
+} from "./components/routes/ManageRoomPage";
 import AddRoom from "./components/routes/AddRoomsPage";
-import ManageEvents,{loader as manageEventsLoader} from "./components/routes/ManageEventsPage";
+import ManageEvents, {
+  loader as manageEventsLoader,
+} from "./components/routes/ManageEventsPage";
 import AddEvent from "./components/routes/AddEventsPage";
 import RoomDetails from "./components/routes/RoomDetails";
 import EventDetails from "./components/routes/EventDetails";
 import ManageBookings from "./components/routes/ManageBookings";
-import ManageBookingsDetails from"./components/routes/ManageBookingsDetails";
+import ManageBookingsDetails from "./components/routes/ManageBookingsDetails";
 import AdminBookings from "./components/routes/AdminBookings";
 import EditProfilePage from "./components/routes/EditProfilePage";
+import AdminRoute from "./components/routes/AdminRoute";
 
 const router = createBrowserRouter([
   {
@@ -72,9 +81,7 @@ const router = createBrowserRouter([
             element: <BookingDetailsPage />,
             loader: bookingDetailsLoader,
             action: bookingDetailsAction,
-            children: [
-              { path: "edit", element: <BookingDetailsPage /> },
-            ],
+            children: [{ path: "edit", element: <BookingDetailsPage /> }],
           },
           { path: "events", element: <EventPage />, loader: eventsLoader },
           {
@@ -88,20 +95,53 @@ const router = createBrowserRouter([
               },
             ],
           },
-          { path: "profile", children: [
-            { index: true, element: <ProfilePage /> },
-            { path: "edit", element: <EditProfilePage /> }
-          ]},
-          { path: "admin", element: <AdminProfile /> },
-          { path: "admin/dashboard", element: <AdminDashboard />,loader: adminDashboardLoader, },
-          { path: "manage-rooms", element: <ManageRooms/>, loader: manageRoomsLoader },
-          { path: "manage-events", element: <ManageEvents />, loader: manageEventsLoader },
-          { path: "manage-rooms/add-rooms", element: <AddRoom /> },
-          { path: "manage-events/add-events", element: <AddEvent /> },
-          { path: "manage-rooms/room-details/:id", element: <RoomDetails /> },
-          { path: "manage-events/event-details/:id", element: <EventDetails /> },
-          { path: "manage-bookings", element: <AdminBookings /> },
-          { path: "manage-bookings/:id", element: <ManageBookingsDetails /> },
+          {
+            path: "profile",
+            children: [
+              { index: true, element: <ProfilePage /> },
+              { path: "edit", element: <EditProfilePage /> },
+            ],
+          },
+          {
+            element: <AdminRoute />,
+            children: [
+              {
+                path: "admin",
+                children: [
+                  {
+                    index: true,
+                    element: <AdminDashboard />,
+                    loader: adminDashboardLoader,
+                  },
+                  {
+                    path: "manage-rooms",
+                    element: <ManageRooms />,
+                    loader: manageRoomsLoader,
+                  },
+                  {
+                    path: "manage-events",
+                    element: <ManageEvents />,
+                    loader: manageEventsLoader,
+                  },
+                  { path: "manage-rooms/add-rooms", element: <AddRoom /> },
+                  { path: "manage-events/add-events", element: <AddEvent /> },
+                  {
+                    path: "manage-rooms/room-details/:id",
+                    element: <RoomDetails />,
+                  },
+                  {
+                    path: "manage-events/event-details/:id",
+                    element: <EventDetails />,
+                  },
+                  { path: "manage-bookings", element: <AdminBookings /> },
+                  {
+                    path: "manage-bookings/:id",
+                    element: <ManageBookingsDetails />,
+                  },
+                ],
+              },
+            ],
+          },
         ],
       },
     ],

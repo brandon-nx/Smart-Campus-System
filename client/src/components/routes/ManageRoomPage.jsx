@@ -12,7 +12,7 @@ export default function ManageRooms() {
   //navigation
   const navigate = useNavigate()  // Use useNavigate from react-router-dom
   const handleBack = () => {
-    navigate(-1)  // Go back one page
+    navigate("/admin")  // Go back one page
   }
 
   const handleAddRoom = () => {
