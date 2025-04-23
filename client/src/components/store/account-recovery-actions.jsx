@@ -3,7 +3,7 @@ import { accountRecoveryActions } from "./account-recovery-slice";
 export const cancelOTPRequest = (recoveryEmail) => {
   return async (dispatch) => {
     const cancelRequest = async () => {
-      const response = await fetch("http://localhost:8080/cancel-otp", {
+      const response = await fetch("/api/cancel-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

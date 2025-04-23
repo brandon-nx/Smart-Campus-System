@@ -30,7 +30,7 @@ cp .env.example .env
 #### Configure the .env File
 
 PORT:
-Change the value to whatever port you prefer (e.g., 8080 is recommended). This is the port where the server will listen. For example, if the port is set to 8080, your fetch requests will be made to http://localhost:8080.
+Change the value to whatever port you prefer (e.g., 8080 is recommended). This is the port where the server will listen. For example, if the port is set to 8080, your fetch requests will be made to /api.
 
 ACCESS_TOKEN_SECRET & ACCESS_REFRESH_SECRET:
 Navigate to the /server/scripts/ folder from the terminal:
@@ -108,7 +108,7 @@ This will start your Express server.
 
 Access the App:
 
-With the server running (e.g., on http://localhost:8080) and the client running (e.g., on http://localhost:5173), your client app should be able to fetch data from the server as configured.
+With the server running (e.g., on /api) and the client running (e.g., on http://localhost:5173), your client app should be able to fetch data from the server as configured.
 
 ## Additional Notes
 

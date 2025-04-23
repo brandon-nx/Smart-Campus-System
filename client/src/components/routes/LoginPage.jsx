@@ -73,7 +73,7 @@ export async function action({ request }) {
     rememberMe: data.get("remember-me") !== null,
   };
 
-  const response = await fetch(`http://localhost:8080/login`, {
+  const response = await fetch(`/api/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

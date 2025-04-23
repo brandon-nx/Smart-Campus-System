@@ -75,7 +75,7 @@ export async function action({ request }) {
     image: "some_url",
   };
 
-  const response = await fetch(`http://localhost:8080/signup`, {
+  const response = await fetch(`/api/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

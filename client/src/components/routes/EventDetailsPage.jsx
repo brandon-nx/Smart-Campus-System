@@ -183,7 +183,7 @@ export async function action({ request, params }) {
     email: data.get("email"),
   };
 
-  const response = await fetch(`http://localhost:8080/events/events/${id}/rsvp`, {
+  const response = await fetch(`/api/events/events/${id}/rsvp`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
