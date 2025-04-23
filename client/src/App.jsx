@@ -42,6 +42,7 @@ import EventDetails from "./components/routes/EventDetails";
 import ManageBookings from "./components/routes/ManageBookings";
 import ManageBookingsDetails from"./components/routes/ManageBookingsDetails";
 import AdminBookings from "./components/routes/AdminBookings";
+import EditProfilePage from "./components/routes/EditProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -87,7 +88,10 @@ const router = createBrowserRouter([
               },
             ],
           },
-          { path: "profile", element: <ProfilePage /> },
+          { path: "profile", children: [
+            { index: true, element: <ProfilePage /> },
+            { path: "edit", element: <EditProfilePage /> }
+          ]},
           { path: "admin", element: <AdminProfile /> },
           { path: "admin/dashboard", element: <AdminDashboard />,loader: adminDashboardLoader, },
           { path: "manage-rooms", element: <ManageRooms/>, loader: manageRoomsLoader },

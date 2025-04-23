@@ -9,7 +9,9 @@ const authRoutes = require("./routes/auth");
 const bookingRoutes = require("./routes/bookings");
 const notificationRoutes = require("./routes/notifications");
 const adminRoutes = require("./routes/admin");
+const accountRoutes = require("./routes/account");
 const db = require("./db");
+const path = require("path");
 
 const app = express();
 
@@ -19,10 +21,12 @@ app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN, // Change if needed, from .env
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
 
 // Test the database connection
 db.query("SELECT 1")
@@ -44,6 +48,7 @@ app.use("/events", eventRoutes);
 app.use("/bookings", bookingRoutes);
 app.use("/notifications", notificationRoutes);
 app.use("/admin", adminRoutes);
+app.use("/account", accountRoutes);
 
 // Error-handling middleware
 app.use((error, req, res, next) => {

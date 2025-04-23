@@ -1,7 +1,20 @@
-export default function InputSelect({ name, id, error, children, ...props }) {
+export default function InputSelect({
+  name,
+  id,
+  error,
+  children,
+  label,
+  ...props
+}) {
   return (
     <div className="input-box">
-      <select className={error ? "invalid" : undefined} name={name} id={id} {...props}>
+      {label && <label htmlFor={id}>{label}</label>}
+      <select
+        className={error ? "invalid" : undefined}
+        name={name}
+        id={id}
+        {...props}
+      >
         {children}
       </select>
       {error && (

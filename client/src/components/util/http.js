@@ -18,7 +18,7 @@ export async function fetchBookingCategories({ signal }) {
 
   return data;
 }
-export async function fetchBookings({ signal ,categoryId}) {
+export async function fetchBookings({ signal, categoryId }) {
   let url = "http://localhost:8080/bookings/all/" + categoryId;
 
   const response = await fetch(url, { signal: signal });
@@ -197,7 +197,7 @@ export async function fetchEventsCount({ signal }) {
   }
   const data = await response.json();
   return data;
-} 
+}
 
 export async function fetchAttendanceCount({ signal }) {
   let url = "http://localhost:8080/admin/attendancesync";
@@ -214,7 +214,7 @@ export async function fetchAttendanceCount({ signal }) {
   return data;
 }
 export async function fetchAttendance({ signal, id }) {
-  let url = "http://localhost:8080/admin/attendance/"+id;
+  let url = "http://localhost:8080/admin/attendance/" + id;
 
   const response = await fetch(url, { signal: signal });
 
@@ -230,204 +230,222 @@ export async function fetchAttendance({ signal, id }) {
 // Data modification functions
 export async function postAnnouncement({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/postAnnouncement", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data), // Ensure data is stringified
-          signal: signal
-      });
+    const res = await fetch("http://localhost:8080/admin/postAnnouncement", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data), // Ensure data is stringified
+      signal: signal,
+    });
 
-      // Handle response status
-      if (res.status === 400 || res.status === 401) {
-          const errorResponse = await res.json(); // Parse the error response
-          return { success: false, error: errorResponse }; // Return error details
-      }
+    // Handle response status
+    if (res.status === 400 || res.status === 401) {
+      const errorResponse = await res.json(); // Parse the error response
+      return { success: false, error: errorResponse }; // Return error details
+    }
 
-      if (!res.ok) {
-          const errorResponse = await res.json(); // Parse the error response
-          throw new Response(
-              { message: errorResponse.message || "Something is wrong, authentication failed." },
-              { status: res.status }
-          );
-      }
-
-      const responseData = await res.json(); // Parse the successful response
-      return { success: true, data: responseData }; // Return success data
-
-  } catch (error) {
+    if (!res.ok) {
+      const errorResponse = await res.json(); // Parse the error response
       throw new Response(
-          { message: error.message || "An unexpected error occurred." },
-          { status: 500 }
+        {
+          message:
+            errorResponse.message ||
+            "Something is wrong, authentication failed.",
+        },
+        { status: res.status }
       );
+    }
+
+    const responseData = await res.json(); // Parse the successful response
+    return { success: true, data: responseData }; // Return success data
+  } catch (error) {
+    throw new Response(
+      { message: error.message || "An unexpected error occurred." },
+      { status: 500 }
+    );
   }
 }
 export async function addNewRoom({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/addNewRoom", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data), // Ensure data is stringified
-          signal: signal
-      });
+    const res = await fetch("http://localhost:8080/admin/addNewRoom", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data), // Ensure data is stringified
+      signal: signal,
+    });
 
-      // Handle response status
-      if (res.status === 400 || res.status === 401) {
-          const errorResponse = await res.json(); // Parse the error response
-          return { success: false, error: errorResponse }; // Return error details
-      }
+    // Handle response status
+    if (res.status === 400 || res.status === 401) {
+      const errorResponse = await res.json(); // Parse the error response
+      return { success: false, error: errorResponse }; // Return error details
+    }
 
-      if (!res.ok) {
-          const errorResponse = await res.json(); // Parse the error response
-          throw new Response(
-              { message: errorResponse.message || "Something is wrong, authentication failed." },
-              { status: res.status }
-          );
-      }
-
-      const responseData = await res.json(); // Parse the successful response
-      return { success: true, data: responseData }; // Return success data
-
-  } catch (error) {
+    if (!res.ok) {
+      const errorResponse = await res.json(); // Parse the error response
       throw new Response(
-          { message: error.message || "An unexpected error occurred." },
-          { status: 500 }
+        {
+          message:
+            errorResponse.message ||
+            "Something is wrong, authentication failed.",
+        },
+        { status: res.status }
       );
+    }
+
+    const responseData = await res.json(); // Parse the successful response
+    return { success: true, data: responseData }; // Return success data
+  } catch (error) {
+    throw new Response(
+      { message: error.message || "An unexpected error occurred." },
+      { status: 500 }
+    );
   }
 }
 export async function addNewEvent({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/addNewEvent", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data), // Ensure data is stringified
-          signal: signal
-      });
+    const res = await fetch("http://localhost:8080/admin/addNewEvent", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data), // Ensure data is stringified
+      signal: signal,
+    });
 
-      // Handle response status
-      if (res.status === 400 || res.status === 401) {
-          const errorResponse = await res.json(); // Parse the error response
-          return { success: false, error: errorResponse }; // Return error details
-      }
+    // Handle response status
+    if (res.status === 400 || res.status === 401) {
+      const errorResponse = await res.json(); // Parse the error response
+      return { success: false, error: errorResponse }; // Return error details
+    }
 
-      if (!res.ok) {
-          const errorResponse = await res.json(); // Parse the error response
-          throw new Response(
-              { message: errorResponse.message || "Something is wrong, authentication failed." },
-              { status: res.status }
-          );
-      }
-
-      const responseData = await res.json(); // Parse the successful response
-      return { success: true, data: responseData }; // Return success data
-
-  } catch (error) {
+    if (!res.ok) {
+      const errorResponse = await res.json(); // Parse the error response
       throw new Response(
-          { message: error.message || "An unexpected error occurred." },
-          { status: 500 }
+        {
+          message:
+            errorResponse.message ||
+            "Something is wrong, authentication failed.",
+        },
+        { status: res.status }
       );
+    }
+
+    const responseData = await res.json(); // Parse the successful response
+    return { success: true, data: responseData }; // Return success data
+  } catch (error) {
+    throw new Response(
+      { message: error.message || "An unexpected error occurred." },
+      { status: 500 }
+    );
   }
 }
 
 export async function deleteEvent({ signal, id }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/deleteEvent/"+id, {
-          method: "DELETE",
-          credentials: "include",
-          signal: signal
-      });
+    const res = await fetch("http://localhost:8080/admin/deleteEvent/" + id, {
+      method: "DELETE",
+      credentials: "include",
+      signal: signal,
+    });
 
-      // Handle response status
-      if (res.status === 400 || res.status === 401) {
-          const errorResponse = await res.json(); // Parse the error response
-          return { success: false, error: errorResponse }; // Return error details
-      }
+    // Handle response status
+    if (res.status === 400 || res.status === 401) {
+      const errorResponse = await res.json(); // Parse the error response
+      return { success: false, error: errorResponse }; // Return error details
+    }
 
-      if (!res.ok) {
-          const errorResponse = await res.json(); // Parse the error response
-          throw new Response(
-              { message: errorResponse.message || "Something is wrong, authentication failed." },
-              { status: res.status }
-          );
-      }
-
-      const responseData = await res.json(); // Parse the successful response
-      return { success: true, data: responseData }; // Return success data
-
-  } catch (error) {
+    if (!res.ok) {
+      const errorResponse = await res.json(); // Parse the error response
       throw new Response(
-          { message: error.message || "An unexpected error occurred." },
-          { status: 500 }
+        {
+          message:
+            errorResponse.message ||
+            "Something is wrong, authentication failed.",
+        },
+        { status: res.status }
       );
+    }
+
+    const responseData = await res.json(); // Parse the successful response
+    return { success: true, data: responseData }; // Return success data
+  } catch (error) {
+    throw new Response(
+      { message: error.message || "An unexpected error occurred." },
+      { status: 500 }
+    );
   }
 }
 
 export async function deleteRoom({ signal, id }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/deleteRoom"+id, {
-          method: "DELETE",
-          credentials: "include",
-          signal: signal
-      });
+    const res = await fetch("http://localhost:8080/admin/deleteRoom" + id, {
+      method: "DELETE",
+      credentials: "include",
+      signal: signal,
+    });
 
-      // Handle response status
-      if (res.status === 400 || res.status === 401) {
-          const errorResponse = await res.json(); // Parse the error response
-          return { success: false, error: errorResponse }; // Return error details
-      }
+    // Handle response status
+    if (res.status === 400 || res.status === 401) {
+      const errorResponse = await res.json(); // Parse the error response
+      return { success: false, error: errorResponse }; // Return error details
+    }
 
-      if (!res.ok) {
-          const errorResponse = await res.json(); // Parse the error response
-          throw new Response(
-              { message: errorResponse.message || "Something is wrong, authentication failed." },
-              { status: res.status }
-          );
-      }
-
-      const responseData = await res.json(); // Parse the successful response
-      return { success: true, data: responseData }; // Return success data
-
-  } catch (error) {
+    if (!res.ok) {
+      const errorResponse = await res.json(); // Parse the error response
       throw new Response(
-          { message: error.message || "An unexpected error occurred." },
-          { status: 500 }
+        {
+          message:
+            errorResponse.message ||
+            "Something is wrong, authentication failed.",
+        },
+        { status: res.status }
       );
+    }
+
+    const responseData = await res.json(); // Parse the successful response
+    return { success: true, data: responseData }; // Return success data
+  } catch (error) {
+    throw new Response(
+      { message: error.message || "An unexpected error occurred." },
+      { status: 500 }
+    );
   }
 }
 export async function updateBookingStatus({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/updateBooking/", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data), // Ensure data is stringified
-          signal: signal
-      });
+    const res = await fetch("http://localhost:8080/admin/updateBooking/", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data), // Ensure data is stringified
+      signal: signal,
+    });
 
-      // Handle response status
-      if (res.status === 400 || res.status === 401) {
-          const errorResponse = await res.json(); // Parse the error response
-          return { success: false, error: errorResponse }; // Return error details
-      }
+    // Handle response status
+    if (res.status === 400 || res.status === 401) {
+      const errorResponse = await res.json(); // Parse the error response
+      return { success: false, error: errorResponse }; // Return error details
+    }
 
-      if (!res.ok) {
-          const errorResponse = await res.json(); // Parse the error response
-          throw new Response(
-              { message: errorResponse.message || "Something is wrong, authentication failed." },
-              { status: res.status }
-          );
-      }
-
-      const responseData = await res.json(); // Parse the successful response
-      return { success: true, data: responseData }; // Return success data
-
-  } catch (error) {
+    if (!res.ok) {
+      const errorResponse = await res.json(); // Parse the error response
       throw new Response(
-          { message: error.message || "An unexpected error occurred." },
-          { status: 500 }
+        {
+          message:
+            errorResponse.message ||
+            "Something is wrong, authentication failed.",
+        },
+        { status: res.status }
       );
+    }
+
+    const responseData = await res.json(); // Parse the successful response
+    return { success: true, data: responseData }; // Return success data
+  } catch (error) {
+    throw new Response(
+      { message: error.message || "An unexpected error occurred." },
+      { status: 500 }
+    );
   }
 }
 
@@ -455,11 +473,9 @@ export async function fetchEvents({ signal, categoryId, searchTerm }) {
 
   return data;
 }
-export async function adminFetchEvents({ signal, categoryId}) {
-
+export async function adminFetchEvents({ signal, categoryId }) {
   console.log(categoryId);
   let url = "http://localhost:8080/events/all/?id=" + categoryId;
-
 
   const response = await fetch(url, { signal: signal });
 
@@ -501,7 +517,9 @@ export async function markNotifRead(id) {
   return res.json();
 }
 export async function fetchRoomIDs({ signal }) {
-  const response = await fetch(`http://localhost:8080/bookings/ids`, {signal:signal});
+  const response = await fetch(`http://localhost:8080/bookings/ids`, {
+    signal: signal,
+  });
 
   if (!response.ok) {
     const error = new Error("An error occurred while fetching the room");
@@ -518,13 +536,78 @@ export async function fetchRoom({ signal, id }) {
   let url = "http://localhost:8080/bookings/room/" + id;
   const response = await fetch(url, { signal: signal }); // Fetch the data
 
-  if (!response.ok) { // Check if the response is okay
-      const error = new Error("An error occurred while fetching the events");
-      error.code = response.status;
-      error.info = await response.json();
-      throw error;
+  if (!response.ok) {
+    // Check if the response is okay
+    const error = new Error("An error occurred while fetching the events");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
   }
 
   const data = await response.json(); // Parse the response data
   return data; // Return the data
+}
+
+export async function fetchAccount({ signal, accountEmail }) {
+  let url = `http://localhost:8080/account?email=${accountEmail}`;
+
+  const response = await fetch(url, { signal: signal });
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while fetching account");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data;
+}
+
+export async function updateAccount(account) {
+  const response = await fetch(`http://localhost:8080/account/update/`, {
+    method: "PUT",
+    body: JSON.stringify(account),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.status === 422) {
+    throw await response.json();
+  }
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while updating account");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  return response.json();
+}
+
+export async function fetchSelectableProfileImages({ signal }) {
+  const response = await fetch(`http://localhost:8080/account/profile-images`, {
+    signal,
+  });
+
+  if (response.status === 422) {
+    const error = new Error("There are no images!");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while fetching the images");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const images = await response.json();
+
+  return images;
 }

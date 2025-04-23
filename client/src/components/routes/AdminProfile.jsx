@@ -1,5 +1,4 @@
 import { ChevronRight, Bell, User, Languages, LayoutDashboard } from "lucide-react";
-import "./styles/profilepage.css";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 

@@ -93,7 +93,7 @@ router.post("/signup", async (req, res, next) => {
 
   // For image, if not provided or invalid, use a placeholder URL
   if (!data.image || !isValidImageUrl(data.image)) {
-    data.image = "https://example.com/placeholder.jpg";
+    data.image = "placeholder.jpg";
   }
 
   // Set a default user type if not provided

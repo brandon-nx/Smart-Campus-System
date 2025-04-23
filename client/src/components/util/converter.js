@@ -8,10 +8,10 @@ function ordinal(n) {
 }
 
 export function convertEventTimeToDateLabel(isoString) {
-  const d       = new Date(isoString);
-  const today   = new Date();
-  const diffMs  = today.setHours(0,0,0,0) - d.setHours(0,0,0,0);
-  const diffDays= Math.round(diffMs / 86400000);
+  const d = new Date(isoString);
+  const today = new Date();
+  const diffMs = today.setHours(0, 0, 0, 0) - d.setHours(0, 0, 0, 0);
+  const diffDays = Math.round(diffMs / 86400000);
 
   if (diffDays === 0) return "Today";
   if (diffDays === 1) return "Yesterday";
@@ -21,7 +21,6 @@ export function convertEventTimeToDateLabel(isoString) {
   const yy = String(d.getFullYear()).slice(-2);
   return `${dd}/${mm}/${yy}`;
 }
-
 
 export function convertEventTimeToDateOnly(
   isoString,
@@ -109,6 +108,7 @@ export function parseTimeToDate(timeString) {
   date.setHours(hours, minutes, seconds, 0);
   return date;
 }
+
 export function formatDateTo24HourString(date) {
   const pad = (num) => num.toString().padStart(2, "0");
   const hours = pad(date.getHours());
@@ -117,15 +117,29 @@ export function formatDateTo24HourString(date) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-export function compressQuery(dataArray){
-  return dataArray.reduce((acc, current) => {
-      const existing = acc.find(item => item.name === current.name);
-      if (existing) {
-          existing.values.push(current.value);
-      } else {
-          acc.push({ name: current.name, values: [current.value] });
-      }
+export function convertDateTimeToDateOnly(isoString) {
+  const date = new Date(isoString);
 
-      return acc;
+  return isNaN(date) ? "" : date.toISOString().substring(0, 10);
+}
+
+export function compressQuery(dataArray) {
+  return dataArray.reduce((acc, current) => {
+    const existing = acc.find((item) => item.name === current.name);
+    if (existing) {
+      existing.values.push(current.value);
+    } else {
+      acc.push({ name: current.name, values: [current.value] });
+    }
+
+    return acc;
   }, []);
+}
+
+export function convertImageFilePathToName(path) {
+  if (path) {
+    const parts = path.split("/");
+    return parts.pop();
+  }
+  return null;
 }
