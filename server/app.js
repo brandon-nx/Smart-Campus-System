@@ -48,6 +48,7 @@ app.use("/api/events", eventRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/account", accountRoutes);
 
 // Error-handling middleware
 app.use((error, req, res, next) => {
