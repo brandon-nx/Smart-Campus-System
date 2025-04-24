@@ -93,7 +93,7 @@ router.post("/signup", async (req, res, next) => {
 
   // For image, if not provided or invalid, use a placeholder URL
   if (!data.image || !isValidImageUrl(data.image)) {
-    data.image = "placeholder.jpg";
+    data.image = "placeholder.png";
   }
 
   // Set a default user type if not provided
@@ -190,7 +190,7 @@ router.post("/login", async (req, res) => {
   try {
     // Query the database with the corrected SQL statement
     const [results] = await db.query(
-      "SELECT email, password, type FROM users WHERE email = ?",
+      "SELECT email, password, type, verified FROM users WHERE email = ?",
       [email]
     );
 
@@ -232,6 +232,7 @@ router.post("/login", async (req, res) => {
       email: user.email,
       token: accessToken,
       type: user.type,
+      verified: user.verified,
       success: true,
     });
   } catch (err) {
@@ -266,11 +267,11 @@ router.post("/token", async (req, res) => {
       });
     }
 
-    const { email, type } = data;
+    const { email, type, verified } = data;
 
     const newAccessToken = generateAccessToken(email);
 
-    return res.json({ email, token: newAccessToken, type, success: true });
+    return res.json({ email, token: newAccessToken, type, verified, success: true });
   } catch (err) {
     console.error("[!SQL!] Error executing query:", err);
     return res.status(500).json({
@@ -570,16 +571,18 @@ router.get("/verify-token", async (req, res) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     const email = decoded.email;
 
-    const [rows] = await db.query("SELECT type FROM users WHERE email = ?", [
-      email,
-    ]);
+    const [rows] = await db.query(
+      "SELECT type, verified FROM users WHERE email = ?",
+      [email]
+    );
 
     const userType = rows[0].type;
+    const userVerified = rows[0].verified;
 
     return res.json({
       message: "Token is valid!",
       success: true,
-      user: { ...decoded, type: userType },
+      user: { ...decoded, type: userType, verified: userVerified },
     });
   } catch (err) {
     console.log("[!SQL!]Error verifying token " + err);

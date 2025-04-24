@@ -38,7 +38,7 @@ async function generateAndStoreRefreshToken(email) {
 async function validateRefreshToken(refreshToken) {
   try {
     const [results] = await db.query(
-      "SELECT at.email, u.type FROM auth_token AS at JOIN users AS u ON u.email = at.email WHERE at.token = ?",
+      "SELECT at.email, u.type, u.verified FROM auth_token AS at JOIN users AS u ON u.email = at.email WHERE at.token = ?",
       [refreshToken]
     );
 

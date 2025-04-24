@@ -204,7 +204,7 @@ export default function EditProfilePage() {
           }
         } else if (errors.find((error) => error.field === "general")) {
           setStatus({
-            message: errors.general?.message,
+            message: errors[0].message,
             type: "error",
             show: true,
           });

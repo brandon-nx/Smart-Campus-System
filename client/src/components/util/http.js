@@ -613,9 +613,62 @@ export async function fetchSelectableProfileImages({ signal }) {
 }
 
 export async function sendAnnouncement(announcementData) {
-  const response = await fetch(`http://localhost:8080/admin/send-announcement`, {
+  const response = await fetch(
+    `http://localhost:8080/admin/send-announcement`,
+    {
+      method: "POST",
+      body: JSON.stringify(announcementData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (response.status === 422) {
+    throw await response.json();
+  }
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while sending announcement");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data;
+}
+
+export async function fetchOTP({ accountEmail }) {
+  const response = await fetch(`http://localhost:8080/account/request-otp`, {
     method: "POST",
-    body: JSON.stringify(announcementData),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({accountEmail}),
+  });
+
+  if (response.status === 422) {
+    throw await response.json();
+  }
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while generating OTP");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data;
+}
+
+export async function verifyAccount(otpData) {
+  const response = await fetch(`http://localhost:8080/account/verify-otp`, {
+    method: "POST",
+    body: JSON.stringify(otpData),
     headers: {
       "Content-Type": "application/json",
     },
@@ -626,7 +679,7 @@ export async function sendAnnouncement(announcementData) {
   }
 
   if (!response.ok) {
-    const error = new Error("An error occurred while sending announcement");
+    const error = new Error("An error occurred while verifying otp");
     error.code = response.status;
     error.info = await response.json();
     throw error;

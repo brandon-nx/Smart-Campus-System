@@ -8,6 +8,8 @@ import {
   FaCalendarCheck,
   FaUserCircle,
   FaExclamationTriangle,
+  FaSignOutAlt,
+  FaCheckCircle,
 } from "react-icons/fa";
 
 import classes from "./styles/RootNavigation.module.css";
@@ -16,8 +18,13 @@ import Modal from "../../../client/src/components/routes/Modal"; // Adjust path 
 function RootNavigation() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const accountVerified = useSelector((state) => state.auth.verified);
   const sosHandler = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const verifiedAccount = isAuthenticated && accountVerified;
+  const unverifiedAccount = isAuthenticated && !accountVerified;
+  const noAccount = !isAuthenticated;
 
   return (
     <div className={classes["nav-container"]}>
@@ -32,17 +39,19 @@ function RootNavigation() {
         <span>Map</span>
       </NavLink>
 
-      <NavLink
-        to={"/events"}
-        className={({ isActive }) =>
-          `${classes["nav-item"]} ${isActive ? classes.active : ""}`
-        }
-      >
-        <FaTheaterMasks className={classes["nav-icon"]} />
-        <span>Event</span>
-      </NavLink>
+      {!!verifiedAccount && (
+        <NavLink
+          to={"/events"}
+          className={({ isActive }) =>
+            `${classes["nav-item"]} ${isActive ? classes.active : ""}`
+          }
+        >
+          <FaTheaterMasks className={classes["nav-icon"]} />
+          <span>Event</span>
+        </NavLink>
+      )}
 
-      {!isAuthenticated && (
+      {!!noAccount && (
         <NavLink
           to={"/login"}
           className={({ isActive }) =>
@@ -54,7 +63,7 @@ function RootNavigation() {
         </NavLink>
       )}
 
-      {isAuthenticated && (
+      {!!verifiedAccount && (
         <>
           <NavLink
             to={"/bookings"}
@@ -76,6 +85,30 @@ function RootNavigation() {
             <span>Profile</span>
           </NavLink>
         </>
+      )}
+
+      {!!unverifiedAccount && (
+        <NavLink
+          to={"/verify"}
+          className={({ isActive }) =>
+            `${classes["nav-item"]} ${isActive ? classes.active : ""}`
+          }
+        >
+          <FaCheckCircle className={classes["nav-icon"]} />
+          <span>Verify Account</span>
+        </NavLink>
+      )}
+
+      {!!unverifiedAccount && (
+        <NavLink
+          to={"/logout"}
+          className={({ isActive }) =>
+            `${classes["nav-item"]} ${isActive ? classes.active : ""}`
+          }
+        >
+          <FaSignOutAlt className={classes["nav-icon"]} />
+          <span>Logout</span>
+        </NavLink>
       )}
 
       <button onClick={sosHandler} className={classes["sos-btn"]}>

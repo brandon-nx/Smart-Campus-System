@@ -53,6 +53,9 @@ import AdminBookings from "./components/routes/AdminBookings";
 import EditProfilePage from "./components/routes/EditProfilePage";
 import AdminRoute from "./components/routes/AdminRoute";
 import ErrorBoundary from "./components/routes/ErrorBoundary";
+import VerifiedRoute from "./components/routes/VerifiedRoute";
+import UnverifiedRoute from "./components/routes/UnverifiedRoute";
+import VerifyPage from "./components/routes/VerifyPage";
 
 const router = createBrowserRouter([
   {
@@ -77,73 +80,92 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
-          { path: "bookings", element: <BookingPage />, loader: bookingLoader },
           {
-            path: "bookings/:id",
-            element: <BookingDetailsPage />,
-            loader: bookingDetailsLoader,
-            action: bookingDetailsAction,
-            children: [{ path: "edit", element: <BookingDetailsPage /> }],
-          },
-          { path: "events", element: <EventPage />, loader: eventsLoader },
-          {
-            path: "events/:id",
-            element: <EventDetailsPage />,
-            loader: eventDetailsLoader,
-            action: eventDetailsAction,
+            element: <VerifiedRoute />,
             children: [
               {
-                path: "events/:id/edit",
+                path: "bookings",
+                element: <BookingPage />,
+                loader: bookingLoader,
               },
-            ],
-          },
-          {
-            path: "profile",
-            children: [
-              { index: true, element: <ProfilePage /> },
-              { path: "edit", element: <EditProfilePage /> },
-            ],
-          },
-          {
-            element: <AdminRoute />,
-            children: [
               {
-                path: "admin",
+                path: "bookings/:id",
+                element: <BookingDetailsPage />,
+                loader: bookingDetailsLoader,
+                action: bookingDetailsAction,
+                children: [{ path: "edit", element: <BookingDetailsPage /> }],
+              },
+              { path: "events", element: <EventPage />, loader: eventsLoader },
+              {
+                path: "events/:id",
+                element: <EventDetailsPage />,
+                loader: eventDetailsLoader,
+                action: eventDetailsAction,
                 children: [
                   {
-                    index: true,
-                    element: <AdminDashboard />,
-                    loader: adminDashboardLoader,
+                    path: "events/:id/edit",
                   },
+                ],
+              },
+              {
+                path: "profile",
+                children: [
+                  { index: true, element: <ProfilePage /> },
+                  { path: "edit", element: <EditProfilePage /> },
+                ],
+              },
+              {
+                element: <AdminRoute />,
+                children: [
                   {
-                    path: "manage-rooms",
-                    element: <ManageRooms />,
-                    loader: manageRoomsLoader,
-                  },
-                  {
-                    path: "manage-events",
-                    element: <ManageEvents />,
-                    loader: manageEventsLoader,
-                  },
-                  { path: "manage-rooms/add-rooms", element: <AddRoom /> },
-                  { path: "manage-events/add-events", element: <AddEvent /> },
-                  {
-                    path: "manage-rooms/room-details/:id",
-                    element: <RoomDetails />,
-                  },
-                  {
-                    path: "manage-events/event-details/:id",
-                    element: <EventDetails />,
-                  },
-                  { path: "manage-bookings", element: <AdminBookings /> },
-                  {
-                    path: "manage-bookings/:id",
-                    element: <ManageBookingsDetails />,
+                    path: "admin",
+                    children: [
+                      {
+                        index: true,
+                        element: <AdminDashboard />,
+                        loader: adminDashboardLoader,
+                      },
+                      {
+                        path: "manage-rooms",
+                        element: <ManageRooms />,
+                        loader: manageRoomsLoader,
+                      },
+                      {
+                        path: "manage-events",
+                        element: <ManageEvents />,
+                        loader: manageEventsLoader,
+                      },
+                      { path: "manage-rooms/add-rooms", element: <AddRoom /> },
+                      {
+                        path: "manage-events/add-events",
+                        element: <AddEvent />,
+                      },
+                      {
+                        path: "manage-rooms/room-details/:id",
+                        element: <RoomDetails />,
+                      },
+                      {
+                        path: "manage-events/event-details/:id",
+                        element: <EventDetails />,
+                      },
+                      { path: "manage-bookings", element: <AdminBookings /> },
+                      {
+                        path: "manage-bookings/:id",
+                        element: <ManageBookingsDetails />,
+                      },
+                    ],
                   },
                 ],
               },
             ],
-          },
+          }, {
+            element: <UnverifiedRoute />, children: [
+              {
+                path: "verify",
+                element: <VerifyPage />
+              }
+            ]
+          }
         ],
       },
     ],
