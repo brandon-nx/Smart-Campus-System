@@ -37,7 +37,7 @@ export async function fetchBookings({ signal ,categoryId}) {
   return data;
 }
 export async function fetchAmenities({ signal }) {
-  let url = "http://localhost:8080/bookings/amenities/" 
+  let url = "api/bookings/amenities/" 
 
   const response = await fetch(url, { signal: signal });
 
@@ -168,7 +168,7 @@ export async function fetchEvent({ id, signal }) {
 }
 
 export async function fetchRoomStats({ id, signal }) {
-  const response = await fetch(`http://localhost:8080/bookings/stats/${id}`, {
+  const response = await fetch(`api/bookings/stats/${id}`, {
     signal,
   });
 
@@ -302,7 +302,7 @@ export async function postAnnouncement({ signal, data }) {
 }
 export async function addCustomAmenity({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/addNewAmenity", {
+      const res = await fetch("api/admin/addNewAmenity", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -336,7 +336,7 @@ export async function addCustomAmenity({ signal, data }) {
 }
 export async function addAmenityToRoom({ signal, data }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/addAmenityToRoom/", {
+      const res = await fetch("api/admin/addAmenityToRoom/", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -620,7 +620,7 @@ export async function markNotifRead(id) {
   return res.json();
 }
 export async function fetchRoomIDs({ signal }) {
-  const response = await fetch(`api/bookings/ids`, {
+  const response = await fetch(`/api/bookings/ids`, {
     signal: signal,
   });
 
@@ -652,7 +652,7 @@ export async function fetchRoom({ signal, id }) {
 }
 
 export async function fetchAccount({ signal, accountEmail }) {
-  let url = `http://localhost:8080/account?email=${accountEmail}`;
+  let url = `api/account?email=${accountEmail}`;
 
   const response = await fetch(url, { signal: signal });
 
@@ -669,7 +669,7 @@ export async function fetchAccount({ signal, accountEmail }) {
 }
 
 export async function updateAccount(account) {
-  const response = await fetch(`http://localhost:8080/account/update/`, {
+  const response = await fetch(`/api/account/update/`, {
     method: "PUT",
     body: JSON.stringify(account),
     headers: {
@@ -692,7 +692,7 @@ export async function updateAccount(account) {
 }
 
 export async function fetchSelectableProfileImages({ signal }) {
-  const response = await fetch(`http://localhost:8080/account/profile-images`, {
+  const response = await fetch(`api/account/profile-images`, {
     signal,
   });
 
@@ -717,7 +717,7 @@ export async function fetchSelectableProfileImages({ signal }) {
 
 export async function sendAnnouncement(announcementData) {
   const response = await fetch(
-    `http://localhost:8080/admin/send-announcement`,
+    `api/admin/send-announcement`,
     {
       method: "POST",
       body: JSON.stringify(announcementData),
@@ -744,7 +744,7 @@ export async function sendAnnouncement(announcementData) {
 }
 
 export async function fetchOTP({ accountEmail }) {
-  const response = await fetch(`http://localhost:8080/account/request-otp`, {
+  const response = await fetch(`/api/account/request-otp`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -769,7 +769,7 @@ export async function fetchOTP({ accountEmail }) {
 }
 
 export async function verifyAccount(otpData) {
-  const response = await fetch(`http://localhost:8080/account/verify-otp`, {
+  const response = await fetch(`/api/account/verify-otp`, {
     method: "POST",
     body: JSON.stringify(otpData),
     headers: {
