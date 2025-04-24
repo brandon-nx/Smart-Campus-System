@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react"
 import { ArrowLeft, Plus, ChevronDown } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query";
-import { addNewRoom,fetchBookingCategories,queryClient} from "../util/http"
+import { addNewRoom,addCustomAmenity,addAmenityToRoom,fetchBookingCategories,queryClient,fetchAmenities} from "../util/http"
 import "./styles/AddroomPage.css"
 
 export default function AddRoom() {
@@ -12,53 +12,80 @@ export default function AddRoom() {
     queryKey: ["bookings", "categories"],
     queryFn: ({ signal }) => fetchBookingCategories({ signal }),
   });
+  const { data: amenities } = useQuery({
+    queryKey: ["amenities"],
+    queryFn: ({ signal }) => fetchAmenities({ signal }),
+  });
   const [roomID, setRoomID] = useState("")
   const [roomName, setRoomName] = useState("")
-  const [roomType, setRoomType] = useState("")
+  const [roomType, setRoomType] = useState("Select Room Type")
   const [roomDescription, setRoomDescription] = useState("")
   const [roomCapacity, setRoomCapacity] = useState("")
   const [imageUrl, setImageUrl] = useState("")
-
+  const [newAmenity, setNewAmenity] = useState("")
   const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [showAmenityModal, setShowAmenityModal] = useState(false)
+
+  // New states for dropdown input and added items list
+  const [dropdownInput, setDropdownInput] = useState("")
+  const [addedItems, setAddedItems] = useState([])
 
   const handleBack = () => navigate(-1)
   const handleCancel = () => navigate(-1)
 
   const handleAddRoom = () => {
-        let data = { 
-          roomID: roomID,
-          roomName: roomName,
-          roomDescription: roomDescription,
-          roomCapacity:roomCapacity,
-          room_type_id: roomType}
-        
-        setShowConfirmation(false)
-        queryClient.fetchQuery({
-          queryKey: ["events", "adding"],
-          queryFn: ({ signal }) => addNewRoom({ signal,data }),
-        });
-        navigate(-1)
     setShowConfirmModal(true)
   }
-
-  const confirmAddRoom = () => {
-    setShowConfirmModal(false)
-    navigate(-1) // Add submission logic here
+  const displayNewAmenityModal = () =>{
+    setShowAmenityModal(true)
   }
+  const addNewAmenity = (item) => {
+    setAddedItems((prev) => {
+      if (!prev.includes(item)) {
+        return [...prev, item]
+      }
+      return prev
+    })
+  }
+  
+  console.log(roomType)
+  const confirmAddRoom = () => {
+    let data = { 
+      roomID: roomID,
+      roomName: roomName,
+      roomDescription: roomDescription,
+      roomCapacity:roomCapacity,
+      room_type_id: roomType,
+      }
+      queryClient.fetchQuery({
+        queryKey: ["rooms", "adding"],
+        queryFn: ({ signal }) => addNewRoom({ signal,data }),
+      });
+      
+      for (let i = 0; i < addedItems.length; i++) {
+        let amdata = {roomID: roomID,amenityID: addedItems[i]}
+        queryClient.fetchQuery({
+          queryKey: ["amenity","rooms","adding"],
+          queryFn: ({ signal }) => addAmenityToRoom({ signal,data:amdata }),
+        });
+      }
+    setShowConfirmModal(false)
+    navigate(-1)
 
+  }
+  const confirmAddAmenity = () => {
+    let data = {name:newAmenity}
+    queryClient.fetchQuery({
+      queryKey: ["amenity", "adding"],
+      queryFn: ({ signal }) => addCustomAmenity({ signal, data }),
+    });
+    setShowAmenityModal(false)
+  }
+  const cancelAddAmenity = () => {
+    setShowAmenityModal(false)
+  }
   const cancelAddRoom = () => {
     setShowConfirmModal(false)
-  }
-
-  const addAmenity = () => {
-    if (newAmenity.trim()) {
-      setAmenities([...amenities, newAmenity.trim()])
-      setNewAmenity("")
-    }
-  }
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click()
   }
 
   const handleImageChange = (e) => {
@@ -118,7 +145,7 @@ export default function AddRoom() {
         </div>
         <div className="form-field">
           <div className="form-field-with-icon">
-            <label className="field-label">{roomType}</label>
+          <label className="field-label">{roomType ? categoryData?.find(cat => cat.id === Number(roomType))?.type_name : "Select Room Type"}</label>
             <ChevronDown className="chevron-icon" />
           </div>
           <select className="field-select" onChange={(e) => setRoomType(e.target.value)}>
@@ -144,7 +171,34 @@ export default function AddRoom() {
           />
         </div>
 
-
+        <div className="form-field">
+          <div className="form-field-with-icon">
+          <label className="field-label">Select Amenities</label>
+            <ChevronDown className="chevron-icon" />
+          </div>
+        <select className="field-select" onChange={(e) => addNewAmenity(e.target.value)}>
+          {amenities?.map((tab) => (<option key={tab.id} value={tab.id}>{tab.amenity_name}</option>))}
+        </select>
+        {/* Display added items with remove button */}
+        </div>
+        <button onClick={displayNewAmenityModal}>New Amenity...</button>
+        <div className="added-items-list">
+          <ul>
+            {addedItems.map((item, index) => (
+              <li key={index} className="added-item">
+                {amenities?.find(cat => cat.id === Number(item))?.amenity_name}
+                <button
+                  className="remove-item-button"
+                  onClick={() => {
+                    setAddedItems((prev) => prev.filter((i) => i !== item))
+                  }}
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className="action-buttons">
           <button className="cancel-button-roomspage" onClick={handleCancel}>
             CANCEL
@@ -166,6 +220,30 @@ export default function AddRoom() {
                 Cancel
               </button>
               <button className="add-main-button-roomspage" onClick={confirmAddRoom}>
+                CONFIRM
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showAmenityModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">Add New Amenity</h2>
+            <div className="form-field">
+              <input
+                type="text"
+                placeholder="Amenity Name"
+                className="field-input"
+                value={newAmenity}
+                onChange={(e) => setNewAmenity(e.target.value)}
+              />
+            </div>
+            <div className="modal-buttons">
+              <button className="cancel-button-roomspage" onClick={cancelAddAmenity}>
+                Cancel
+              </button>
+              <button className="add-main-button-roomspage" onClick={confirmAddAmenity}>
                 CONFIRM
               </button>
             </div>

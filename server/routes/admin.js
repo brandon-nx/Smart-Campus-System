@@ -156,24 +156,66 @@ router.post("/addNewEvent", async (req, res) => {
   }
 });
 
-router.post("/addNewRoom", async (req, res) => {
-  try {
-    const { roomID, roomName, roomDescription, roomCapacity, room_type_id } =
-      req.body;
-    const result = await db.query(
-      `INSERT INTO venue (roomID, roomName, roomDescription, roomCapacity, room_type_id) VALUES (?, ?, ?, ?, ?)`,
-      [roomID, roomName, roomDescription, roomCapacity, room_type_id]
-    );
+  router.post("/addNewRoom", async (req, res) => {
+    try {
+      const { roomID, roomName, roomDescription, roomCapacity, room_type_id} = req.body;
+      const result = await db.query(
+        `INSERT INTO venue (roomID, roomName, roomDescription, roomCapacity, room_type_id) VALUES (?, ?, ?, ?, ?)`,
+        [roomID, roomName, roomDescription, roomCapacity, room_type_id]
+      );
+      db.query(
+        `INSERT INTO operational_hours (roomID, day_of_week, open_time, close_time) VALUES 
+(?, 'Monday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s')),
+(?, 'Tuesday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s')),
+(?, 'Wednesday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s')),
+(?, 'Thursday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s')),
+(?, 'Friday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s'));`,
+        [roomID,roomID,roomID,roomID,roomID]
+      );
+      if (result) {
+        return res.status(201).json({ message: "Room added successfully." });
+      }
+    } catch (err) {
+      console.error("[!SQL!] Error inserting data: " + err);
+      return res.status(500).json({ error: "An error occurred while adding the room." });
+    }
+    
+  });
+
+
+  router.post("/addAmenityToRoom",async (req,res)=>{
+    const roomID = req.body.roomID;
+    const amenityID = req.body.amenityID;
+    try {
+    const result =  await db.query(
+      `INSERT INTO venue_amenities (roomID,amenity_id) VALUES (?,?)`,
+      [roomID, amenityID]
+    )
     if (result) {
       return res.status(201).json({ message: "Room added successfully." });
     }
   } catch (err) {
     console.error("[!SQL!] Error inserting data: " + err);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while adding the room." });
+    return res.status(500).json({ error: "An error occurred while adding the room." });
   }
-});
+  })
+
+  router.post("/addNewAmenity",async (req,res)=>{
+    const amenity = req.body.name;
+    try {
+    const result =  await db.query(
+      `INSERT INTO amenities (amenity_name) VALUES (?)`,
+      [amenity]
+    )
+    if (result) {
+      return res.status(201).json({ message: "Amenity added successfully." });
+    }
+  } catch (err) {
+    console.error("[!SQL!] Error inserting data: " + err);
+    return res.status(500).json({ error: "An error occurred while adding the room." });
+  }
+  })
+  
 // Delete event by id
 router.delete("/deleteEvent/:id", async (req, res) => {
   const eventId = req.params.id;
@@ -195,9 +237,9 @@ router.delete("/deleteEvent/:id", async (req, res) => {
 router.delete("/deleteRoom/:id", async (req, res) => {
   const roomID = req.params.id;
   try {
-    const result = await db.query("DELETE FROM venue WHERE roomID = ?", [
-      roomID,
-    ]);
+    db.query('DELETE FROM operational_hours WHERE roomID = ?', [roomID])
+    db.query('DELETE FROM venue_amenities WHERE roomID = ?', [roomID])
+    const result = await db.query('DELETE FROM venue WHERE roomID = ?', [roomID]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Room not found" });
     }

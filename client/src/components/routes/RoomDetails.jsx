@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2, ChevronDown, Plus } from "lucide-react";
 import "./styles/RoomDetails.css";
-import { fetchRoom,queryClient,deleteRoom} from "../util/http";
+import { fetchRoom,queryClient,deleteRoom,fetchRoomStats} from "../util/http";
 import { useQuery } from "@tanstack/react-query";
+import { eventsConfig} from "./adminChartConfig";
 // Import image if it's inside the src folder
 import seminarImage from "../../assets/images/seminar.jpg"; // Update path based on your folder structure
 
@@ -19,6 +20,7 @@ function RoomDetails() {
     queryKey: ["event", "data", id],
     queryFn: ({ signal }) => fetchRoom({ signal, id }),
   });
+
   console.log (currentRoomQuery)
 
   const roomData = currentRoomQuery
@@ -44,7 +46,6 @@ function RoomDetails() {
   const cancelDelete = () => {
     setShowDeleteConfirm(false); // Hide the delete confirmation dialog
   };
-
 
 
 
@@ -94,10 +95,11 @@ function RoomDetails() {
   return (
     <div className="room-details-container">
       <header className="room-details-header">
+
         <button className="back-button" onClick={handleBack}>
           <ArrowLeft className="back-icon" />
         </button>
-        <h1 className="header-title">{roomData.name}</h1>
+        <h1 className="header-title">{roomData.roomName}</h1>
         <button className="delete-button" onClick={handleDelete}>
           <Trash2 className="trash-icon" />
         </button>
@@ -121,19 +123,16 @@ function RoomDetails() {
         <div className="form-container">
           {/* Room Type */}
           <div className="form-field">
-            <div className="form-field-with-icon">
-              <label className="field-select-visible">Room Type: {roomData.room_type_id}</label>
-            </div>
+              <label className="field-select-visible">Room Name: {roomData.roomName}</label>
           </div>
-
-          {/* Room Name */}
           <div className="form-field">
-            <input
-              type="text"
-              value={roomData.name}
-              className="field-input"
-              onChange={(e) => setRoomData({ ...roomData, name: e.target.value })}
-            />
+          <label className="field-select-visible">Room Description: {roomData.roomDescription}</label>
+          </div>
+          <div className="form-field">
+            <label className="field-select-visible">Amenities List: </label>
+            <label className="field-select-visible">
+              {roomData.amenities.map(am => am.name).join(", ")}
+            </label>
           </div>
         </div>
       </div>

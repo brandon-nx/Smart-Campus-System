@@ -15,7 +15,16 @@ export function eventsConfig(eventData) {
             },
             scales: {
                 x: {
-                    stacked: true
+                    stacked: true,
+                    beforeUpdate: function(axis) {
+                        const labels = axis.chart.data.labels;
+                        for (let i = 0; i < labels.length; i++) {
+                            const label = labels[i];
+                            if (typeof label === 'string' && label.length > 10) {
+                                labels[i] = label.substring(0, 10) + '...'; // Truncates and adds ellipsis
+                            }
+                        }
+                    }
                 },
                 y: {
                     stacked: true,
@@ -38,6 +47,41 @@ export function attendanceConfig(attendanceData){ return {
     }}
   }
 
+}
+export function roomDetailsConfig(roomDetailsData) {
+    return {
+        type: 'line',
+        data: roomDetailsData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                title: {
+                    display: true,
+                    text: 'Room Details Chart',
+                },
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Time',
+                    },
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value',
+                    },
+                    beginAtZero: true,
+                },
+            },
+        },
+    };
 }
 
 export function roomsConfig(roomData){ return {
