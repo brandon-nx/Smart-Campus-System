@@ -24,7 +24,7 @@ export async function action({ request }) {
     authData.newConfirmPassword = data.get("reset-confirm-password");
   }
 
-  const response = await fetch(`http://localhost:8080/${step}`, {
+  const response = await fetch(`/api/${step}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

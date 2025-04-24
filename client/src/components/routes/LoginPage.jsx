@@ -33,9 +33,6 @@ export default function Login() {
       {accountRecoveryCtx.isOpen && <PasswordRecoveryWindow />}
       <div className={classes["login-container"]}>
         <div className={classes["top-bar"]}>
-          <Link to="/" className={classes["back-btn"]}>
-            ←
-          </Link>
           <span className={classes["top-bar-text"]}>Member of UOSM</span>
         </div>
 
@@ -73,7 +70,7 @@ export async function action({ request }) {
     rememberMe: data.get("remember-me") !== null,
   };
 
-  const response = await fetch(`http://localhost:8080/login`, {
+  const response = await fetch(`/api/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

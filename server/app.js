@@ -43,12 +43,11 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 // Set up authentication routes
-app.use(authRoutes);
-app.use("/events", eventRoutes);
-app.use("/bookings", bookingRoutes);
-app.use("/notifications", notificationRoutes);
-app.use("/admin", adminRoutes);
-app.use("/account", accountRoutes);
+app.use("/api", authRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Error-handling middleware
 app.use((error, req, res, next) => {

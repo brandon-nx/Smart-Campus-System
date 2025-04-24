@@ -3,7 +3,7 @@ import { authActions } from "./auth-slice";
 export const verifyToken = () => {
   return async (dispatch) => {
     try {
-      let res = await fetch("http://localhost:8080/verify-token", {
+      let res = await fetch("/api/verify-token", {
         method: "GET",
         credentials: "include",
         headers: {
@@ -16,7 +16,7 @@ export const verifyToken = () => {
         console.log("Token is not valid / expired!");
 
         //Check refresh token available
-        res = await fetch("http://localhost:8080/token", {
+        res = await fetch("/api/token", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -67,7 +67,7 @@ export const verifyToken = () => {
 export const removeToken = () => {
   return async (dispatch) => {
     try {
-      let res = await fetch("http://localhost:8080/logout", {
+      let res = await fetch("/api/logout", {
         method: "POST",
         credentials: "include",
         headers: {

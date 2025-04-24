@@ -7,9 +7,10 @@
   justify-content: center;
   min-height: 100vh;
   position: relative;
-  padding-top: 60px;
+  padding-top: 80px;
   box-sizing: border-box;
   background-color: #fff;
+  padding-bottom: 80px;
 }
 
 /* Top horizontal bar */
@@ -34,8 +35,17 @@
   cursor: pointer;
   border: none;
   background: none;
-  color: #ad000b;
+  color: #000; /* black by default */
+  text-decoration: none; /* remove underline */
+  transition: color 0.2s ease;
 }
+
+.back-btn:hover,
+.back-btn:focus {
+  color: #ad000b; /* red on hover */
+  text-decoration: none; /* still no underline */
+}
+
 
 .top-bar-text {
   position: absolute;

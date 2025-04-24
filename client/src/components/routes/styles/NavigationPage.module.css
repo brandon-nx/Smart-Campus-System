@@ -7,22 +7,50 @@
   box-sizing: border-box;
   overflow-y: auto;
   position: relative;
+  padding-top: 135px;
 }
 
 /* Top Bar: Searc Input*/
 .map-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   padding: 10px 20px;
   background-color: #f2f2f2;
   border-bottom: 1px solid #ddd;
-  position: relative;
-  z-index: 10;
+  z-index: 4000;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-sizing: border-box;
 }
+
+
+/* Floor Switch Button*/
+.floor-switcher {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+.floor-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
 
 .map-top-search-container {
   width: 100%;
+  position: relative;
+  z-index: 4000; 
 }
 
 .map-top-search-box {
@@ -91,7 +119,7 @@
   height: calc(100vh - 50px);
   background-color: rgba(255, 255, 255, 0.98);
   border-top: 1px solid #ccc;
-  z-index: 3000;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -105,6 +133,7 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1rem;
+  z-index: 3000;
 }
 
 .map-top-dropdown-item {
@@ -112,10 +141,12 @@
   border-bottom: 1px solid #eee;
   font-size: 1rem;
   cursor: pointer;
+  z-index: 3000;
 }
 
 .map-top-dropdown-item:hover {
   background-color: #f8f8f8;
+  z-index: 3000;
 }
 
 /* Map viewer area */

@@ -314,7 +314,7 @@ export async function action({ request, params }) {
   console.log(bookingData);
 
   const response = await fetch(
-    `http://localhost:8080/bookings/rooms/${id}/book`,
+    `/api/bookings/rooms/${id}/book`,
     {
       method: "POST",
       headers: {

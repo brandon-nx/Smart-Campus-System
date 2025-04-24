@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 export const queryClient = new QueryClient();
 export async function fetchBookingCategories({ signal }) {
-  let url = "http://localhost:8080/bookings/categories";
+  let url = "/api/bookings/categories";
 
   const response = await fetch(url, { signal: signal });
 
@@ -18,8 +18,8 @@ export async function fetchBookingCategories({ signal }) {
 
   return data;
 }
-export async function fetchBookings({ signal, categoryId }) {
-  let url = "http://localhost:8080/bookings/all/" + categoryId;
+export async function fetchBookings({ signal ,categoryId}) {
+  let url = "/api/bookings/all/" + categoryId;
 
   const response = await fetch(url, { signal: signal });
 
@@ -58,7 +58,7 @@ export async function fetchAmenities({ signal }) {
 export async function fetchBookingRooms({ signal, categoryId, searchTerm }) {
   console.log(searchTerm);
   console.log(categoryId);
-  let url = "http://localhost:8080/bookings/rooms";
+  let url = "/api/bookings/rooms";
 
   if (categoryId && searchTerm) {
     url += "?id=" + categoryId + "&search=" + searchTerm;
@@ -81,7 +81,7 @@ export async function fetchBookingRooms({ signal, categoryId, searchTerm }) {
 }
 
 export async function fetchBookingRoom({ id, signal }) {
-  const response = await fetch(`http://localhost:8080/bookings/rooms/${id}`, {
+  const response = await fetch(`/api/bookings/rooms/${id}`, {
     signal,
   });
 
@@ -99,7 +99,7 @@ export async function fetchBookingRoom({ id, signal }) {
 
 export async function fetchBookingStartSlots({ id, signal, bookingDate }) {
   const response = await fetch(
-    `http://localhost:8080/bookings/rooms/${id}/start-slots?date=${bookingDate}`,
+    `/api/bookings/rooms/${id}/start-slots?date=${bookingDate}`,
     {
       signal,
     }
@@ -130,7 +130,7 @@ export async function fetchBookingEndSlots({
   startTime,
 }) {
   const response = await fetch(
-    `http://localhost:8080/bookings/rooms/${id}/end-slots?date=${bookingDate}&start=${startTime}`,
+    `/api/bookings/rooms/${id}/end-slots?date=${bookingDate}&start=${startTime}`,
     {
       signal,
     }
@@ -151,7 +151,7 @@ export async function fetchBookingEndSlots({
 }
 
 export async function fetchEvent({ id, signal }) {
-  const response = await fetch(`http://localhost:8080/events/events/${id}`, {
+  const response = await fetch(`/api/events/events/${id}`, {
     signal,
   });
 
@@ -185,7 +185,7 @@ export async function fetchRoomStats({ id, signal }) {
 }
 
 export async function fetchEventCategories({ signal }) {
-  let url = "http://localhost:8080/events/categories";
+  let url = "/api/events/categories";
 
   const response = await fetch(url, { signal: signal });
 
@@ -205,7 +205,7 @@ export async function fetchEventCategories({ signal }) {
 
 //graph related functions
 export async function fetchRoomsBookingCount({ signal }) {
-  let url = "http://localhost:8080/admin/roombookingsync";
+  let url = "/api/admin/roombookingsync";
 
   const response = await fetch(url, { signal: signal });
 
@@ -220,7 +220,7 @@ export async function fetchRoomsBookingCount({ signal }) {
 }
 
 export async function fetchEventsCount({ signal }) {
-  let url = "http://localhost:8080/admin/eventbookingsync";
+  let url = "/api/admin/eventbookingsync";
 
   const response = await fetch(url, { signal: signal });
 
@@ -235,7 +235,7 @@ export async function fetchEventsCount({ signal }) {
 }
 
 export async function fetchAttendanceCount({ signal }) {
-  let url = "http://localhost:8080/admin/attendancesync";
+  let url = "/api/admin/attendancesync";
 
   const response = await fetch(url, { signal: signal });
 
@@ -249,7 +249,7 @@ export async function fetchAttendanceCount({ signal }) {
   return data;
 }
 export async function fetchAttendance({ signal, id }) {
-  let url = "http://localhost:8080/admin/attendance/" + id;
+  let url = "/api/admin/attendance/"+id;
 
   const response = await fetch(url, { signal: signal });
 
@@ -265,7 +265,7 @@ export async function fetchAttendance({ signal, id }) {
 // Data modification functions
 export async function postAnnouncement({ signal, data }) {
   try {
-    const res = await fetch("http://localhost:8080/admin/postAnnouncement", {
+    const res = await fetch("api/admin/postAnnouncement", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -370,7 +370,7 @@ export async function addAmenityToRoom({ signal, data }) {
 }
 export async function addNewRoom({ signal, data }) {
   try {
-    const res = await fetch("http://localhost:8080/admin/addNewRoom", {
+    const res = await fetch("api/admin/addNewRoom", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -407,7 +407,7 @@ export async function addNewRoom({ signal, data }) {
 }
 export async function addNewEvent({ signal, data }) {
   try {
-    const res = await fetch("http://localhost:8080/admin/addNewEvent", {
+    const res = await fetch("api/admin/addNewEvent", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -445,7 +445,7 @@ export async function addNewEvent({ signal, data }) {
 
 export async function deleteEvent({ signal, id }) {
   try {
-    const res = await fetch("http://localhost:8080/admin/deleteEvent/" + id, {
+    const res = await fetch("api/admin/deleteEvent/" + id, {
       method: "DELETE",
       credentials: "include",
       signal: signal,
@@ -481,7 +481,7 @@ export async function deleteEvent({ signal, id }) {
 
 export async function deleteRoom({ signal, id }) {
   try {
-      const res = await fetch("http://localhost:8080/admin/deleteRoom/"+id, {
+      const res = await fetch("api/admin/deleteRoom/"+id, {
           method: "DELETE",
           credentials: "include",
           signal: signal
@@ -516,7 +516,7 @@ export async function deleteRoom({ signal, id }) {
 }
 export async function updateBookingStatus({ signal, data }) {
   try {
-    const res = await fetch("http://localhost:8080/admin/updateBooking/", {
+    const res = await fetch("api/admin/updateBooking/", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -555,7 +555,7 @@ export async function updateBookingStatus({ signal, data }) {
 export async function fetchEvents({ signal, categoryId, searchTerm }) {
   console.log(searchTerm);
   console.log(categoryId);
-  let url = "http://localhost:8080/events/events";
+  let url = "/api/events/events";
 
   if (categoryId && searchTerm) {
     url += "?id=" + categoryId + "&search=" + searchTerm;
@@ -578,7 +578,7 @@ export async function fetchEvents({ signal, categoryId, searchTerm }) {
 }
 export async function adminFetchEvents({ signal, categoryId }) {
   console.log(categoryId);
-  let url = "http://localhost:8080/events/all/?id=" + categoryId;
+  let url = "/api/events/all/?id=" + categoryId;
 
   const response = await fetch(url, { signal: signal });
 
@@ -594,7 +594,7 @@ export async function adminFetchEvents({ signal, categoryId }) {
   return data;
 }
 export async function fetchNotifications({ signal, accountEmail }) {
-  let url = `http://localhost:8080/notifications?email=${accountEmail}`;
+  let url = `/api/notifications?email=${accountEmail}`;
 
   const response = await fetch(url, { signal: signal });
 
@@ -611,7 +611,7 @@ export async function fetchNotifications({ signal, accountEmail }) {
 }
 
 export async function markNotifRead(id) {
-  const res = await fetch(`http://localhost:8080/notifications/${id}/read`, {
+  const res = await fetch(`/api/notifications/${id}/read`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status: "read" }),
@@ -620,7 +620,7 @@ export async function markNotifRead(id) {
   return res.json();
 }
 export async function fetchRoomIDs({ signal }) {
-  const response = await fetch(`http://localhost:8080/bookings/ids`, {
+  const response = await fetch(`api/bookings/ids`, {
     signal: signal,
   });
 
@@ -636,7 +636,7 @@ export async function fetchRoomIDs({ signal }) {
   return data;
 }
 export async function fetchRoom({ signal, id }) {
-  let url = "http://localhost:8080/bookings/rooms/" + id;
+  let url = "api/bookings/rooms/" + id;
   const response = await fetch(url, { signal: signal }); // Fetch the data
 
   if (!response.ok) {
