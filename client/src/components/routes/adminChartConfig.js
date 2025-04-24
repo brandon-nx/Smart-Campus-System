@@ -48,6 +48,41 @@ export function attendanceConfig(attendanceData){ return {
   }
 
 }
+export function roomDetailsConfig(roomDetailsData) {
+    return {
+        type: 'line',
+        data: roomDetailsData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                title: {
+                    display: true,
+                    text: 'Room Details Chart',
+                },
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Time',
+                    },
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value',
+                    },
+                    beginAtZero: true,
+                },
+            },
+        },
+    };
+}
 
 export function roomsConfig(roomData){ return {
     type: 'bar',

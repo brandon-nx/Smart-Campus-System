@@ -443,7 +443,7 @@ router.get("/room/:id",async (req, res) => {
 router.get("/stats/:id",async (req, res) => {
   const { id } = req.params;
   try {
-    let sql = `SELECT DATE_FORMAT(booking_date, '%M') AS month,COUNT(*) as value FROM bookings WHERE roomID = ? GROUP BY MONTH(booking_date)`;
+    let sql = `SELECT DATE_FORMAT(booking_date, '%M') AS month,COUNT(*) as value FROM bookings WHERE roomID = ? GROUP BY DATE_FORMAT(booking_date, '%M')`;
     console.log(sql, id);
     const [rows] = await db.query(sql, [id]);
     return res.json(rows);

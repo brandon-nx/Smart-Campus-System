@@ -123,6 +123,15 @@ router.post("/updateBooking", async (req, res) => {
         `INSERT INTO venue (roomID, roomName, roomDescription, roomCapacity, room_type_id) VALUES (?, ?, ?, ?, ?)`,
         [roomID, roomName, roomDescription, roomCapacity, room_type_id]
       );
+      db.query(
+        `INSERT INTO operational_hours (roomID, day_of_week, open_time, close_time) VALUES 
+(?, 'Monday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s')),
+(?, 'Tuesday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s')),
+(?, 'Wednesday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s')),
+(?, 'Thursday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s')),
+(?, 'Friday', STR_TO_DATE('09:00:00', '%H:%i:%s'), STR_TO_DATE('17:00:00', '%H:%i:%s'));`,
+        [roomID,roomID,roomID,roomID,roomID]
+      );
       if (result) {
         return res.status(201).json({ message: "Room added successfully." });
       }
@@ -184,6 +193,8 @@ router.delete('/deleteEvent/:id', async (req, res) => {
 router.delete('/deleteRoom/:id', async (req, res) => {
   const roomID = req.params.id;
   try {
+    db.query('DELETE FROM operational_hours WHERE roomID = ?', [roomID])
+    db.query('DELETE FROM venue_amenities WHERE roomID = ?', [roomID])
     const result = await db.query('DELETE FROM venue WHERE roomID = ?', [roomID]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Room not found' });
