@@ -52,12 +52,14 @@ import ManageBookingsDetails from "./components/routes/ManageBookingsDetails";
 import AdminBookings from "./components/routes/AdminBookings";
 import EditProfilePage from "./components/routes/EditProfilePage";
 import AdminRoute from "./components/routes/AdminRoute";
+import ErrorBoundary from "./components/routes/ErrorBoundary";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
     id: "root",
+    errorElement: <ErrorBoundary />,
     children: [
       { index: true, element: <NavigationPage /> },
       {

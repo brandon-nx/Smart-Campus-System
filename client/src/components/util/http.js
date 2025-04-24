@@ -611,3 +611,28 @@ export async function fetchSelectableProfileImages({ signal }) {
 
   return images;
 }
+
+export async function sendAnnouncement(announcementData) {
+  const response = await fetch(`http://localhost:8080/admin/send-announcement`, {
+    method: "POST",
+    body: JSON.stringify(announcementData),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.status === 422) {
+    throw await response.json();
+  }
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while sending announcement");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data;
+}

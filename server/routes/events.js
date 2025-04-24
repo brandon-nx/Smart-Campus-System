@@ -71,7 +71,7 @@ router.get("/allevents", async (req, res) => {
 
     // Execute the query with parameters.
     const [rows] = await db.query(sql, params);
-    console.log(rows)
+    console.log(rows);
     return res.json(rows);
   } catch (error) {
     console.error("Error fetching events:", err);
@@ -99,6 +99,7 @@ router.get("/events", async (req, res) => {
             JOIN venue       AS v ON e.roomid = v.roomID
             WHERE e.event_type_id = ?
               AND e.status = 'Open'
+              AND e.eventstart >= CURDATE()
     `;
     const params = [id];
 
@@ -109,7 +110,7 @@ router.get("/events", async (req, res) => {
 
     // Execute the query with parameters.
     const [rows] = await db.query(sql, params);
-    console.log(rows)
+    console.log(rows);
     return res.json(rows);
   } catch (error) {
     console.error("Error fetching events:", err);
@@ -179,7 +180,7 @@ router.post("/events/:id/rsvp", async (req, res) => {
   try {
     const [eventRows] = await db.query(
       `
-    SELECT eventcapacity FROM events WHERE idevent = ?
+    SELECT eventcapacity, eventstart FROM events WHERE idevent = ?
   `,
       [id]
     );
@@ -191,7 +192,18 @@ router.post("/events/:id/rsvp", async (req, res) => {
       });
     }
 
-    const capacity = eventRows[0].eventcapacity;
+    const { eventcapacity: capacity, eventstart } = eventRows[0];
+
+    const now = new Date();
+    const startDate =
+      eventstart instanceof Date ? eventstart : new Date(eventstart);
+
+    if (startDate <= now) {
+      return res.status(422).json({
+        message: "RSVP Failed, Event has already started or is in the past!",
+        status: 422,
+      });
+    }
 
     const [[{ attendees }]] = await db.query(
       `
@@ -274,7 +286,6 @@ router.post("/", async (req, res, next) => {
 
 router.patch("/:id", async (req, res, next) => {
   const data = req.body;
-
 
   if (!isValidText(data.title)) {
     errors.title = "Invalid title.";
