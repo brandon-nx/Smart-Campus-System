@@ -49,6 +49,10 @@ router.get("/ids", async (req, res) => {
   const [rows] = await db.query("SELECT roomID,roomName from venue")
   return res.json(rows);
 })
+router.get("/amenities", async (req, res) => {
+  const [rows] = await db.query("SELECT * from amenities")
+  return res.json(rows);
+})
 router.get("/rooms/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -427,6 +431,19 @@ router.get("/room/:id",async (req, res) => {
   const { id } = req.params;
   try {
     let sql = `SELECT * FROM venue WHERE roomID = ?`;
+    console.log(sql, id);
+    const [rows] = await db.query(sql, [id]);
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error fetching bookings:", error); // Use the correct variable name
+    return res.status(500).json({ message: "Failed to fetch bookings" });
+  }
+});
+
+router.get("/stats/:id",async (req, res) => {
+  const { id } = req.params;
+  try {
+    let sql = `SELECT DATE_FORMAT(booking_date, '%M') AS month,COUNT(*) as value FROM bookings WHERE roomID = ? GROUP BY MONTH(booking_date)`;
     console.log(sql, id);
     const [rows] = await db.query(sql, [id]);
     return res.json(rows);

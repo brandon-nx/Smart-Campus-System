@@ -36,6 +36,24 @@ export async function fetchBookings({ signal ,categoryId}) {
 
   return data;
 }
+export async function fetchAmenities({ signal }) {
+  let url = "http://localhost:8080/bookings/amenities/" 
+
+  const response = await fetch(url, { signal: signal });
+
+  if (!response.ok) {
+    const error = new Error(
+      "An error occurred while fetching the booking categories"
+    );
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data;
+}
 
 export async function fetchBookingRooms({ signal, categoryId, searchTerm }) {
   console.log(searchTerm);
@@ -149,6 +167,23 @@ export async function fetchEvent({ id, signal }) {
   return data;
 }
 
+export async function fetchRoomStats({ id, signal }) {
+  const response = await fetch(`http://localhost:8080/bookings/stats/${id}`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while fetching event");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data;
+}
+
 export async function fetchEventCategories({ signal }) {
   let url = "http://localhost:8080/events/categories";
 
@@ -231,6 +266,74 @@ export async function fetchAttendance({ signal, id }) {
 export async function postAnnouncement({ signal, data }) {
   try {
       const res = await fetch("http://localhost:8080/admin/postAnnouncement", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data), // Ensure data is stringified
+          signal: signal
+      });
+
+      // Handle response status
+      if (res.status === 400 || res.status === 401) {
+          const errorResponse = await res.json(); // Parse the error response
+          return { success: false, error: errorResponse }; // Return error details
+      }
+
+      if (!res.ok) {
+          const errorResponse = await res.json(); // Parse the error response
+          throw new Response(
+              { message: errorResponse.message || "Something is wrong, authentication failed." },
+              { status: res.status }
+          );
+      }
+
+      const responseData = await res.json(); // Parse the successful response
+      return { success: true, data: responseData }; // Return success data
+
+  } catch (error) {
+      throw new Response(
+          { message: error.message || "An unexpected error occurred." },
+          { status: 500 }
+      );
+  }
+}
+export async function addCustomAmenity({ signal, data }) {
+  try {
+      const res = await fetch("http://localhost:8080/admin/addNewAmenity", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data), // Ensure data is stringified
+          signal: signal
+      });
+
+      // Handle response status
+      if (res.status === 400 || res.status === 401) {
+          const errorResponse = await res.json(); // Parse the error response
+          return { success: false, error: errorResponse }; // Return error details
+      }
+
+      if (!res.ok) {
+          const errorResponse = await res.json(); // Parse the error response
+          throw new Response(
+              { message: errorResponse.message || "Something is wrong, authentication failed." },
+              { status: res.status }
+          );
+      }
+
+      const responseData = await res.json(); // Parse the successful response
+      return { success: true, data: responseData }; // Return success data
+
+  } catch (error) {
+      throw new Response(
+          { message: error.message || "An unexpected error occurred." },
+          { status: 500 }
+      );
+  }
+}
+export async function addAmenityToRoom({ signal, data }) {
+  try {
+      const res = await fetch("http://localhost:8080/admin/addAmenityToRoom/", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },

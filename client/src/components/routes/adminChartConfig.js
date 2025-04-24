@@ -15,7 +15,16 @@ export function eventsConfig(eventData) {
             },
             scales: {
                 x: {
-                    stacked: true
+                    stacked: true,
+                    beforeUpdate: function(axis) {
+                        const labels = axis.chart.data.labels;
+                        for (let i = 0; i < labels.length; i++) {
+                            const label = labels[i];
+                            if (typeof label === 'string' && label.length > 10) {
+                                labels[i] = label.substring(0, 10) + '...'; // Truncates and adds ellipsis
+                            }
+                        }
+                    }
                 },
                 y: {
                     stacked: true,

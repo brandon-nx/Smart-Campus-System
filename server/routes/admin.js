@@ -118,7 +118,7 @@ router.post("/updateBooking", async (req, res) => {
 
   router.post("/addNewRoom", async (req, res) => {
     try {
-      const { roomID, roomName, roomDescription, roomCapacity, room_type_id } = req.body;
+      const { roomID, roomName, roomDescription, roomCapacity, room_type_id} = req.body;
       const result = await db.query(
         `INSERT INTO venue (roomID, roomName, roomDescription, roomCapacity, room_type_id) VALUES (?, ?, ?, ?, ?)`,
         [roomID, roomName, roomDescription, roomCapacity, room_type_id]
@@ -130,7 +130,43 @@ router.post("/updateBooking", async (req, res) => {
       console.error("[!SQL!] Error inserting data: " + err);
       return res.status(500).json({ error: "An error occurred while adding the room." });
     }
+    
   });
+
+
+  router.post("/addAmenityToRoom",async (req,res)=>{
+    const roomID = req.body.roomID;
+    const amenityID = req.body.amenityID;
+    try {
+    const result =  await db.query(
+      `INSERT INTO venue_amenities (roomID,amenity_id) VALUES (?,?)`,
+      [roomID, amenityID]
+    )
+    if (result) {
+      return res.status(201).json({ message: "Room added successfully." });
+    }
+  } catch (err) {
+    console.error("[!SQL!] Error inserting data: " + err);
+    return res.status(500).json({ error: "An error occurred while adding the room." });
+  }
+  })
+
+  router.post("/addNewAmenity",async (req,res)=>{
+    const amenity = req.body.name;
+    try {
+    const result =  await db.query(
+      `INSERT INTO amenities (amenity_name) VALUES (?)`,
+      [amenity]
+    )
+    if (result) {
+      return res.status(201).json({ message: "Amenity added successfully." });
+    }
+  } catch (err) {
+    console.error("[!SQL!] Error inserting data: " + err);
+    return res.status(500).json({ error: "An error occurred while adding the room." });
+  }
+  })
+  
 // Delete event by id
 router.delete('/deleteEvent/:id', async (req, res) => {
   const eventId = req.params.id;
